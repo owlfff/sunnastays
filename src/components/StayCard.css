@@ -1,0 +1,41 @@
+.stay-card {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: 0 2px 12px rgba(26, 18, 8, 0.07);
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.stay-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stay-card-img {
+  height: 200px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.stay-card-emoji { font-size: 52px; }
+
+.stay-wishlist {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; border: none;
+  transition: transform 0.2s;
+}
+.stay-wishlist:hover { transform: scale(1.15); }
+
+.stay-card-body { padding: 16px; }
+
+.stay-meta {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin: 6px 0 4px;
+}
+.stay-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+.stay-rating { font-size: 13px; color: var(--ink); font-weight: 500; }
+.stay-loc { font-size: 13px; color: var(--ink-soft); margin-bottom: 10px; }
+.stay-price { font-size: 15px; font-weight: 600; color: var(--ink); }
+.stay-price span { font-weight: 400; color: var(--ink-soft); font-size: 13px; }
