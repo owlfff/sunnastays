@@ -23,7 +23,7 @@ export default function Nav() {
       </Link>
       <div className="nav-right">
         <Link to="/search" className="nav-link">Explore</Link>
-        <a href="#" className="nav-link">Sign in</a>
+        <button className="nav-link nav-signin">Sign in</button>
         <button className="nav-host-btn" onClick={() => navigate('/host')}>
           List your property
         </button>

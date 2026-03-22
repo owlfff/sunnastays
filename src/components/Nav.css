@@ -76,3 +76,17 @@
   .nav { padding: 0 16px; }
   .nav-link:not(:last-of-type) { display: none; }
 }
+
+/* Sign in as button styled like a nav link */
+.nav-signin {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-mid);
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.nav-signin:hover { background: var(--sand); }

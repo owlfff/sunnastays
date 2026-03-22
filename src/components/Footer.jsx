@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Footer.css';
 
 export default function Footer() {
@@ -18,24 +18,24 @@ export default function Footer() {
           </div>
           <div className="footer-col">
             <h4>Explore</h4>
-            <a onClick={() => navigate('/search')}>Search stays</a>
-            <a href="#">Destinations</a>
-            <a href="#">Weekend escapes</a>
-            <a href="#">Family villas</a>
+            <button onClick={() => navigate('/search')}>Search stays</button>
+            <button>Destinations</button>
+            <button>Weekend escapes</button>
+            <button>Family villas</button>
           </div>
           <div className="footer-col">
             <h4>Hosting</h4>
-            <a onClick={() => navigate('/host')}>List your property</a>
-            <a href="#">Halal Charter</a>
-            <a href="#">Host resources</a>
-            <a href="#">Verification</a>
+            <button onClick={() => navigate('/host')}>List your property</button>
+            <button>Halal Charter</button>
+            <button>Host resources</button>
+            <button>Verification</button>
           </div>
           <div className="footer-col">
             <h4>Company</h4>
-            <a href="#">About us</a>
-            <a href="#">Blog</a>
-            <a href="#">Careers</a>
-            <a href="#">Contact</a>
+            <button>About us</button>
+            <button>Blog</button>
+            <button>Careers</button>
+            <button>Contact</button>
           </div>
         </div>
         <div className="footer-bottom">

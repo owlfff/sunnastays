@@ -71,3 +71,20 @@
 @media (max-width: 500px) {
   .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* Make footer buttons look like links */
+.footer-col button {
+  display: block;
+  font-size: 14px;
+  color: rgba(245,237,216,0.55);
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+  font-weight: 300;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  text-align: left;
+}
+.footer-col button:hover { color: var(--terra-muted); }
