@@ -43,7 +43,7 @@ export async function getStay(slug) {
 }
 
 export async function submitListing(payload) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('properties')
     .insert([{
       name:        payload.name,
