@@ -1,11 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-/**
- * useSearch
- * Central hook for the destination/date/guest search state.
- * Used by the hero SearchBar and carried through to SearchResults.
- */
 export function useSearch() {
   const navigate = useNavigate();
   const [dest, setDest]         = useState('');
@@ -31,8 +26,8 @@ export function useSearch() {
 
   const runSearch = useCallback(() => {
     const params = new URLSearchParams();
-    if (dest)    params.set('destination', dest);
-    if (checkin) params.set('checkin', checkin.toISOString().split('T')[0]);
+    if (dest && dest.trim() !== '')    params.set('destination', dest.trim());
+    if (checkin)  params.set('checkin',  checkin.toISOString().split('T')[0]);
     if (checkout) params.set('checkout', checkout.toISOString().split('T')[0]);
     if (totalGuests > 0) params.set('guests', totalGuests);
     navigate(`/search?${params.toString()}`);
