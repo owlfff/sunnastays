@@ -2,32 +2,22 @@ import { useState, useCallback } from 'react';
 import { submitListing } from '../api';
 
 const INITIAL_STATE = {
-  // Step 1
   name: '', type: '', city: '', country: '', bedrooms: '1', maxGuests: '2', description: '',
-  // Step 2
   photos: [],
-  // Step 3
   price: '', minStay: '1 night', cleaningFee: '',
-  // Step 4
   halalChecks: {
-    alcoholFree: false,
-    noNonHalalMeat: false,
-    petFree: false,
-    halalKitchen: false,
-    prayerSpace: false,
-    mosqueInfo: false,
-    noInappropriateDecor: false,
+    alcoholFree: false, noNonHalalMeat: false, petFree: false,
+    halalKitchen: false, prayerSpace: false, mosqueInfo: false, noInappropriateDecor: false,
   },
-  // Step 5
   fullName: '', email: '', phone: '', termsAccepted: false,
 };
 
 export function useOnboarding() {
-  const [step, setStep]       = useState(1);
-  const [form, setForm]       = useState(INITIAL_STATE);
+  const [step, setStep]             = useState(1);
+  const [form, setForm]             = useState(INITIAL_STATE);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted]   = useState(false);
-  const [error, setError]     = useState(null);
+  const [error, setError]           = useState(null);
 
   const update = useCallback((field, value) => {
     setForm(f => ({ ...f, [field]: value }));
@@ -55,9 +45,8 @@ export function useOnboarding() {
 
   const checkedCount = Object.values(form.halalChecks).filter(Boolean).length;
   const totalChecks  = Object.keys(form.halalChecks).length;
-
-  const hostFee   = form.price ? Math.round(parseFloat(form.price) * 0.08) : 0;
-  const hostEarns = form.price ? Math.round(parseFloat(form.price) - hostFee) : 0;
+  const hostFee      = form.price ? Math.round(parseFloat(form.price) * 0.08) : 0;
+  const hostEarns    = form.price ? Math.round(parseFloat(form.price) - hostFee) : 0;
 
   const handleSubmit = useCallback(async () => {
     if (!form.termsAccepted) {
@@ -84,12 +73,9 @@ export function useOnboarding() {
   }, []);
 
   return {
-    step, goStep,
-    form, update, toggleHalalCheck,
-    addPhoto, removePhoto,
-    submitting, submitted, error,
-    checkedCount, totalChecks,
-    hostFee, hostEarns,
+    step, goStep, form, update, toggleHalalCheck,
+    addPhoto, removePhoto, submitting, submitted, error,
+    checkedCount, totalChecks, hostFee, hostEarns,
     handleSubmit, reset,
   };
 }

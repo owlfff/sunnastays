@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
 import { useOnboarding } from '../hooks/useOnboarding';
 import './HostOnboarding.css';
 
@@ -20,34 +21,26 @@ const COUNTRIES = [
 ];
 
 const HALAL_CHECKS = [
-  { key: 'alcoholFree',        required: true,  title: 'Alcohol-free property', desc: 'No alcohol is stored, consumed, or served on the property at any time, including by you as a host.' },
-  { key: 'noNonHalalMeat',     required: true,  title: 'No non-halal meat', desc: 'Pork and non-halal meat products are not present or permitted on the property at any time.' },
-  { key: 'petFree',            required: true,  title: 'Pet-free property', desc: 'No pets reside in or visit the property. If previously pet-occupied, it has been professionally deep-cleaned.' },
-  { key: 'halalKitchen',       required: false, title: 'Halal-only kitchen', desc: 'Kitchen utensils, cookware, and appliances have only been used with halal-compliant food.' },
-  { key: 'prayerSpace',        required: false, title: 'Prayer space or mat available', desc: 'A clean prayer mat is available and the Qibla direction is indicated or can be provided on request.' },
-  { key: 'mosqueInfo',         required: false, title: 'Nearby mosque information', desc: 'You can provide guests with details of the nearest mosque, including prayer times if possible.' },
-  { key: 'noInappropriateDecor', required: false, title: 'No inappropriate décor', desc: 'The property contains no explicit imagery, alcohol advertising, or content conflicting with Islamic values.' },
+  { key: 'alcoholFree',          required: true,  title: 'Alcohol-free property',      desc: 'No alcohol is stored, consumed, or served on the property at any time.' },
+  { key: 'noNonHalalMeat',       required: true,  title: 'No non-halal meat',           desc: 'Pork and non-halal meat products are not present or permitted on the property.' },
+  { key: 'petFree',              required: true,  title: 'Pet-free property',           desc: 'No pets reside in or visit the property.' },
+  { key: 'halalKitchen',         required: false, title: 'Halal-only kitchen',          desc: 'Kitchen utensils and appliances have only been used with halal-compliant food.' },
+  { key: 'prayerSpace',          required: false, title: 'Prayer space or mat available', desc: 'A clean prayer mat is available and the Qibla direction is indicated.' },
+  { key: 'mosqueInfo',           required: false, title: 'Nearby mosque information',   desc: 'You can provide guests with details of the nearest mosque.' },
+  { key: 'noInappropriateDecor', required: false, title: 'No inappropriate décor',      desc: 'The property contains no explicit imagery or alcohol advertising.' },
 ];
 
-const PHOTO_PLACEHOLDERS = [
-  { gradient: 'linear-gradient(135deg,var(--terra-muted),var(--terra))', emoji: '🕌' },
-  { gradient: 'linear-gradient(135deg,var(--sand-deep),#a07040)', emoji: '🛏️' },
-  { gradient: 'linear-gradient(135deg,#a8c4b8,#4a7c59)', emoji: '🍳' },
-];
-
-// ── Step 1: Property Details ──────────────────────────────────
+// ── Step 1 ────────────────────────────────────────────────────
 function StepProperty({ form, update, goStep, navigate }) {
   return (
     <>
       <div className="step-title">Property details</div>
-      <div className="step-subtitle">Tell us about your property. Accuracy here builds guest trust.</div>
-
+      <div className="step-subtitle">Tell us about your property.</div>
       <div className="form-group">
         <label className="form-label">Property name</label>
-        <input className="form-input" type="text" placeholder="e.g. Sultana Suite, Riad al-Fajr…"
+        <input className="form-input" type="text" placeholder="e.g. Sultana Suite…"
           value={form.name} onChange={e => update('name', e.target.value)} />
       </div>
-
       <div className="form-group">
         <label className="form-label">Property type</label>
         <div className="type-grid">
@@ -60,7 +53,6 @@ function StepProperty({ form, update, goStep, navigate }) {
           ))}
         </div>
       </div>
-
       <div className="form-row">
         <div className="form-group">
           <label className="form-label">City</label>
@@ -75,7 +67,6 @@ function StepProperty({ form, update, goStep, navigate }) {
           </select>
         </div>
       </div>
-
       <div className="form-row">
         <div className="form-group">
           <label className="form-label">Bedrooms</label>
@@ -90,14 +81,12 @@ function StepProperty({ form, update, goStep, navigate }) {
           </select>
         </div>
       </div>
-
       <div className="form-group">
         <label className="form-label">Property description</label>
         <textarea className="form-input form-textarea"
-          placeholder="Describe your property — its character, location highlights, and what makes it special for Muslim guests…"
+          placeholder="Describe your property…"
           value={form.description} onChange={e => update('description', e.target.value)} />
       </div>
-
       <div className="step-nav">
         <button className="btn-back" onClick={() => navigate('/')}>← Back to home</button>
         <button className="btn-next" onClick={() => goStep(2)}>Continue →</button>
@@ -108,32 +97,72 @@ function StepProperty({ form, update, goStep, navigate }) {
 
 // ── Step 2: Photos ────────────────────────────────────────────
 function StepPhotos({ form, addPhoto, removePhoto, goStep }) {
-  const photos = form.photos.length > 0 ? form.photos : PHOTO_PLACEHOLDERS;
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = React.useState(false);
+  const [uploadError, setUploadError] = React.useState(null);
+
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading(true);
+    setUploadError(null);
+
+    for (const file of files) {
+      const ext = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage
+        .from('property-images')
+        .upload(fileName, file);
+
+      if (error) {
+        setUploadError('Failed to upload ' + file.name);
+        continue;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('property-images')
+        .getPublicUrl(fileName);
+
+      addPhoto({ url: publicUrl, name: file.name });
+    }
+    setUploading(false);
+  };
 
   return (
     <>
       <div className="step-title">Add photos</div>
       <div className="step-subtitle">Great photos get more bookings. Add at least 5 — the first will be your cover image.</div>
 
-      <div className="photo-drop" onClick={() => addPhoto({ gradient: 'linear-gradient(135deg,#D4C4A0,#C4622D)', emoji: ['🌅','🛁','🌿','🏙️','☀️','🌙'][Math.floor(Math.random()*6)] })}>
+      <div className="photo-drop" onClick={() => fileInputRef.current.click()}>
         <div style={{ fontSize: 44 }}>📸</div>
-        <h4>Drag photos here or click to upload</h4>
+        <h4>{uploading ? 'Uploading…' : 'Click to upload photos'}</h4>
         <p>JPG, PNG or HEIC · Minimum 1024px wide · Up to 20 photos</p>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
       </div>
 
-      <div className="photo-grid">
-        {photos.map((p, i) => (
-          <div key={i} className="photo-thumb" style={{ background: p.gradient }}>
-            <div className="photo-thumb-bg">{p.emoji}</div>
-            {form.photos.length > 0 && (
+      {uploadError && <div className="form-error">{uploadError}</div>}
+
+      {form.photos.length > 0 && (
+        <div className="photo-grid">
+          {form.photos.map((p, i) => (
+            <div key={i} className="photo-thumb-real">
+              <img src={p.url} alt={p.name} />
               <button className="photo-remove" onClick={() => removePhoto(i)}>✕</button>
-            )}
-          </div>
-        ))}
-      </div>
+              {i === 0 && <span className="photo-cover-badge">Cover</span>}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="photo-tip">
-        📌 <strong>Tip:</strong> Photos showing prayer spaces, halal kitchens, and the local mosque tend to get more bookings on SunnaStays.
+        📌 <strong>Tip:</strong> Photos showing prayer spaces, halal kitchens, and the local mosque tend to get more bookings.
       </div>
 
       <div className="step-nav">
@@ -147,16 +176,10 @@ function StepPhotos({ form, addPhoto, removePhoto, goStep }) {
 // ── Step 3: Pricing ───────────────────────────────────────────
 function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
   const QUICK_PRICES = [75, 120, 180, 250, 400];
-
-  const setPrice = (val) => {
-    update('price', String(val));
-  };
-
   return (
     <>
       <div className="step-title">Set your price</div>
-      <div className="step-subtitle">You're in full control. Set your nightly rate — we'll show you what you earn after our 8% host fee.</div>
-
+      <div className="step-subtitle">Set your nightly rate — we'll show you what you earn after our 8% host fee.</div>
       <div className="form-group">
         <label className="form-label">Nightly price (GBP)</label>
         <div className="price-input-wrap">
@@ -166,19 +189,16 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
         </div>
         <div className="price-suggestion">
           {QUICK_PRICES.map(p => (
-            <button key={p} className={`price-tag ${form.price === String(p) ? 'selected' : ''}`} onClick={() => setPrice(p)}>
-              £{p}
-            </button>
+            <button key={p} className={`price-tag ${form.price === String(p) ? 'selected' : ''}`}
+              onClick={() => update('price', String(p))}>£{p}</button>
           ))}
         </div>
       </div>
-
       <div className="price-breakdown">
         <div className="price-row"><span>Your nightly rate</span><span>{form.price ? `£${form.price}` : '£—'}</span></div>
         <div className="price-row"><span>SunnaStays host fee (8%)</span><span>{form.price ? `−£${hostFee}` : '−£—'}</span></div>
         <div className="price-row price-row--total"><span>You receive per night</span><span>{form.price ? `£${hostEarns}` : '£—'}</span></div>
       </div>
-
       <div className="form-row" style={{ marginTop: 22 }}>
         <div className="form-group">
           <label className="form-label">Minimum stay</label>
@@ -195,7 +215,6 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
           </div>
         </div>
       </div>
-
       <div className="step-nav">
         <button className="btn-back" onClick={() => goStep(2)}>← Back</button>
         <button className="btn-next" onClick={() => goStep(4)}>Continue →</button>
@@ -204,13 +223,12 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
   );
 }
 
-// ── Step 4: Halal Checklist ───────────────────────────────────
-function StepHalal({ form, toggleHalalCheck, goStep, checkedCount, totalChecks }) {
+// ── Step 4: Halal ─────────────────────────────────────────────
+function StepHalal({ form, toggleHalalCheck, goStep }) {
   return (
     <>
       <div className="step-title">Halal standards</div>
-      <div className="step-subtitle">SunnaStays only accepts properties that meet our Halal Charter. Required items must be confirmed to list.</div>
-
+      <div className="step-subtitle">Required items must be confirmed to list.</div>
       <div className="halal-check-list">
         {HALAL_CHECKS.map(({ key, required, title, desc }) => {
           const checked = form.halalChecks[key];
@@ -219,21 +237,14 @@ function StepHalal({ form, toggleHalalCheck, goStep, checkedCount, totalChecks }
               onClick={() => toggleHalalCheck(key)}>
               <div className="check-box">{checked ? '✓' : ''}</div>
               <div className="check-text">
-                <h4>
-                  {title}
-                  {required && <span className="required-badge">Required</span>}
-                </h4>
+                <h4>{title}{required && <span className="required-badge">Required</span>}</h4>
                 <p>{desc}</p>
               </div>
             </div>
           );
         })}
       </div>
-
-      <div className="halal-note">
-        🟢 Our team verifies your property against these standards before your listing goes live.
-      </div>
-
+      <div className="halal-note">🟢 Our team verifies your property before your listing goes live.</div>
       <div className="step-nav">
         <button className="btn-back" onClick={() => goStep(3)}>← Back</button>
         <button className="btn-next" onClick={() => goStep(5)}>Continue →</button>
@@ -245,18 +256,17 @@ function StepHalal({ form, toggleHalalCheck, goStep, checkedCount, totalChecks }
 // ── Step 5: Submit ────────────────────────────────────────────
 function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error, handleSubmit, goStep }) {
   const loc = [form.city, form.country].filter(Boolean).join(', ') || '—';
-
   return (
     <>
       <div className="step-title">Review & submit</div>
-      <div className="step-subtitle">Check your listing summary, accept the Host Agreement, then submit for review.</div>
-
+      <div className="step-subtitle">Check your listing summary then submit for review.</div>
       <div className="submit-summary">
         {[
           ['Property name', form.name || '—'],
           ['Location', loc],
           ['Property type', form.type || '—'],
           ['Nightly rate', form.price ? `£${form.price} / night` : '—'],
+          ['Photos', `${form.photos.length} uploaded`],
           ['Halal standards', `${checkedCount} / ${totalChecks} items confirmed`],
         ].map(([k, v]) => (
           <div key={k} className="summary-row">
@@ -265,15 +275,13 @@ function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error
           </div>
         ))}
       </div>
-
       <div className="terms-box">
-        <p>By submitting, you confirm all information is accurate, your property meets the SunnaStays Halal Charter, and you agree to our Host Terms & Conditions. Misrepresentation of halal standards may result in immediate removal from the platform.</p>
+        <p>By submitting, you confirm all information is accurate and your property meets the SunnaStays Halal Charter.</p>
         <label className="terms-check">
           <input type="checkbox" checked={form.termsAccepted} onChange={e => update('termsAccepted', e.target.checked)} />
           I agree to the SunnaStays Host Agreement and Halal Property Charter
         </label>
       </div>
-
       <div className="form-group">
         <label className="form-label">Your full name</label>
         <input className="form-input" type="text" placeholder="As it appears on your ID"
@@ -291,9 +299,7 @@ function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error
             value={form.phone} onChange={e => update('phone', e.target.value)} />
         </div>
       </div>
-
       {error && <div className="form-error">{error}</div>}
-
       <div className="step-nav">
         <button className="btn-back" onClick={() => goStep(4)}>← Back</button>
         <button className="btn-next btn-submit" onClick={handleSubmit} disabled={submitting}>
@@ -304,19 +310,19 @@ function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error
   );
 }
 
-// ── Success State ─────────────────────────────────────────────
+// ── Success ───────────────────────────────────────────────────
 function SuccessState({ navigate }) {
   return (
     <div className="success-state">
       <div className="success-icon">🎉</div>
       <h3>Listing submitted!</h3>
-      <p>Jazakallah khair. Your property has been received and our halal verification team will review it within <strong>48 hours</strong>. We'll be in touch at the email you provided.</p>
+      <p>Jazakallah khair. Your property has been received and our halal verification team will review it within <strong>48 hours</strong>.</p>
       <button className="btn-primary" onClick={() => navigate('/')}>← Back to SunnaStays</button>
     </div>
   );
 }
 
-// ── Main Component ────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────────
 export default function HostOnboarding() {
   const navigate = useNavigate();
   const ob = useOnboarding();
@@ -330,7 +336,6 @@ export default function HostOnboarding() {
           <p>Join SunnaStays in 5 simple steps. Our team reviews every listing within 48 hours.</p>
         </div>
 
-        {/* PROGRESS */}
         <div className="progress-track">
           {STEPS.map((label, i) => {
             const n = i + 1;
@@ -345,17 +350,14 @@ export default function HostOnboarding() {
           })}
         </div>
 
-        {/* STEP CARD */}
         <div className="step-card">
-          {ob.submitted ? (
-            <SuccessState navigate={navigate} />
-          ) : (
+          {ob.submitted ? <SuccessState navigate={navigate} /> : (
             <>
-              {ob.step === 1 && <StepProperty    form={ob.form} update={ob.update} goStep={ob.goStep} navigate={navigate} />}
-              {ob.step === 2 && <StepPhotos      form={ob.form} addPhoto={ob.addPhoto} removePhoto={ob.removePhoto} goStep={ob.goStep} />}
-              {ob.step === 3 && <StepPricing     form={ob.form} update={ob.update} goStep={ob.goStep} hostFee={ob.hostFee} hostEarns={ob.hostEarns} />}
-              {ob.step === 4 && <StepHalal       form={ob.form} toggleHalalCheck={ob.toggleHalalCheck} goStep={ob.goStep} checkedCount={ob.checkedCount} totalChecks={ob.totalChecks} />}
-              {ob.step === 5 && <StepSubmit      form={ob.form} update={ob.update} checkedCount={ob.checkedCount} totalChecks={ob.totalChecks} submitting={ob.submitting} error={ob.error} handleSubmit={ob.handleSubmit} goStep={ob.goStep} />}
+              {ob.step === 1 && <StepProperty  form={ob.form} update={ob.update} goStep={ob.goStep} navigate={navigate} />}
+              {ob.step === 2 && <StepPhotos    form={ob.form} addPhoto={ob.addPhoto} removePhoto={ob.removePhoto} goStep={ob.goStep} />}
+              {ob.step === 3 && <StepPricing   form={ob.form} update={ob.update} goStep={ob.goStep} hostFee={ob.hostFee} hostEarns={ob.hostEarns} />}
+              {ob.step === 4 && <StepHalal     form={ob.form} toggleHalalCheck={ob.toggleHalalCheck} goStep={ob.goStep} />}
+              {ob.step === 5 && <StepSubmit    form={ob.form} update={ob.update} checkedCount={ob.checkedCount} totalChecks={ob.totalChecks} submitting={ob.submitting} error={ob.error} handleSubmit={ob.handleSubmit} goStep={ob.goStep} />}
             </>
           )}
         </div>
