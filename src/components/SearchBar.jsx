@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './SearchBar.css';
 
 const DESTINATIONS = [
-  { emoji: '🕌', label: 'Istanbul', value: 'Istanbul, Turkey' },
-  { emoji: '🌴', label: 'Dubai',    value: 'Dubai, UAE' },
-  { emoji: '🏰', label: 'Marrakech', value: 'Marrakech, Morocco' },
+  { emoji: '🕌', label: 'Istanbul', value: 'Istanbul' },
+  { emoji: '🌴', label: 'Dubai',    value: 'Dubai' },
+  { emoji: '🏰', label: 'Marrakech', value: 'Marrakech' },
   { emoji: '🏙️', label: 'Kuala Lumpur', value: 'Kuala Lumpur' },
   { emoji: '🌊', label: 'Maldives', value: 'Maldives' },
-  { emoji: '🇬🇧', label: 'London',  value: 'London, UK' },
-  { emoji: '🌿', label: 'Granada',  value: 'Granada, Spain' },
-  { emoji: '🏛️', label: 'Amman',   value: 'Amman, Jordan' },
+  { emoji: '🇬🇧', label: 'London',  value: 'London' },
+  { emoji: '🌿', label: 'Granada',  value: 'Granada' },
+  { emoji: '🏛️', label: 'Amman',   value: 'Amman' },
 ];
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -56,13 +56,12 @@ export default function SearchBar({ search }) {
     guests, adjustGuest, guestLabel, runSearch,
   } = search;
 
-  const [open, setOpen]       = useState(null); // 'dest' | 'cal' | 'guests'
+  const [open, setOpen]           = useState(null);
   const [destInput, setDestInput] = useState('');
   const wrapRef = useRef(null);
 
   const fmt = d => d ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : null;
 
-  // Close on outside click
   useEffect(() => {
     const handler = e => {
       if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(null);
@@ -77,8 +76,14 @@ export default function SearchBar({ search }) {
 
   const selectDest = useCallback(value => {
     setDest(value);
-    setDestInput('');
+    setDestInput(value);
     setOpen('cal');
+  }, [setDest]);
+
+  const handleDestInput = useCallback(e => {
+    const val = e.target.value;
+    setDestInput(val);
+    setDest(val);
   }, [setDest]);
 
   const handleDayClick = useCallback(dt => {
@@ -133,21 +138,27 @@ export default function SearchBar({ search }) {
       {/* DEST DROPDOWN */}
       {open === 'dest' && (
         <div className="sb-dropdown sb-dropdown--dest">
-          <div className="sb-dd-label">Popular destinations</div>
+          <div className="sb-dd-label">Type any city or country</div>
           <input
             className="dest-input"
-            placeholder="Type a city…"
+            placeholder="e.g. London, Dubai, Morocco…"
             value={destInput}
-            onChange={e => setDestInput(e.target.value)}
+            onChange={handleDestInput}
+            onKeyDown={e => { if (e.key === 'Enter') { setOpen(null); runSearch(); } }}
             autoFocus
           />
-          <div className="dest-grid">
-            {filtered.map(d => (
-              <button key={d.value} className={`dest-chip ${dest === d.value ? 'selected' : ''}`} onClick={() => selectDest(d.value)}>
-                {d.emoji} {d.label}
-              </button>
-            ))}
-          </div>
+          {filtered.length > 0 && (
+            <>
+              <div className="sb-dd-label" style={{ marginTop: 12 }}>Popular destinations</div>
+              <div className="dest-grid">
+                {filtered.map(d => (
+                  <button key={d.value} className={`dest-chip ${dest === d.value ? 'selected' : ''}`} onClick={() => selectDest(d.value)}>
+                    {d.emoji} {d.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
 

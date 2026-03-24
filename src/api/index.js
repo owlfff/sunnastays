@@ -62,7 +62,7 @@ export async function searchStays(params = {}) {
     .select('*')
     .eq('status', 'approved');
 
-  if (params.destination) {
+  if (params.destination && params.destination !== "Anywhere") {
     query = query.or(
       `city.ilike.%${params.destination}%,country.ilike.%${params.destination}%,name.ilike.%${params.destination}%`
     );
