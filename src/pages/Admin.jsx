@@ -117,6 +117,16 @@ export default function Admin() {
                   <div className="admin-detail"><span>Max guests</span><strong>{p.max_guests}</strong></div>
                 </div>
 
+                {p.photos && p.photos.length > 0 ? (
+                  <div className="admin-photos">
+                    {p.photos.map((url, i) => (
+                      <img key={i} src={url} alt={`Property ${i+1}`} className="admin-photo" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="admin-no-photos">No photos uploaded</div>
+                )}
+
                 {p.description && (
                   <p className="admin-card-desc">{p.description}</p>
                 )}
