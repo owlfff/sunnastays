@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import SearchResults from './pages/SearchResults';
 import Listing from './pages/Listing';
 import HostOnboarding from './pages/HostOnboarding';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
 import './styles/global.css';
 
 export default function App() {
@@ -12,12 +14,13 @@ export default function App() {
     <BrowserRouter>
       <Nav />
       <Routes>
-        <Route path="/"              element={<Home />} />
-        <Route path="/search"        element={<SearchResults />} />
-        <Route path="/stays/:slug"   element={<Listing />} />
-        <Route path="/host"          element={<HostOnboarding />} />
-        {/* Catch-all → home */}
-        <Route path="*"              element={<Home />} />
+        <Route path="/"            element={<Home />} />
+        <Route path="/search"      element={<SearchResults />} />
+        <Route path="/stays/:slug" element={<Listing />} />
+        <Route path="/host"        element={<HostOnboarding />} />
+        <Route path="/signup"      element={<SignUp />} />
+        <Route path="/signin"      element={<SignIn />} />
+        <Route path="*"            element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

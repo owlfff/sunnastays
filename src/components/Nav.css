@@ -90,3 +90,10 @@
   font-family: 'DM Sans', sans-serif;
 }
 .nav-signin:hover { background: var(--sand); }
+
+.nav-user {
+  font-size: 13px;
+  color: var(--ink-mid);
+  font-weight: 500;
+  padding: 8px 12px;
+}
