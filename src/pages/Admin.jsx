@@ -16,7 +16,7 @@ export default function Admin() {
       setUser(user);
       loadProperties();
     });
-  }, []);
+  }, [navigate]);
 
   const loadProperties = async () => {
     setLoading(true);
