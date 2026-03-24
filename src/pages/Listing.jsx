@@ -46,16 +46,33 @@ export default function Listing() {
     <div className="listing-page">
       {/* PHOTO HERO */}
       <div className="listing-hero">
-        <div className="listing-img-main" style={{ background: stay.gradient || 'linear-gradient(135deg,var(--terra-muted),var(--terra))' }}>
-          <span className="listing-img-emoji">{stay.images?.[0] || stay.emoji}</span>
-        </div>
-        <div className="listing-img-grid">
-          {[stay.images?.[1] || '🌅', stay.images?.[2] || '🛏️'].map((img, i) => (
-            <div key={i} className="listing-img-sub" style={{ background: i === 0 ? 'linear-gradient(135deg,var(--sand-deep),#c0a070)' : 'linear-gradient(135deg,#a8c4b8,#4a7c59)' }}>
-              <span>{img}</span>
+        {stay.photos && stay.photos.length > 0 ? (
+          <>
+            <div className="listing-img-main">
+              <img src={stay.photos[0]} alt={stay.name} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'20px 0 0 20px' }} />
             </div>
-          ))}
-        </div>
+            <div className="listing-img-grid">
+              {[stay.photos[1] || stay.photos[0], stay.photos[2] || stay.photos[0]].map((url, i) => (
+                <div key={i} className="listing-img-sub">
+                  <img src={url} alt={stay.name} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius: i === 0 ? '0 20px 0 0' : '0 0 20px 0' }} />
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="listing-img-main" style={{ background: stay.gradient || 'linear-gradient(135deg,var(--terra-muted),var(--terra))' }}>
+              <span className="listing-img-emoji">{stay.emoji || '🏠'}</span>
+            </div>
+            <div className="listing-img-grid">
+              {['🌅', '🛏️'].map((img, i) => (
+                <div key={i} className="listing-img-sub" style={{ background: i === 0 ? 'linear-gradient(135deg,var(--sand-deep),#c0a070)' : 'linear-gradient(135deg,#a8c4b8,#4a7c59)' }}>
+                  <span>{img}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* CONTENT */}

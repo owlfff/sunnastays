@@ -9,7 +9,10 @@ export default function StayCard({ stay }) {
   return (
     <div className="stay-card" onClick={() => navigate(`/stays/${stay.slug}`)}>
       <div className="stay-card-img" style={{ background: stay.gradient }}>
-        <span className="stay-card-emoji">{stay.emoji}</span>
+        {stay.photos && stay.photos.length > 0
+          ? <img src={stay.photos[0]} alt={stay.name} style={{ width:'100%', height:'100%', objectFit:'cover', position:'absolute', inset:0 }} />
+          : <span className="stay-card-emoji">{stay.emoji}</span>
+        }
         <button
           className="stay-wishlist"
           onClick={e => { e.stopPropagation(); setWishlisted(w => !w); }}
