@@ -31,7 +31,8 @@
   overflow: hidden;
 }
 .sb-field:first-child { border-radius: 60px 0 0 60px; }
-.sb-field:hover, .sb-field.active { background: var(--sand); }
+.sb-field:hover { background: var(--sand); }
+.sb-field.active { background: var(--white); box-shadow: 0 2px 16px rgba(26,18,8,0.12); border-radius: 60px; z-index: 1; }
 .sb-field--no-border { border-right: none; }
 
 .sb-label { white-space: nowrap;
