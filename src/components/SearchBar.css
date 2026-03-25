@@ -14,7 +14,6 @@
   border: 1.5px solid var(--sand-dark);
   width: 100%;
   min-width: 0;
-  overflow: hidden;
 }
 
 .sb-field {
@@ -23,23 +22,24 @@
   cursor: pointer;
   border-right: 1px solid var(--sand-dark);
   transition: background 0.15s;
-  min-width: 0;
+  min-width: 120px;
   border-radius: 60px 0 0 60px;
   height: 66px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 .sb-field:first-child { border-radius: 60px 0 0 60px; }
 .sb-field:hover, .sb-field.active { background: var(--sand); }
 .sb-field--no-border { border-right: none; }
 
-.sb-label {
+.sb-label { white-space: nowrap;
   font-size: 10px; font-weight: 700;
   letter-spacing: 1.2px; text-transform: uppercase;
   color: var(--ink-soft); margin-bottom: 3px;
 }
-.sb-value { font-size: 14px; color: var(--ink); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-value { font-size: 14px; color: var(--ink); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .sb-value.ph { color: var(--ink-soft); font-weight: 400; }
 
 .sb-search-btn {
