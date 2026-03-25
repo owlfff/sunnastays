@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import StayCard from '../components/StayCard';
+import SearchMap from '../components/SearchMap';
 import Footer from '../components/Footer';
 import { searchStays } from '../api';
 import './SearchResults.css';
@@ -21,9 +22,10 @@ export default function SearchResults() {
   const checkout    = searchParams.get('checkout') || '';
   const guests      = searchParams.get('guests') || '';
 
-  const [stays, setStays]     = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [sort, setSort]       = useState('rating');
+  const [stays, setStays]       = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [sort, setSort]         = useState('rating');
+  const [hoveredId, setHoveredId] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -33,15 +35,15 @@ export default function SearchResults() {
   }, [destination, checkin, checkout, guests]);
 
   const sorted = [...stays].sort((a, b) => {
-    if (sort === 'rating')    return b.rating - a.rating;
-    if (sort === 'price_asc') return a.price - b.price;
+    if (sort === 'rating')     return b.rating - a.rating;
+    if (sort === 'price_asc')  return a.price - b.price;
     if (sort === 'price_desc') return b.price - a.price;
     return 0;
   });
 
-  const destLabel   = destination || 'Anywhere';
-  const dateLabel   = checkin && checkout ? `${checkin} – ${checkout}` : 'Any week';
-  const guestLabel  = guests ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Any guests';
+  const destLabel  = destination || 'Anywhere';
+  const dateLabel  = checkin && checkout ? `${checkin} – ${checkout}` : 'Any week';
+  const guestLabel = guests ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Any guests';
 
   return (
     <div className="sr-page">
@@ -58,17 +60,16 @@ export default function SearchResults() {
       </div>
 
       <div className="sr-layout">
-        {/* RESULTS PANEL */}
+        {/* RESULTS */}
         <div className="sr-results">
           <div className="sr-results-header">
             <div className="sr-count">
-              {loading ? 'Searching…' : <><strong>{sorted.length}</strong> <span>halal stays found</span></>}
+              {loading
+                ? 'Searching…'
+                : <><strong>{sorted.length}</strong> <span>halal stays found</span></>
+              }
             </div>
-            <select
-              className="sr-sort"
-              value={sort}
-              onChange={e => setSort(e.target.value)}
-            >
+            <select className="sr-sort" value={sort} onChange={e => setSort(e.target.value)}>
               <option value="rating">Sort: Top rated</option>
               <option value="price_asc">Price: Low to high</option>
               <option value="price_desc">Price: High to low</option>
@@ -76,47 +77,35 @@ export default function SearchResults() {
           </div>
 
           {loading ? (
-            <div className="sr-loading">
-              <div className="sr-loading-grid">
-                {[...Array(6)].map((_, i) => <div key={i} className="sr-skeleton" />)}
-              </div>
+            <div className="sr-loading-grid">
+              {[...Array(4)].map((_, i) => <div key={i} className="sr-skeleton" />)}
+            </div>
+          ) : sorted.length === 0 ? (
+            <div className="sr-empty">
+              <div className="sr-empty-icon">🔍</div>
+              <h3>No halal stays found</h3>
+              <p>Try a different destination or browse all stays</p>
+              <button className="btn-primary" onClick={() => navigate('/search')}>Browse all stays</button>
             </div>
           ) : (
             <div className="sr-grid">
-              {sorted.map(stay => <StayCard key={stay.id} stay={stay} />)}
+              {sorted.map(stay => (
+                <div
+                  key={stay.id}
+                  className={`sr-card-wrap ${hoveredId === stay.id ? 'hovered' : ''}`}
+                  onMouseEnter={() => setHoveredId(stay.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                >
+                  <StayCard stay={stay} />
+                </div>
+              ))}
             </div>
           )}
         </div>
 
-        {/* MAP PANEL */}
-        <div className="sr-map">
-          <div className="sr-map-inner">
-            <div className="map-pins">
-              {sorted.slice(0, 5).map((stay, i) => {
-                const positions = [
-                  { top: '20%', left: '22%' },
-                  { top: '44%', left: '58%' },
-                  { top: '64%', left: '28%' },
-                  { top: '28%', left: '70%' },
-                  { top: '70%', left: '55%' },
-                ];
-                return (
-                  <div
-                    key={stay.id}
-                    className="map-pin"
-                    style={positions[i]}
-                    onClick={() => navigate(`/stays/${stay.slug}`)}
-                  >
-                    £{stay.price}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="map-placeholder">
-              <h3>Map view</h3>
-              <p>Coming soon — interactive map</p>
-            </div>
-          </div>
+        {/* MAP */}
+        <div className="sr-map-panel">
+          <SearchMap stays={sorted} onHover={setHoveredId} />
         </div>
       </div>
 

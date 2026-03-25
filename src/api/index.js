@@ -54,6 +54,9 @@ function formatProperty(p, index) {
     maxGuests:      p.max_guests,
     type:           p.type,
     photos:         p.photos || [],
+    lat:            p.lat,
+    lng:            p.lng,
+    address:        p.address,
   };
 }
 

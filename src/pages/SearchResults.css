@@ -129,3 +129,24 @@
   .sr-filter-bar { padding: 12px 20px; }
   .sr-grid { grid-template-columns: 1fr; }
 }
+
+.sr-map-panel {
+  position: sticky;
+  top: calc(var(--nav-height) + 60px);
+  height: calc(100vh - var(--nav-height) - 60px);
+  padding: 28px 0 28px 0;
+}
+
+.sr-empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+.sr-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.sr-empty h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; margin-bottom: 8px; color: var(--ink);
+}
+.sr-empty p { font-size: 15px; color: var(--ink-soft); margin-bottom: 24px; font-weight: 300; }
+
+.sr-card-wrap { transition: transform 0.2s; }
+.sr-card-wrap.hovered { transform: translateY(-4px); }
