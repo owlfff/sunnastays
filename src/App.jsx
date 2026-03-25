@@ -19,6 +19,8 @@ export default function App() {
       <Analytics />
       <Routes>
         <Route path="/admin" element={<Admin />} />
+        <Route path="/dashboard/host"  element={<HostDashboard />} />
+        <Route path="/dashboard/guest" element={<GuestDashboard />} />
         <Route path="*" element={
           <>
             <Nav />
@@ -29,8 +31,6 @@ export default function App() {
               <Route path="/host"        element={<HostOnboarding />} />
               <Route path="/signup"      element={<SignUp />} />
               <Route path="/signin"      element={<SignIn />} />
-              <Route path="/dashboard/host"  element={<HostDashboard />} />
-              <Route path="/dashboard/guest" element={<GuestDashboard />} />
             </Routes>
           </>
         } />
