@@ -103,7 +103,11 @@ export default function SearchMap({ stays, onHover }) {
     if (staysWithCoords.length > 1) {
       const bounds = new window.google.maps.LatLngBounds();
       staysWithCoords.forEach(s => bounds.extend({ lat: parseFloat(s.lat), lng: parseFloat(s.lng) }));
-      map.fitBounds(bounds, { padding: 60 });
+      map.fitBounds(bounds, { padding: 100 });
+      // After fitBounds, zoom out by 1 level
+      window.google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
+        map.setZoom(Math.min(map.getZoom() - 1, 10));
+      });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded, stays]);
