@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './SearchMap.css';
 
 export default function SearchMap({ stays, onHover }) {
+  const staysRef = useRef(stays);
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
@@ -106,6 +107,31 @@ export default function SearchMap({ stays, onHover }) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded, stays]);
+
+  // Highlight hovered marker without rebuilding map
+  useEffect(() => {
+    const staysWithCoords = stays.filter(s => s.lat && s.lng);
+    markersRef.current.forEach((marker, i) => {
+      const stay = staysWithCoords[i];
+      const isHovered = stay.id === onHover || String(stay.id) === String(onHover);
+      marker.setIcon({
+        path: window.google && window.google.maps.SymbolPath.CIRCLE,
+        scale: isHovered ? 24 : 20,
+        fillColor: isHovered ? '#1A1208' : '#C4622D',
+        fillOpacity: 1,
+        strokeWeight: 0,
+      });
+      marker.setLabel({
+        text: `£${stay.price}`,
+        color: 'white',
+        fontFamily: 'DM Sans, sans-serif',
+        fontWeight: '700',
+        fontSize: isHovered ? '13px' : '12px',
+      });
+      marker.setZIndex(isHovered ? 10 : 1);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onHover]);
 
   return (
     <div className="search-map-wrap">
