@@ -9,6 +9,7 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Admin from './pages/Admin';
 import './styles/global.css';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   return (
@@ -30,5 +31,6 @@ export default function App() {
         } />
       </Routes>
     </BrowserRouter>
+    <Analytics />
   );
 }
