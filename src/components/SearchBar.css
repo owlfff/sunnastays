@@ -31,8 +31,15 @@
   overflow: hidden;
 }
 .sb-field:first-child { border-radius: 60px 0 0 60px; }
-.sb-field:hover { background: var(--sand); }
-.sb-field.active { background: var(--white); box-shadow: 0 2px 16px rgba(26,18,8,0.12); border-radius: 60px; z-index: 1; }
+.sb-field:hover { background: var(--sand-dark); }
+.sb-field.active { 
+  background: var(--white); 
+  box-shadow: 0 4px 20px rgba(26,18,8,0.15); 
+  border-radius: 60px !important; 
+  z-index: 2;
+  margin: 4px;
+  height: calc(66px - 8px);
+}
 .sb-field--no-border { border-right: none; }
 
 .sb-label { white-space: nowrap;
