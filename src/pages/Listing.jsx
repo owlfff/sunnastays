@@ -175,7 +175,7 @@ export default function Listing() {
               </div>
             </div>
 
-            <button className="btn-primary booking-btn" onClick={() => setShowBooking(true)}>{stay.instantBooking ? '⚡ Book instantly' : '📋 Request to book'}</button>
+            <button className="btn-primary booking-btn" onClick={e => { e.preventDefault(); e.stopPropagation(); setShowBooking(true); }}>{stay.instantBooking ? '⚡ Book instantly' : '📋 Request to book'}</button>
             <p className="booking-note">You won't be charged yet</p>
           </div>
 
