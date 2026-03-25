@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './SearchMap.css';
 
 export default function SearchMap({ stays, onHover }) {
-  const staysRef = useRef(stays);
+
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
