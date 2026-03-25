@@ -64,7 +64,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.sb-dropdown--dest { left: 0; min-width: 340px; }
+.sb-dropdown--dest { left: 0; min-width: 340px; max-height: 320px; overflow-y: auto; }
 .sb-dropdown--cal  { left: 130px; min-width: 420px; }
 .sb-dropdown--guests { right: 0; left: auto; min-width: 260px; }
 
@@ -82,7 +82,7 @@
   outline: none; transition: border-color 0.15s; margin-bottom: 12px;
 }
 .dest-input:focus { border-color: var(--terra); }
-.dest-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.dest-grid { display: flex; flex-wrap: wrap; gap: 8px; min-height: 80px; align-content: flex-start; }
 .dest-chip {
   padding: 7px 13px; border-radius: 20px;
   border: 1.5px solid var(--sand-dark); background: transparent;
