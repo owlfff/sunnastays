@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import StayCard from '../components/StayCard';
 import SearchMap from '../components/SearchMap';
@@ -26,6 +26,7 @@ export default function SearchResults() {
   const [loading, setLoading]   = useState(true);
   const [sort, setSort]         = useState('rating');
   const [hoveredId, setHoveredId] = useState(null);
+  const handleHover = useCallback((id) => setHoveredId(id), []);
 
   useEffect(() => {
     setLoading(true);
@@ -34,12 +35,12 @@ export default function SearchResults() {
       .catch(() => setLoading(false));
   }, [destination, checkin, checkout, guests]);
 
-  const sorted = [...stays].sort((a, b) => {
+  const sorted = useMemo(() => [...stays].sort((a, b) => {
     if (sort === 'rating')     return b.rating - a.rating;
     if (sort === 'price_asc')  return a.price - b.price;
     if (sort === 'price_desc') return b.price - a.price;
     return 0;
-  });
+  }), [stays, sort]);
 
   const destLabel  = destination || 'Anywhere';
   const dateLabel  = checkin && checkout ? `${checkin} – ${checkout}` : 'Any week';
@@ -105,7 +106,7 @@ export default function SearchResults() {
 
         {/* MAP */}
         <div className="sr-map-panel">
-          <SearchMap stays={sorted} onHover={setHoveredId} />
+          <SearchMap stays={sorted} onHover={handleHover} />
         </div>
       </div>
 
