@@ -23,6 +23,10 @@
   transition: background 0.15s;
   min-width: 0;
   border-radius: 60px 0 0 60px;
+  height: 66px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .sb-field:first-child { border-radius: 60px 0 0 60px; }
 .sb-field:hover, .sb-field.active { background: var(--sand); }
