@@ -118,8 +118,8 @@ export default function SearchBar({ search }) {
   const handleDestInput = useCallback(e => {
     const val = e.target.value;
     setDestInput(val);
-    setDest(val);
-  }, [setDest]);
+    // Don't update dest until user selects — keeps the search bar stable
+  }, []);
 
   const handleDayClick = useCallback(dt => {
     if (!checkin || (checkin && checkout) || dt <= checkin) {
@@ -171,7 +171,7 @@ export default function SearchBar({ search }) {
               placeholder="Search destinations"
               value={destInput}
               onChange={handleDestInput}
-              onKeyDown={e => { if (e.key === 'Enter' && dest) { setOpen(null); runSearch(); } }}
+              onKeyDown={e => { if (e.key === 'Enter' && destInput) { setDest(destInput); setOpen(null); setTimeout(runSearch, 50); } }}
               autoFocus
             />
             {destInput && (
