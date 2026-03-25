@@ -56,6 +56,7 @@ export default function AddressPicker({ value, onChange }) {
       marker.setPosition({ lat, lng });
       onChange({ address, lat, lng });
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded]);
 
   return (
