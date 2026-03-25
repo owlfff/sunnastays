@@ -51,10 +51,25 @@ export default function AddressPicker({ value, onChange }) {
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
       const address = place.formatted_address;
+
+      // Extract city and country from address components
+      let city = '';
+      let country = '';
+      if (place.address_components) {
+        place.address_components.forEach(component => {
+          if (component.types.includes('postal_town') || component.types.includes('locality')) {
+            city = component.long_name;
+          }
+          if (component.types.includes('country')) {
+            country = component.long_name;
+          }
+        });
+      }
+
       map.setCenter({ lat, lng });
       map.setZoom(16);
       marker.setPosition({ lat, lng });
-      onChange({ address, lat, lng });
+      onChange({ address, lat, lng, city, country });
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded]);

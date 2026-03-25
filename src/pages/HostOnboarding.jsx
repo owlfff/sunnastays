@@ -16,11 +16,6 @@ const PROPERTY_TYPES = [
   { icon: '🏕️', label: 'Unique stay' },
 ];
 
-const COUNTRIES = [
-  'Turkey','United Arab Emirates','Morocco','Malaysia','Jordan',
-  'Indonesia','United Kingdom','Spain','Maldives','Saudi Arabia','Egypt','Other',
-];
-
 const HALAL_CHECKS = [
   { key: 'alcoholFree',          required: true,  title: 'Alcohol-free property',      desc: 'No alcohol is stored, consumed, or served on the property at any time.' },
   { key: 'noNonHalalMeat',       required: true,  title: 'No non-halal meat',           desc: 'Pork and non-halal meat products are not present or permitted on the property.' },
@@ -54,20 +49,7 @@ function StepProperty({ form, update, goStep, navigate }) {
           ))}
         </div>
       </div>
-      <div className="form-row">
-        <div className="form-group">
-          <label className="form-label">City</label>
-          <input className="form-input" type="text" placeholder="Istanbul"
-            value={form.city} onChange={e => update('city', e.target.value)} />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Country</label>
-          <select className="form-input form-select" value={form.country} onChange={e => update('country', e.target.value)}>
-            <option value="">Select country…</option>
-            {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-          </select>
-        </div>
-      </div>
+
       <div className="form-row">
         <div className="form-group">
           <label className="form-label">Bedrooms</label>
@@ -90,10 +72,12 @@ function StepProperty({ form, update, goStep, navigate }) {
       </div>
       <AddressPicker
         value={{ address: form.address, lat: form.lat, lng: form.lng }}
-        onChange={({ address, lat, lng }) => {
+        onChange={({ address, lat, lng, city, country }) => {
           update('address', address);
           update('lat', lat);
           update('lng', lng);
+          if (city) update('city', city);
+          if (country) update('country', country);
         }}
       />
       <div className="step-nav">
