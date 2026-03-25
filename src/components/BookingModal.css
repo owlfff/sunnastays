@@ -342,3 +342,59 @@
   padding: 15px;
   font-size: 15px;
 }
+
+/* REQUIRED / OPTIONAL */
+.bm-required { color: var(--terra); font-weight: 700; }
+.bm-optional { color: var(--ink-soft); font-weight: 300; font-size: 12px; }
+
+/* FIELD ERRORS */
+.bm-field-error {
+  font-size: 12px;
+  color: var(--error);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.bm-field-error::before { content: '⚠'; font-size: 11px; }
+
+.input-error {
+  border-color: var(--error) !important;
+  background: rgba(192,57,43,0.04) !important;
+}
+
+/* UNAVAILABLE DATES */
+.bm-cal-day.unavailable {
+  color: var(--sand-deep);
+  text-decoration: line-through;
+  position: relative;
+}
+
+/* LEGEND */
+.bm-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.bm-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bm-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.bm-legend-unavail { background: var(--sand-deep); }
+.bm-legend-selected { background: var(--terra); }
+
+/* DATES HINT */
+.bm-dates-hint {
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: center;
+  padding: 8px;
+  font-weight: 300;
+}

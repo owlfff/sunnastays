@@ -1,19 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { createBooking, checkExistingBooking } from '../api';
+import { createBooking } from '../api';
 import './BookingModal.css';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
-function CalendarMonth({ year, month, checkin, checkout, onSelectDay }) {
+function isDateUnavailable(dt, unavailableRanges) {
+  return unavailableRanges.some(({ checkin, checkout }) => {
+    return dt >= checkin && dt < checkout;
+  });
+}
+
+function CalendarMonth({ year, month, checkin, checkout, onSelectDay, unavailableRanges }) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = new Date(); today.setHours(0,0,0,0);
   const cells = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+
   return (
     <div className="bm-cal-month">
       <div className="bm-cal-title">{MONTHS[month]} {year}</div>
@@ -22,18 +29,30 @@ function CalendarMonth({ year, month, checkin, checkout, onSelectDay }) {
         {cells.map((dt, i) => {
           if (!dt) return <div key={'e'+i} />;
           const isPast = dt < today;
+          const isUnavail = isDateUnavailable(dt, unavailableRanges);
           const isCI = checkin && dt.toDateString() === checkin.toDateString();
           const isCO = checkout && dt.toDateString() === checkout.toDateString();
           const inRange = checkin && checkout && dt > checkin && dt < checkout;
           let cls = 'bm-cal-day';
-          if (isPast) cls += ' disabled';
+          if (isPast || isUnavail) cls += ' disabled';
+          if (isUnavail && !isPast) cls += ' unavailable';
           if (isCI || isCO) cls += ' selected';
           if (inRange) cls += ' in-range';
-          return <div key={i} className={cls} onClick={() => !isPast && onSelectDay(dt)}>{dt.getDate()}</div>;
+          return (
+            <div key={i} className={cls}
+              onClick={() => !isPast && !isUnavail && onSelectDay(dt)}
+              title={isUnavail ? 'Already booked' : ''}>
+              {dt.getDate()}
+            </div>
+          );
         })}
       </div>
     </div>
   );
+}
+
+function FieldError({ msg }) {
+  return msg ? <div className="bm-field-error">{msg}</div> : null;
 }
 
 export default function BookingModal({ stay, onClose }) {
@@ -48,6 +67,26 @@ export default function BookingModal({ stay, onClose }) {
   const [error, setError] = useState(null);
   const [confirmed, setConfirmed] = useState(false);
   const [calOffset, setCalOffset] = useState(0);
+  const [unavailableRanges, setUnavailableRanges] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [attempted, setAttempted] = useState(false);
+
+  // Fetch booked dates
+  useEffect(() => {
+    supabase
+      .from('bookings')
+      .select('checkin, checkout, status')
+      .eq('property_id', stay.id)
+      .not('status', 'eq', 'rejected')
+      .then(({ data }) => {
+        if (!data) return;
+        const ranges = data.map(b => ({
+          checkin:  new Date(b.checkin),
+          checkout: new Date(b.checkout),
+        }));
+        setUnavailableRanges(ranges);
+      });
+  }, [stay.id]);
 
   const now = new Date();
   const calMonths = [0, 1].map(i => {
@@ -59,6 +98,15 @@ export default function BookingModal({ stay, onClose }) {
     if (!checkin || (checkin && checkout) || dt <= checkin) {
       setCheckin(dt); setCheckout(null);
     } else {
+      // Check if any unavailable date falls in the range
+      const rangeHasUnavail = unavailableRanges.some(({ checkin: uc, checkout: uo }) => {
+        return uc < dt && uo > checkin;
+      });
+      if (rangeHasUnavail) {
+        setError('Your selected range includes unavailable dates. Please choose different dates.');
+        return;
+      }
+      setError(null);
       setCheckout(dt);
     }
   };
@@ -69,18 +117,25 @@ export default function BookingModal({ stay, onClose }) {
   const serviceFee = Math.round(subtotal * 0.12);
   const total = subtotal + serviceFee;
 
+  const validateStep2 = () => {
+    const errors = {};
+    if (!form.name.trim())  errors.name  = 'Full name is required';
+    if (!form.email.trim()) errors.email = 'Email address is required';
+    else if (!/\S+@\S+\.\S+/.test(form.email)) errors.email = 'Please enter a valid email';
+    if (!form.phone.trim()) errors.phone = 'Phone number is required';
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleStep2Continue = () => {
+    setAttempted(true);
+    if (validateStep2()) setStep(3);
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     setError(null);
     try {
-      const checkinStr = checkin.toISOString().split('T')[0];
-      const checkoutStr = checkout.toISOString().split('T')[0];
-      const alreadyBooked = await checkExistingBooking(stay.id, checkinStr, checkoutStr);
-      if (alreadyBooked) {
-        setError('These dates are already booked or have a pending request. Please choose different dates.');
-        setLoading(false);
-        return;
-      }
       const { data: { user } } = await supabase.auth.getUser();
       await createBooking({
         propertyId:     stay.id,
@@ -100,6 +155,17 @@ export default function BookingModal({ stay, onClose }) {
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateField = (field, value) => {
+    setForm(f => ({...f, [field]: value}));
+    if (attempted) {
+      setFieldErrors(prev => {
+        const next = {...prev};
+        if (value.trim()) delete next[field];
+        return next;
+      });
     }
   };
 
@@ -136,15 +202,9 @@ export default function BookingModal({ stay, onClose }) {
               </div>
               <div className="bm-success-details">
                 <div className="bm-success-row">
-                  <div className="bm-success-col">
-                    <span>Check-in</span>
-                    <strong>{fmt(checkin)}</strong>
-                  </div>
+                  <div className="bm-success-col"><span>Check-in</span><strong>{fmt(checkin)}</strong></div>
                   <div className="bm-success-divider">→</div>
-                  <div className="bm-success-col">
-                    <span>Check-out</span>
-                    <strong>{fmt(checkout)}</strong>
-                  </div>
+                  <div className="bm-success-col"><span>Check-out</span><strong>{fmt(checkout)}</strong></div>
                 </div>
                 <div className="bm-success-meta">
                   <div className="bm-success-meta-item"><span>Nights</span><strong>{nights}</strong></div>
@@ -180,17 +240,26 @@ export default function BookingModal({ stay, onClose }) {
                   <div className="bm-calendars">
                     {calMonths.map(({year,month}) => (
                       <CalendarMonth key={year+'-'+month} year={year} month={month}
-                        checkin={checkin} checkout={checkout} onSelectDay={handleDayClick} />
+                        checkin={checkin} checkout={checkout}
+                        onSelectDay={handleDayClick}
+                        unavailableRanges={unavailableRanges} />
                     ))}
                   </div>
+
+                  <div className="bm-legend">
+                    <div className="bm-legend-item"><div className="bm-legend-dot bm-legend-unavail" />Unavailable</div>
+                    <div className="bm-legend-item"><div className="bm-legend-dot bm-legend-selected" />Selected</div>
+                  </div>
+
                   <div className="bm-date-summary">
                     <div className="bm-date-pill"><span>Check-in</span><strong>{fmt(checkin)}</strong></div>
                     <div className="bm-date-arrow">→</div>
                     <div className="bm-date-pill"><span>Check-out</span><strong>{fmt(checkout)}</strong></div>
                   </div>
+
                   <div className="bm-guests-row">
                     <div>
-                      <div className="bm-guests-label">Guests</div>
+                      <div className="bm-guests-label">Guests <span className="bm-required">*</span></div>
                       <div className="bm-guests-sub">Max {maxGuests}</div>
                     </div>
                     <div className="bm-counter">
@@ -199,14 +268,26 @@ export default function BookingModal({ stay, onClose }) {
                       <button className="counter-btn" disabled={guests>=maxGuests} onClick={() => setGuests(g=>g+1)}>+</button>
                     </div>
                   </div>
+
+                  {error && <div className="auth-error">{error}</div>}
+
                   {nights > 0 && (
                     <div className="bm-price-preview">
                       <div className="bm-price-row"><span>£{stay.price} × {nights} night{nights>1?'s':''}</span><span>£{subtotal}</span></div>
-                      <div className="bm-price-row"><span>Service fee</span><span>£{serviceFee}</span></div>
+                      <div className="bm-price-row"><span>Service fee (12%)</span><span>£{serviceFee}</span></div>
                       <div className="bm-price-row bm-price-total"><span>Total</span><span>£{total}</span></div>
                     </div>
                   )}
-                  <button className="btn-primary bm-next-btn" disabled={!checkin || !checkout} onClick={() => setStep(2)}>Continue →</button>
+
+                  {(!checkin || !checkout) && (
+                    <div className="bm-dates-hint">Please select check-in and check-out dates to continue</div>
+                  )}
+
+                  <button className="btn-primary bm-next-btn"
+                    disabled={!checkin || !checkout}
+                    onClick={() => setStep(2)}>
+                    Continue →
+                  </button>
                 </div>
               )}
 
@@ -217,32 +298,46 @@ export default function BookingModal({ stay, onClose }) {
                     <div className="bm-summary-dates">{fmt(checkin)} – {fmt(checkout)} · {nights} night{nights>1?'s':''} · {guests} guest{guests>1?'s':''}</div>
                     <div className="bm-summary-price">Total: £{total}</div>
                   </div>
+
                   <div className="form-group">
-                    <label className="form-label">Full name</label>
-                    <input className="form-input" type="text" placeholder="As on your ID"
-                      value={form.name} onChange={e => setForm(f=>({...f,name:e.target.value}))} />
+                    <label className="form-label">Full name <span className="bm-required">*</span></label>
+                    <input
+                      className={`form-input ${fieldErrors.name ? 'input-error' : ''}`}
+                      type="text" placeholder="As on your ID"
+                      value={form.name} onChange={e => updateField('name', e.target.value)} />
+                    <FieldError msg={fieldErrors.name} />
                   </div>
+
                   <div className="form-group">
-                    <label className="form-label">Email address</label>
-                    <input className="form-input" type="email" placeholder="you@example.com"
-                      value={form.email} onChange={e => setForm(f=>({...f,email:e.target.value}))} />
+                    <label className="form-label">Email address <span className="bm-required">*</span></label>
+                    <input
+                      className={`form-input ${fieldErrors.email ? 'input-error' : ''}`}
+                      type="email" placeholder="you@example.com"
+                      value={form.email} onChange={e => updateField('email', e.target.value)} />
+                    <FieldError msg={fieldErrors.email} />
                   </div>
+
                   <div className="form-group">
-                    <label className="form-label">Phone number</label>
-                    <input className="form-input" type="tel" placeholder="+44 7700 000000"
-                      value={form.phone} onChange={e => setForm(f=>({...f,phone:e.target.value}))} />
+                    <label className="form-label">Phone number <span className="bm-required">*</span></label>
+                    <input
+                      className={`form-input ${fieldErrors.phone ? 'input-error' : ''}`}
+                      type="tel" placeholder="+44 7700 000000"
+                      value={form.phone} onChange={e => updateField('phone', e.target.value)} />
+                    <FieldError msg={fieldErrors.phone} />
                   </div>
+
                   {!stay.instantBooking && (
                     <div className="form-group">
-                      <label className="form-label">Message to host <span style={{fontWeight:300,color:'var(--ink-soft)'}}>(optional)</span></label>
+                      <label className="form-label">Message to host <span className="bm-optional">(optional)</span></label>
                       <textarea className="form-input form-textarea"
                         placeholder="Tell the host about yourself and your trip..."
                         value={message} onChange={e => setMessage(e.target.value)} />
                     </div>
                   )}
+
                   <div className="bm-nav">
                     <button className="btn-back" onClick={() => setStep(1)}>← Back</button>
-                    <button className="btn-primary" disabled={!form.name||!form.email||!form.phone} onClick={() => setStep(3)}>Continue →</button>
+                    <button className="btn-primary" onClick={handleStep2Continue}>Continue →</button>
                   </div>
                 </div>
               )}
@@ -259,6 +354,7 @@ export default function BookingModal({ stay, onClose }) {
                     <div className="bm-confirm-row"><span>Nights</span><strong>{nights}</strong></div>
                     <div className="bm-confirm-row"><span>Guests</span><strong>{guests}</strong></div>
                     <div className="bm-confirm-row"><span>Name</span><strong>{form.name}</strong></div>
+                    <div className="bm-confirm-row"><span>Email</span><strong>{form.email}</strong></div>
                     <div className="bm-confirm-row bm-confirm-total"><span>Total</span><strong>£{total}</strong></div>
                   </div>
                   <div className="bm-terms">By confirming you agree to SunnaStays guest policies. Payment will be collected after confirmation.</div>
