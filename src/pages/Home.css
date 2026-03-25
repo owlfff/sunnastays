@@ -6,6 +6,7 @@
   position: relative;
   padding-top: var(--nav-height);
   overflow: visible;
+  contain: layout;
 }
 .hero-bg-pattern {
   position: absolute; inset: 0; pointer-events: none;
