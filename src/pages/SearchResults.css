@@ -36,7 +36,7 @@
 .sr-layout {
   display: grid;
   grid-template-columns: 1fr 420px;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* RESULTS */
@@ -154,10 +154,11 @@
 .sr-card-wrap.hovered { transform: translateY(-4px); }
 
 .sr-map-panel {
-  align-self: flex-start;
   position: sticky;
   top: calc(var(--nav-height) + 60px);
   height: calc(100vh - var(--nav-height) - 60px);
+  max-height: 100%;
   overflow: hidden;
   padding: 28px 0;
+  align-self: start;
 }

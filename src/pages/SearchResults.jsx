@@ -59,7 +59,7 @@ export default function SearchResults() {
         ))}
       </div>
 
-      <div className="sr-layout">
+      <div className="sr-layout" style={{minHeight: Math.max(sorted.length * 320, 400) + "px"}}>
         {/* RESULTS */}
         <div className="sr-results">
           <div className="sr-results-header">
