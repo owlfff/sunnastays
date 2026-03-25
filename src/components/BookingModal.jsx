@@ -151,6 +151,34 @@ export default function BookingModal({ stay, onClose }) {
         guestPhone:     form.phone,
       });
       setConfirmed(true);
+
+      // Send email notifications
+      try {
+        await fetch('/api/send-booking-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'host',
+            booking: {
+              guestName:     form.name,
+              guestEmail:    form.email,
+              guestPhone:    form.phone,
+              checkin:       checkin.toISOString().split('T')[0],
+              checkout:      checkout.toISOString().split('T')[0],
+              guests,
+              totalPrice:    total,
+              instantBooking: stay.instantBooking,
+              message,
+            },
+            property: {
+              name:     stay.name,
+              location: stay.location,
+            },
+          }),
+        });
+      } catch(emailErr) {
+        console.error('Email notification failed:', emailErr);
+      }
     } catch(e) {
       setError('Something went wrong. Please try again.');
     } finally {
