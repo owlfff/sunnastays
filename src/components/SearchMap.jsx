@@ -95,6 +95,7 @@ export default function SearchMap({ stays, onHover }) {
       staysWithCoords.forEach(s => bounds.extend({ lat: parseFloat(s.lat), lng: parseFloat(s.lng) }));
       map.fitBounds(bounds, { padding: 60 });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded, stays]);
 
   return (
