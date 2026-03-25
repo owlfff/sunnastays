@@ -35,7 +35,7 @@ export default function SearchMap({ stays, onHover }) {
 
     const map = new window.google.maps.Map(mapRef.current, {
       center,
-      zoom: staysWithCoords.length > 0 ? 12 : 5,
+      zoom: staysWithCoords.length > 0 ? 10 : 4,
       disableDefaultUI: true,
       zoomControl: true,
       mapTypeControl: false,
@@ -113,22 +113,25 @@ export default function SearchMap({ stays, onHover }) {
     const staysWithCoords = stays.filter(s => s.lat && s.lng);
     markersRef.current.forEach((marker, i) => {
       const stay = staysWithCoords[i];
-      const isHovered = stay.id === onHover || String(stay.id) === String(onHover);
-      marker.setIcon({
-        path: window.google && window.google.maps.SymbolPath.CIRCLE,
-        scale: isHovered ? 24 : 20,
-        fillColor: isHovered ? '#1A1208' : '#C4622D',
-        fillOpacity: 1,
-        strokeWeight: 0,
+      const isHovered = String(stay.id) === String(onHover);
+      marker.setOptions({
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          scale: isHovered ? 22 : 18,
+          fillColor: isHovered ? '#1A1208' : '#C4622D',
+          fillOpacity: 1,
+          strokeWeight: isHovered ? 3 : 0,
+          strokeColor: '#ffffff',
+        },
+        label: {
+          text: `£${stay.price}`,
+          color: 'white',
+          fontFamily: 'DM Sans, sans-serif',
+          fontWeight: '700',
+          fontSize: '12px',
+        },
+        zIndex: isHovered ? 10 : 1,
       });
-      marker.setLabel({
-        text: `£${stay.price}`,
-        color: 'white',
-        fontFamily: 'DM Sans, sans-serif',
-        fontWeight: '700',
-        fontSize: isHovered ? '13px' : '12px',
-      });
-      marker.setZIndex(isHovered ? 10 : 1);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onHover]);
