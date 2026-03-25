@@ -40,7 +40,8 @@ export default function Nav() {
         <Link to="/search" className="nav-link">Explore</Link>
         {user ? (
           <>
-            <span className="nav-user">👤 {user.email}</span>
+            <button className="nav-link nav-signin" onClick={() => navigate('/dashboard/guest')}>My trips</button>
+            <button className="nav-link nav-signin" onClick={() => navigate('/dashboard/host')}>My listings</button>
             <button className="nav-link nav-signin" onClick={handleSignOut}>Sign out</button>
           </>
         ) : (
