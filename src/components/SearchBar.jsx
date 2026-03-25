@@ -101,9 +101,7 @@ export default function SearchBar({ search }) {
     { year: now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear(), month: (now.getMonth() + 1) % 12 },
   ];
 
-  const filtered = destInput
-    ? DESTINATIONS.filter(d => d.label.toLowerCase().includes(destInput.toLowerCase()))
-    : DESTINATIONS;
+  const filtered = DESTINATIONS;
 
   return (
     <div className="sb-outer" ref={wrapRef}>
@@ -152,7 +150,12 @@ export default function SearchBar({ search }) {
               <div className="sb-dd-label" style={{ marginTop: 12 }}>Popular destinations</div>
               <div className="dest-grid">
                 {filtered.map(d => (
-                  <button key={d.value} className={`dest-chip ${dest === d.value ? 'selected' : ''}`} onClick={() => selectDest(d.value)}>
+                  <button
+                    key={d.value}
+                    className={`dest-chip ${dest === d.value ? 'selected' : ''}`}
+                    onClick={() => selectDest(d.value)}
+                    style={{ display: destInput && !d.label.toLowerCase().includes(destInput.toLowerCase()) ? 'none' : '' }}
+                  >
                     {d.emoji} {d.label}
                   </button>
                 ))}
