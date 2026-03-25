@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
+import BookingModal from '../components/BookingModal';
 import { getStay } from '../api';
 import './Listing.css';
 
@@ -10,6 +11,7 @@ export default function Listing() {
   const [stay, setStay] = useState(null);
   const [loading, setLoading] = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -173,7 +175,7 @@ export default function Listing() {
               </div>
             </div>
 
-            <button className="btn-primary booking-btn">Reserve now</button>
+            <button className="btn-primary booking-btn" onClick={() => setShowBooking(true)}>{stay.instantBooking ? '⚡ Book instantly' : '📋 Request to book'}</button>
             <p className="booking-note">You won't be charged yet</p>
           </div>
 
@@ -187,6 +189,7 @@ export default function Listing() {
       </div>
 
       <Footer />
+      {showBooking && <BookingModal stay={stay} onClose={() => setShowBooking(false)} />}
     </div>
   );
 }

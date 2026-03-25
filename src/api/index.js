@@ -57,6 +57,7 @@ function formatProperty(p, index) {
     lat:            p.lat,
     lng:            p.lng,
     address:        p.address,
+    instantBooking: p.instant_booking,
   };
 }
 
@@ -119,10 +120,66 @@ export async function submitListing(payload) {
       max_guests:  parseInt(payload.maxGuests) || 2,
       status:      'pending',
       address:     payload.address || null,
+      instant_booking: payload.instantBooking || false,
       lat:         payload.lat || null,
       lng:         payload.lng || null,
       photos:      photoUrls,
     }]);
+
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+export async function createBooking(payload) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .insert([{
+      property_id:  payload.propertyId,
+      guest_id:     payload.guestId,
+      checkin:      payload.checkin,
+      checkout:     payload.checkout,
+      guests:       payload.guests,
+      total_price:  payload.totalPrice,
+      status:       payload.instantBooking ? 'confirmed' : 'pending',
+      message:      payload.message || '',
+      guest_name:   payload.guestName,
+      guest_email:  payload.guestEmail,
+      guest_phone:  payload.guestPhone,
+    }])
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function getBookingsForProperty(propertyId) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('property_id', propertyId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function getBookingsForGuest(guestId) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, properties(name, city, country, photos)')
+    .eq('guest_id', guestId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateBookingStatus(bookingId, status) {
+  const { error } = await supabase
+    .from('bookings')
+    .update({ status })
+    .eq('id', bookingId);
 
   if (error) throw new Error(error.message);
   return { success: true };
