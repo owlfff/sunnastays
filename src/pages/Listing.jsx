@@ -8,8 +8,8 @@ import './Listing.css';
 export default function Listing() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [stay, setStay] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [stay, setStay]           = useState(null);
+  const [loading, setLoading]     = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
 
@@ -80,7 +80,6 @@ export default function Listing() {
       {/* CONTENT */}
       <div className="container listing-content">
         <div className="listing-left">
-          {/* TITLE */}
           <h1 className="listing-title">{stay.name}</h1>
           <div className="listing-meta-row">
             <span>★ <strong>{stay.rating}</strong> · {stay.reviewCount} reviews</span>
@@ -91,7 +90,6 @@ export default function Listing() {
 
           <hr className="listing-divider" />
 
-          {/* HOST */}
           <div className="host-row">
             <div className="host-avatar">{stay.host?.emoji || '👤'}</div>
             <div>
@@ -105,12 +103,10 @@ export default function Listing() {
 
           <hr className="listing-divider" />
 
-          {/* DESCRIPTION */}
           <p className="listing-desc">{stay.description}</p>
 
           <hr className="listing-divider" />
 
-          {/* HALAL STANDARDS */}
           <div className="halal-standards">
             <h4>🟢 SunnaStays Halal Standards</h4>
             <ul className="halal-list">
@@ -122,7 +118,6 @@ export default function Listing() {
 
           <hr className="listing-divider" />
 
-          {/* AMENITIES */}
           <div className="amenities-title">What this place offers</div>
           <div className="amenity-grid">
             {stay.amenities?.map(a => (
@@ -175,7 +170,16 @@ export default function Listing() {
               </div>
             </div>
 
-            <button className="btn-primary booking-btn" onClick={e => { e.preventDefault(); e.stopPropagation(); setShowBooking(true); }}>{stay.instantBooking ? '⚡ Book instantly' : '📋 Request to book'}</button>
+            <button
+              className="btn-primary booking-btn"
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowBooking(true);
+              }}
+            >
+              {stay.instantBooking ? '⚡ Book instantly' : '📋 Request to book'}
+            </button>
             <p className="booking-note">You won't be charged yet</p>
           </div>
 
@@ -189,7 +193,13 @@ export default function Listing() {
       </div>
 
       <Footer />
-      {showBooking && <BookingModal stay={stay} onClose={() => setShowBooking(false)} />}
+
+      {showBooking && (
+        <BookingModal
+          stay={stay}
+          onClose={() => setShowBooking(false)}
+        />
+      )}
     </div>
   );
 }
