@@ -49,6 +49,7 @@ export default function SearchBar({ search }) {
   } = search;
 
   const [open, setOpen]           = useState(null);
+  const [calOffset, setCalOffset]   = useState(0);
   const [destInput, setDestInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [loadingGmaps, setLoadingGmaps] = useState(false);
@@ -131,10 +132,10 @@ export default function SearchBar({ search }) {
   }, [checkin, checkout, setCheckin, setCheckout]);
 
   const now = new Date();
-  const calBase = [
-    { year: now.getFullYear(), month: now.getMonth() },
-    { year: now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear(), month: (now.getMonth() + 1) % 12 },
-  ];
+  const calBase = [0, 1].map(i => {
+    const d = new Date(now.getFullYear(), now.getMonth() + calOffset + i, 1);
+    return { year: d.getFullYear(), month: d.getMonth() };
+  });
 
   const clearDest = () => { setDestInput(''); setDest(''); setSuggestions([]); inputRef.current?.focus(); };
 
@@ -228,7 +229,11 @@ export default function SearchBar({ search }) {
       {/* CALENDAR DROPDOWN */}
       {open === 'cal' && (
         <div className="sb-dropdown sb-dropdown--cal">
-          <div className="sb-dd-label">Select your dates</div>
+          <div className="sb-cal-nav">
+            <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.max(0, o-1))} disabled={calOffset === 0}>←</button>
+            <span className="sb-cal-nav-label">{[calBase[0].month]} {calBase[0].year} – {[calBase[1].month]} {calBase[1].year}</span>
+            <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.min(10, o+1))}>→</button>
+          </div>
           <div className="cal-months">
             {calBase.map(({ year, month }) => (
               <CalendarMonth key={`${year}-${month}`} year={year} month={month}

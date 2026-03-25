@@ -36,7 +36,7 @@
 .sr-layout {
   display: grid;
   grid-template-columns: 1fr 420px;
-  min-height: calc(100vh - var(--nav-height) - 60px);
+  align-items: start;
 }
 
 /* RESULTS */
@@ -130,7 +130,7 @@
   .sr-grid { grid-template-columns: 1fr; }
 }
 
-.sr-map-panel {
+.sr-map-panel-disabled {
   position: sticky;
   top: calc(var(--nav-height) + 60px);
   height: calc(100vh - var(--nav-height) - 60px);
@@ -152,3 +152,12 @@
 
 .sr-card-wrap { transition: transform 0.2s; }
 .sr-card-wrap.hovered { transform: translateY(-4px); }
+
+.sr-map-panel {
+  align-self: flex-start;
+  position: sticky;
+  top: calc(var(--nav-height) + 60px);
+  height: calc(100vh - var(--nav-height) - 60px);
+  overflow: hidden;
+  padding: 28px 0;
+}

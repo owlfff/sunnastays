@@ -233,3 +233,28 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.sb-cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.sb-cal-nav-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-mid);
+}
+.sb-cal-nav-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sand-dark);
+  background: var(--white);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-mid);
+  transition: all 0.15s;
+}
+.sb-cal-nav-btn:hover:not(:disabled) { border-color: var(--terra); color: var(--terra); }
+.sb-cal-nav-btn:disabled { opacity: 0.3; cursor: default; }
