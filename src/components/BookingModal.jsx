@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabase';
-import { createBooking } from '../api';
+import { createBooking, checkExistingBooking } from '../api';
 import './BookingModal.css';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -73,6 +73,14 @@ export default function BookingModal({ stay, onClose }) {
     setLoading(true);
     setError(null);
     try {
+      const checkinStr = checkin.toISOString().split('T')[0];
+      const checkoutStr = checkout.toISOString().split('T')[0];
+      const alreadyBooked = await checkExistingBooking(stay.id, checkinStr, checkoutStr);
+      if (alreadyBooked) {
+        setError('These dates are already booked or have a pending request. Please choose different dates.');
+        setLoading(false);
+        return;
+      }
       const { data: { user } } = await supabase.auth.getUser();
       await createBooking({
         propertyId:     stay.id,

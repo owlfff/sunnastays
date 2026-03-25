@@ -13,6 +13,9 @@
   padding: 24px 48px 0;
   max-width: 1296px;
   margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 .listing-img-main {

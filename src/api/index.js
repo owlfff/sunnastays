@@ -130,6 +130,18 @@ export async function submitListing(payload) {
   return { success: true };
 }
 
+export async function checkExistingBooking(propertyId, checkin, checkout) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('id, status, checkin, checkout')
+    .eq('property_id', propertyId)
+    .not('status', 'eq', 'rejected')
+    .or(`and(checkin.lte.${checkout},checkout.gte.${checkin})`);
+
+  if (error) return false;
+  return data && data.length > 0;
+}
+
 export async function createBooking(payload) {
   const { data, error } = await supabase
     .from('bookings')
