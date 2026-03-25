@@ -134,7 +134,9 @@
   position: sticky;
   top: calc(var(--nav-height) + 60px);
   height: calc(100vh - var(--nav-height) - 60px);
-  padding: 28px 0 28px 0;
+  max-height: calc(100vh - var(--nav-height) - 60px);
+  padding: 28px 0;
+  overflow: hidden;
 }
 
 .sr-empty {
