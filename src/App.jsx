@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Nav from './components/Nav';
 import Home from './pages/Home';
 import SearchResults from './pages/SearchResults';
@@ -9,11 +10,11 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Admin from './pages/Admin';
 import './styles/global.css';
-import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Analytics />
       <Routes>
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={
@@ -31,6 +32,5 @@ export default function App() {
         } />
       </Routes>
     </BrowserRouter>
-    <Analytics />
   );
 }
