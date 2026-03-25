@@ -16,7 +16,7 @@
 }
 .hero-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 80px; align-items: center;
   padding-top: 80px; padding-bottom: 80px;
   position: relative;
