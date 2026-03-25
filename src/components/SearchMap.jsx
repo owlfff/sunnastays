@@ -12,7 +12,7 @@ export default function SearchMap({ stays, onHover }) {
     if (window.google) { setLoaded(true); return; }
     if (document.querySelector('script[data-gmaps]')) return;
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_KEY}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_KEY}&libraries=places,marker`;
     script.async = true;
     script.dataset.gmaps = true;
     script.onload = () => setLoaded(true);
@@ -54,15 +54,24 @@ export default function SearchMap({ stays, onHover }) {
 
     // Add markers
     staysWithCoords.forEach(stay => {
-      const pin = document.createElement('div');
-      pin.className = 'map-price-pin';
-      pin.innerHTML = `£${stay.price}`;
-
-      const marker = new window.google.maps.marker.AdvancedMarkerElement({
+      const marker = new window.google.maps.Marker({
         map,
         position: { lat: parseFloat(stay.lat), lng: parseFloat(stay.lng) },
-        content: pin,
         title: stay.name,
+        label: {
+          text: `£${stay.price}`,
+          color: 'white',
+          fontFamily: 'DM Sans, sans-serif',
+          fontWeight: '700',
+          fontSize: '12px',
+        },
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          scale: 20,
+          fillColor: '#C4622D',
+          fillOpacity: 1,
+          strokeWeight: 0,
+        },
       });
 
       marker.addListener('click', () => {
