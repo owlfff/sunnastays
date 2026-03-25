@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { useOnboarding } from '../hooks/useOnboarding';
+import AddressPicker from '../components/AddressPicker';
 import './HostOnboarding.css';
 
 const STEPS = ['Property', 'Photos', 'Pricing', 'Halal', 'Submit'];
@@ -87,6 +88,14 @@ function StepProperty({ form, update, goStep, navigate }) {
           placeholder="Describe your property…"
           value={form.description} onChange={e => update('description', e.target.value)} />
       </div>
+      <AddressPicker
+        value={{ address: form.address, lat: form.lat, lng: form.lng }}
+        onChange={({ address, lat, lng }) => {
+          update('address', address);
+          update('lat', lat);
+          update('lng', lng);
+        }}
+      />
       <div className="step-nav">
         <button className="btn-back" onClick={() => navigate('/')}>← Back to home</button>
         <button className="btn-next" onClick={() => goStep(2)}>Continue →</button>

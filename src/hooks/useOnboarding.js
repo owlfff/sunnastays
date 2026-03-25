@@ -3,6 +3,7 @@ import { submitListing } from '../api';
 
 const INITIAL_STATE = {
   name: '', type: '', city: '', country: '', bedrooms: '1', maxGuests: '2', description: '',
+  address: '', lat: null, lng: null,
   photos: [],
   price: '', minStay: '1 night', cleaningFee: '',
   halalChecks: {

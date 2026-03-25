@@ -115,6 +115,9 @@ export async function submitListing(payload) {
       bedrooms:    parseInt(payload.bedrooms) || 1,
       max_guests:  parseInt(payload.maxGuests) || 2,
       status:      'pending',
+      address:     payload.address || null,
+      lat:         payload.lat || null,
+      lng:         payload.lng || null,
       photos:      photoUrls,
     }]);
 
