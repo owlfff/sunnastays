@@ -106,7 +106,7 @@ export default function SearchResults() {
 
         {/* MAP */}
         <div className="sr-map-panel">
-          <SearchMap stays={sorted} onHover={handleHover} />
+          <SearchMap stays={sorted} onHover={handleHover} hoveredId={hoveredId} />
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './SearchMap.css';
 
-export default function SearchMap({ stays, onHover }) {
+export default function SearchMap({ stays, onHover, hoveredId }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
@@ -114,7 +114,7 @@ export default function SearchMap({ stays, onHover }) {
     markersRef.current.forEach((marker, i) => {
       const stay = staysWithCoords[i];
       if (!stay) return;
-      const isHovered = String(stay.id) === String(onHover);
+      const isHovered = String(stay.id) === String(hoveredId);
       marker.setIcon({
         path: window.google.maps.SymbolPath.CIRCLE,
         scale: isHovered ? 24 : 20,
@@ -126,7 +126,7 @@ export default function SearchMap({ stays, onHover }) {
       marker.setZIndex(isHovered ? 999 : 1);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onHover]);
+  }, [hoveredId]);
 
   return (
     <div className="search-map-wrap">
