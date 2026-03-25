@@ -37,6 +37,16 @@ function StepProperty({ form, update, goStep, navigate }) {
         <input className="form-input" type="text" placeholder="e.g. Sultana Suite…"
           value={form.name} onChange={e => update('name', e.target.value)} />
       </div>
+      <AddressPicker
+        value={{ address: form.address, lat: form.lat, lng: form.lng }}
+        onChange={({ address, lat, lng, city, country }) => {
+          update('address', address);
+          update('lat', lat);
+          update('lng', lng);
+          if (city) update('city', city);
+          if (country) update('country', country);
+        }}
+      />
       <div className="form-group">
         <label className="form-label">Property type</label>
         <div className="type-grid">
@@ -70,16 +80,6 @@ function StepProperty({ form, update, goStep, navigate }) {
           placeholder="Describe your property…"
           value={form.description} onChange={e => update('description', e.target.value)} />
       </div>
-      <AddressPicker
-        value={{ address: form.address, lat: form.lat, lng: form.lng }}
-        onChange={({ address, lat, lng, city, country }) => {
-          update('address', address);
-          update('lat', lat);
-          update('lng', lng);
-          if (city) update('city', city);
-          if (country) update('country', country);
-        }}
-      />
       <div className="step-nav">
         <button className="btn-back" onClick={() => navigate('/')}>← Back to home</button>
         <button className="btn-next" onClick={() => goStep(2)}>Continue →</button>
