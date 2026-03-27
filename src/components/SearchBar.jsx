@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import './SearchBar.css';
 
 const SUGGESTED = [
@@ -39,6 +40,8 @@ function CalendarMonth({ year, month, checkin, checkout, onSelectDay }) {
         })}
       </div>
     </div>
+      </>
+      , document.body)}
   );
 }
 
@@ -159,7 +162,9 @@ export default function SearchBar({ search }) {
         <button className="sb-search-btn" onClick={runSearch}>🔍</button>
       </div>
 
-      {/* DEST DROPDOWN */}
+      {/* DROPDOWNS — rendered in portal to escape nav stacking context */}
+      {open && createPortal(
+        <>
       {open === 'dest' && (
         <div className="sb-dropdown sb-dropdown--dest">
           <div className="sb-dest-input-wrap">
