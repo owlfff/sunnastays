@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { searchStays } from '../api';
 import { useNavigate } from 'react-router-dom';
+import SearchBar from '../components/SearchBar';
+import { useSearch } from '../hooks/useSearch';
 import StayCard from '../components/StayCard';
 import Footer from '../components/Footer';
 import './Home.css';
@@ -41,6 +43,7 @@ const TESTIMONIALS = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const search = useSearch();
   const [activeCategory, setActiveCategory] = useState(0);
   const [featuredStays, setFeaturedStays] = useState(FEATURED);
 
