@@ -36,6 +36,8 @@ export default async function handler(req, res) {
         totalPrice:   String(booking.totalPrice),
         instantBooking: String(booking.instantBooking),
         message:      booking.message || '',
+        propertyName: property.name || '',
+        propertyLocation: property.location || '',
       },
       customer_email: booking.guestEmail,
       success_url: successUrl,
