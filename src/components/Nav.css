@@ -2,6 +2,7 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 200;
+  isolation: auto;
   background: rgba(251, 247, 238, 0.96);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(196, 98, 45, 0.12);

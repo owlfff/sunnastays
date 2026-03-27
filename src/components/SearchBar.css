@@ -289,12 +289,31 @@
     border-radius: 20px 20px 0 0;
     max-height: 70vh;
     overflow-y: auto;
-    z-index: 600;
+    z-index: 9999 !important;
   }
   .sb-dropdown--cal {
     left: 0 !important;
   }
   .cal-months {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Fix mobile dropdown z-index */
+@media (max-width: 768px) {
+  .sb-dropdown {
+    z-index: 1000 !important;
+  }
+  /* Add overlay behind dropdown */
+  .sb-outer::before {
+    content: '';
+    display: none;
+  }
+  .sb-outer.dropdown-open::before {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 999;
   }
 }
