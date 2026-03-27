@@ -148,3 +148,17 @@
   .nav-search-wrap .sb-wrap { flex-wrap: nowrap; }
   .nav-host-btn { display: none; }
 }
+
+/* MOBILE — collapse search to icon only */
+@media (max-width: 768px) {
+  .nav {
+    grid-template-columns: auto 1fr auto;
+    padding: 0 16px;
+    gap: 8px;
+  }
+  .nav-search-wrap {
+    display: none;
+  }
+  .nav-right .nav-signin { display: none; }
+  .nav-host-btn { display: none; }
+}

@@ -258,3 +258,17 @@
 }
 .sb-cal-nav-btn:hover:not(:disabled) { border-color: var(--terra); color: var(--terra); }
 .sb-cal-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* Mobile dropdown — full width */
+@media (max-width: 768px) {
+  .sb-dropdown--dest,
+  .sb-dropdown--cal,
+  .sb-dropdown--guests {
+    left: 0 !important;
+    right: 0 !important;
+    width: calc(100vw - 32px) !important;
+    min-width: unset !important;
+    position: fixed;
+    top: calc(var(--nav-height) + 8px);
+  }
+}

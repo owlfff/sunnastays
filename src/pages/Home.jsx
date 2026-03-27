@@ -75,6 +75,7 @@ export default function Home() {
             <h1 className="fade-up-2">
               Travel with <em>trust,</em><br />stay in <em>comfort</em>
             </h1>
+            <div className="hero-search-mobile fade-up-3"><SearchBar search={search} /></div>
             <p className="hero-sub fade-up-2">
               Short stays that honour your values. Every property on SunnaStays is verified halal — no alcohol, no non-halal meat, no compromise.
             </p>
