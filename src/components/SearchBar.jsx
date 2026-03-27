@@ -147,12 +147,10 @@ export default function SearchBar({ search }) {
           <div className={`sb-value ${dest ? '' : 'ph'}`}>{dest || 'Search destinations'}</div>
         </div>
         <div className={`sb-field ${open === 'cal' ? 'active' : ''}`} onClick={() => toggle('cal')}>
-          <div className="sb-label">Check-in</div>
-          <div className={`sb-value ${checkin ? '' : 'ph'}`}>{fmt(checkin) || 'Add dates'}</div>
-        </div>
-        <div className={`sb-field sb-field--no-border ${open === 'cal' ? 'active' : ''}`} onClick={() => toggle('cal')}>
-          <div className="sb-label">Check-out</div>
-          <div className={`sb-value ${checkout ? '' : 'ph'}`}>{fmt(checkout) || 'Add dates'}</div>
+          <div className="sb-label">When</div>
+          <div className={`sb-value ${checkin ? '' : 'ph'}`}>
+            {checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : checkin ? fmt(checkin) : 'Add dates'}
+          </div>
         </div>
         <div className={`sb-field sb-field--no-border ${open === 'guests' ? 'active' : ''}`} onClick={() => toggle('guests')}>
           <div className="sb-label">Guests</div>
