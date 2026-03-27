@@ -317,3 +317,25 @@
     z-index: 999;
   }
 }
+
+/* Portal dropdowns — fixed positioning */
+.sb-dropdown--portal {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+/* Mobile — full width bottom sheet */
+@media (max-width: 768px) {
+  .sb-dropdown--portal {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    min-width: unset !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .cal-months { grid-template-columns: 1fr; }
+}
