@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchBar from '../components/SearchBar';
 import StayCard from '../components/StayCard';
 import Footer from '../components/Footer';
-import { useSearch } from '../hooks/useSearch';
 import './Home.css';
 
 const CATEGORIES = [
@@ -42,7 +40,6 @@ const TESTIMONIALS = [
 
 export default function Home() {
   const navigate = useNavigate();
-  const search = useSearch();
   const [activeCategory, setActiveCategory] = useState(0);
 
   return (
@@ -62,7 +59,6 @@ export default function Home() {
             <p className="hero-sub fade-up-2">
               Short stays that honour your values. Every property on SunnaStays is verified halal — no alcohol, no non-halal meat, no compromise.
             </p>
-            <SearchBar search={search} />
             <div className="hero-trust fade-up-4">
               {[
                 { icon:'🕌', value:'2,400+', label:'Verified halal stays' },

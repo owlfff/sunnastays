@@ -1,21 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabase';
+import { useSearch } from '../hooks/useSearch';
+import SearchBar from './SearchBar';
 import './Nav.css';
 
 export default function Nav() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState(null);
+  const search = useSearch();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
+  React.useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
@@ -28,16 +24,25 @@ export default function Nav() {
     navigate('/');
   };
 
-  const isHome = location.pathname === '/';
+  const isAuth = location.pathname === '/signin' || location.pathname === '/signup';
 
   return (
-    <nav className={`nav ${scrolled || !isHome ? 'nav--solid' : ''}`}>
+    <nav className="nav nav--solid">
+      {/* LEFT — Logo */}
       <Link to="/" className="nav-logo">
         <div className="nav-logo-mark">س</div>
-        <span className="nav-logo-text">Sunna<span>Stays</span></span>
+        <span className="nav-logo-text nav-logo-text--desktop">Sunna<span>Stays</span></span>
       </Link>
+
+      {/* CENTRE — Search bar */}
+      {!isAuth && (
+        <div className="nav-search-wrap">
+          <SearchBar search={search} compact />
+        </div>
+      )}
+
+      {/* RIGHT — Auth links */}
       <div className="nav-right">
-        <Link to="/search" className="nav-link">Explore</Link>
         {user ? (
           <>
             <button className="nav-link nav-signin" onClick={() => navigate('/dashboard/guest')}>My trips</button>
