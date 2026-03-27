@@ -50,7 +50,7 @@ export default function SearchBar({ search }) {
   const [calOffset, setCalOffset] = useState(0);
   const [destInput, setDestInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [loadingGmaps, setLoadingGmaps] = useState(false);
+  
   const wrapRef = useRef(null);
   const inputRef = useRef(null);
   const acRef = useRef(null);
@@ -60,12 +60,12 @@ export default function SearchBar({ search }) {
   useEffect(() => {
     if (window.google) return;
     if (document.querySelector('script[data-gmaps]')) return;
-    setLoadingGmaps(true);
+    
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_KEY}&libraries=places`;
     script.async = true;
     script.dataset.gmaps = true;
-    script.onload = () => setLoadingGmaps(false);
+    script.onload = () => {};
     document.head.appendChild(script);
   }, []);
 
