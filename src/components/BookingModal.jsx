@@ -196,7 +196,7 @@ export default function BookingModal({ stay, onClose }) {
       <div className="bm-modal">
         <div className="bm-header">
           <div className="bm-title">
-            {confirmed ? (stay.instantBooking ? 'Booking confirmed' : 'Request sent') :
+            {confirmed ? ('Booking confirmed') :
              step === 1 ? 'Choose your dates' :
              step === 2 ? 'Your details' : 'Review & confirm'}
           </div>
@@ -205,12 +205,12 @@ export default function BookingModal({ stay, onClose }) {
 
         {confirmed ? (
           <div className="bm-success">
-            <div className="bm-success-arabic">{stay.instantBooking ? 'مبروك' : 'شكراً'}</div>
+            <div className="bm-success-arabic">{'مبروك'}</div>
             <div className="bm-success-icon-wrap">
               <div className="bm-success-icon">{stay.instantBooking ? '✓' : '📋'}</div>
             </div>
             <h3 className="bm-success-title">
-              {stay.instantBooking ? "You're booked!" : 'Request sent!'}
+              {stay.instantBooking ? undefined : 'Request sent!'}
             </h3>
             <p className="bm-success-sub">
               {stay.instantBooking
@@ -237,7 +237,7 @@ export default function BookingModal({ stay, onClose }) {
               <div className="bm-success-halal">🟢 SunnaStays Halal Guarantee applies to this booking</div>
             </div>
             <button className="btn-primary bm-done-btn" onClick={onClose}>
-              {stay.instantBooking ? 'View booking details' : 'Got it'}
+              {'View booking details'}
             </button>
           </div>
         ) : (
@@ -348,7 +348,7 @@ export default function BookingModal({ stay, onClose }) {
                     <FieldError msg={fieldErrors.phone} />
                   </div>
 
-                  {!stay.instantBooking && (
+                  {false && (
                     <div className="form-group">
                       <label className="form-label">Message to host <span className="bm-optional">(optional)</span></label>
                       <textarea className="form-input form-textarea"
@@ -367,7 +367,7 @@ export default function BookingModal({ stay, onClose }) {
               {step === 3 && (
                 <div className="bm-step-content">
                   <div className={stay.instantBooking ? 'bm-instant-badge' : 'bm-request-badge'}>
-                    {stay.instantBooking ? '⚡ Instant booking — confirmed immediately' : '📋 Request to book — host responds within 24 hours'}
+                    {'⚡ Instant booking — confirmed immediately'}
                   </div>
                   <div className="bm-confirm-summary">
                     <div className="bm-confirm-row"><span>Property</span><strong>{stay.name}</strong></div>
@@ -384,7 +384,7 @@ export default function BookingModal({ stay, onClose }) {
                   <div className="bm-nav">
                     <button className="btn-back" onClick={() => setStep(2)}>← Back</button>
                     <button className="btn-primary bm-confirm-btn" onClick={handleSubmit} disabled={loading}>
-                      {loading ? 'Confirming…' : stay.instantBooking ? '⚡ Confirm booking' : '📋 Send request'}
+                      {loading ? 'Confirming…' : '⚡ Confirm booking'}
                     </button>
                   </div>
                 </div>

@@ -208,29 +208,6 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
           </div>
         </div>
       </div>
-      <div className="form-group" style={{marginTop:8}}>
-        <label className="form-label">Booking type</label>
-        <div style={{display:'flex',gap:12,marginTop:4}}>
-          <div
-            className={form.instantBooking ? 'type-tile' : 'type-tile selected'}
-            onClick={() => update('instantBooking', false)}
-            style={{flex:1,padding:'16px 12px'}}
-          >
-            <div className="ti">📋</div>
-            <div className="tn">Request to book</div>
-            <div style={{fontSize:11,color:'var(--ink-soft)',marginTop:4,fontWeight:300}}>You approve each guest</div>
-          </div>
-          <div
-            className={form.instantBooking ? 'type-tile selected' : 'type-tile'}
-            onClick={() => update('instantBooking', true)}
-            style={{flex:1,padding:'16px 12px'}}
-          >
-            <div className="ti">⚡</div>
-            <div className="tn">Instant booking</div>
-            <div style={{fontSize:11,color:'var(--ink-soft)',marginTop:4,fontWeight:300}}>Guests book immediately</div>
-          </div>
-        </div>
-      </div>
       <div className="step-nav">
         <button className="btn-back" onClick={() => goStep(2)}>← Back</button>
         <button className="btn-next" onClick={() => goStep(4)}>Continue →</button>
