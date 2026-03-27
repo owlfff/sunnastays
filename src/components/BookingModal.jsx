@@ -136,48 +136,40 @@ export default function BookingModal({ stay, onClose }) {
     setLoading(true);
     setError(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      await createBooking({
-        propertyId:     stay.id,
-        guestId:        user ? user.id : null,
-        checkin:        checkin.toISOString().split('T')[0],
-        checkout:       checkout.toISOString().split('T')[0],
-        guests,
-        totalPrice:     total,
-        instantBooking: stay.instantBooking,
-        message,
-        guestName:      form.name,
-        guestEmail:     form.email,
-        guestPhone:     form.phone,
-      });
-      setConfirmed(true);
+      const checkinStr  = checkin.toISOString().split('T')[0];
+      const checkoutStr = checkout.toISOString().split('T')[0];
 
-      // Send email notifications
-      try {
-        await fetch('/api/send-booking-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'host',
-            booking: {
-              guestName:     form.name,
-              guestEmail:    form.email,
-              guestPhone:    form.phone,
-              checkin:       checkin.toISOString().split('T')[0],
-              checkout:      checkout.toISOString().split('T')[0],
-              guests,
-              totalPrice:    total,
-              instantBooking: stay.instantBooking,
-              message,
-            },
-            property: {
-              name:     stay.name,
-              location: stay.location,
-            },
-          }),
-        });
-      } catch(emailErr) {
-        console.error('Email notification failed:', emailErr);
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          booking: {
+            propertyId:     stay.id,
+            guestName:      form.name,
+            guestEmail:     form.email,
+            guestPhone:     form.phone,
+            checkin:        checkinStr,
+            checkout:       checkoutStr,
+            nights,
+            guests,
+            totalPrice:     total,
+            instantBooking: stay.instantBooking,
+            message,
+          },
+          property: {
+            name:  stay.name,
+            photo: stay.photos?.[0] || null,
+          },
+          successUrl: `${window.location.origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl:  window.location.href,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError('Could not create checkout session. Please try again.');
       }
     } catch(e) {
       setError('Something went wrong. Please try again.');
@@ -185,6 +177,7 @@ export default function BookingModal({ stay, onClose }) {
       setLoading(false);
     }
   };
+
 
   const updateField = (field, value) => {
     setForm(f => ({...f, [field]: value}));

@@ -1,0 +1,51 @@
+.success-page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #F5EDD8 0%, #EDE0C4 40%, #D4C4A0 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.success-card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 48px 40px;
+  max-width: 480px; width: 100%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.success-arabic {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 24px; color: var(--terra);
+  direction: rtl; margin-bottom: 20px; opacity: 0.8;
+}
+.success-icon-wrap {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--terra-muted), var(--terra));
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 8px 24px rgba(196,98,45,0.3);
+}
+.success-check { font-size: 36px; color: white; font-weight: 700; }
+.success-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; font-weight: 600;
+  color: var(--ink); margin-bottom: 12px;
+}
+.success-sub {
+  font-size: 15px; color: var(--ink-soft);
+  font-weight: 300; line-height: 1.6; margin-bottom: 20px;
+}
+.success-halal {
+  background: rgba(74,124,89,0.08);
+  border: 1px solid rgba(74,124,89,0.2);
+  border-radius: 10px; padding: 12px;
+  font-size: 13px; color: var(--success);
+  font-weight: 500; margin-bottom: 20px;
+}
+.success-redirect {
+  font-size: 13px; color: var(--ink-soft);
+  margin-bottom: 20px; font-weight: 300;
+}
+.success-btn {
+  width: 100%; justify-content: center;
+  border-radius: 14px; padding: 15px;
+}

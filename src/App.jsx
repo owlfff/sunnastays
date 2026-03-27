@@ -9,6 +9,7 @@ import HostOnboarding from './pages/HostOnboarding';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Admin from './pages/Admin';
+import BookingSuccess from './pages/BookingSuccess';
 import HostDashboard from './pages/HostDashboard';
 import GuestDashboard from './pages/GuestDashboard';
 import './styles/global.css';
@@ -31,6 +32,7 @@ export default function App() {
               <Route path="/host"        element={<HostOnboarding />} />
               <Route path="/signup"      element={<SignUp />} />
               <Route path="/signin"      element={<SignIn />} />
+              <Route path="/booking-success" element={<BookingSuccess />} />
             </Routes>
           </>
         } />
