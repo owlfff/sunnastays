@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
@@ -13,6 +13,13 @@ export default function Listing() {
   const [loading, setLoading]     = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('booking') === 'true') {
+      setShowBooking(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     setLoading(true);
@@ -178,7 +185,7 @@ export default function Listing() {
                 e.stopPropagation();
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) {
-                  navigate('/signin?redirect=/stays/' + stay.slug);
+                  navigate('/signin?redirect=/stays/' + stay.slug + '?booking=true');
                   return;
                 }
                 setShowBooking(true);
