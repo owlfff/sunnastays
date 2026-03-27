@@ -178,7 +178,7 @@ export default function Listing() {
                 setShowBooking(true);
               }}
             >
-              '⚡ Book instantly'
+              ⚡ Book instantly
             </button>
             <p className="booking-note">You won't be charged yet</p>
           </div>
