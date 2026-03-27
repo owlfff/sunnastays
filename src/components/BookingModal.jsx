@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { createBooking } from '../api';
+
 import './BookingModal.css';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -65,7 +65,7 @@ export default function BookingModal({ stay, onClose }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [confirmed, setConfirmed] = useState(false);
+  
   const [calOffset, setCalOffset] = useState(0);
   const [unavailableRanges, setUnavailableRanges] = useState([]);
   const [fieldErrors, setFieldErrors] = useState({});
