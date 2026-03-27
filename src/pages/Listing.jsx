@@ -176,6 +176,7 @@ export default function Listing() {
                 e.preventDefault();
                 e.stopPropagation();
                 const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
                   navigate('/signin?redirect=/stays/' + stay.slug);
                   return;
                 }
