@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import './SignUp.css';
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/';
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -26,7 +28,7 @@ export default function SignIn() {
       return;
     }
 
-    navigate('/');
+    navigate(redirect);
   };
 
   return (
