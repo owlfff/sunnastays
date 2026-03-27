@@ -209,3 +209,21 @@
     height: 52px;
   }
 }
+
+@media (max-width: 768px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding: 24px 20px 40px;
+    gap: 24px;
+  }
+  .hero-left h1 { font-size: 36px; }
+  .hero-sub { font-size: 15px; margin-bottom: 0; }
+  .hero-arabic { display: none; }
+  .hero-tag { display: none; }
+  .hero-trust { flex-wrap: wrap; gap: 12px; }
+  .hero-visual { display: none; }
+  .stays-grid { grid-template-columns: 1fr; }
+  .how-grid { grid-template-columns: 1fr; }
+  .promise-grid { grid-template-columns: 1fr; }
+  .test-grid { grid-template-columns: 1fr; }
+}

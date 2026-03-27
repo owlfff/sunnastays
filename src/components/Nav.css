@@ -152,7 +152,8 @@
 /* MOBILE — collapse search to icon only */
 @media (max-width: 768px) {
   .nav {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
     padding: 0 16px;
     gap: 8px;
   }
@@ -161,4 +162,5 @@
   }
   .nav-right .nav-signin { display: none; }
   .nav-host-btn { display: none; }
+  .nav-logo-text--desktop { display: block; }
 }

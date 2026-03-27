@@ -272,3 +272,29 @@
     top: calc(var(--nav-height) + 8px);
   }
 }
+
+/* MOBILE FIXES */
+@media (max-width: 768px) {
+  .sb-outer {
+    position: static;
+  }
+  .sb-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    min-width: unset !important;
+    border-radius: 20px 20px 0 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 600;
+  }
+  .sb-dropdown--cal {
+    left: 0 !important;
+  }
+  .cal-months {
+    grid-template-columns: 1fr;
+  }
+}
