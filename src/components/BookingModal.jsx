@@ -64,6 +64,7 @@ export default function BookingModal({ stay, onClose }) {
   const [message, setMessage] = useState('');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [loading, setLoading] = useState(false);
+  const [confirmed] = useState(false);
   const [error, setError] = useState(null);
   
   const [calOffset, setCalOffset] = useState(0);
