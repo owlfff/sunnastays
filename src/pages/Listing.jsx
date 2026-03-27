@@ -185,7 +185,7 @@ export default function Listing() {
                 e.stopPropagation();
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) {
-                  navigate('/signin?redirect=/stays/' + stay.slug + '?booking=true');
+                  navigate('/signin?redirect=' + encodeURIComponent('/stays/' + stay.slug + '?booking=true'));
                   return;
                 }
                 setShowBooking(true);

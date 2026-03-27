@@ -6,7 +6,7 @@ import './SignUp.css';
 export default function SignIn() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
+  const redirect = decodeURIComponent(searchParams.get('redirect') || '/');
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
