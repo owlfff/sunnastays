@@ -172,9 +172,13 @@ export default function Listing() {
 
             <button
               className="btn-primary booking-btn"
-              onClick={e => {
+              onClick={async e => {
                 e.preventDefault();
                 e.stopPropagation();
+                const { data: { user } } = await supabase.auth.getUser();
+                  navigate('/signin?redirect=/stays/' + stay.slug);
+                  return;
+                }
                 setShowBooking(true);
               }}
             >
