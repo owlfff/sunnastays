@@ -339,3 +339,24 @@
   }
   .cal-months { grid-template-columns: 1fr; }
 }
+
+/* MOBILE — bottom sheet dropdowns */
+@media (max-width: 768px) {
+  .sb-dropdown {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    min-width: unset !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 75vh;
+    overflow-y: auto;
+    z-index: 9999 !important;
+    box-shadow: 0 -4px 40px rgba(26,18,8,0.2);
+  }
+  .cal-months {
+    grid-template-columns: 1fr !important;
+  }
+}

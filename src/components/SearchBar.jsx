@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import './SearchBar.css';
 
@@ -50,34 +50,35 @@ export default function SearchBar({ search }) {
   const [calOffset, setCalOffset] = useState(0);
   const [destInput, setDestInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const wrapRef = useRef(null);
   const inputRef = useRef(null);
   const acRef = useRef(null);
 
   const fmt = d => d ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : null;
 
+  // Load Google Maps
   useEffect(() => {
     if (window.google) return;
     if (document.querySelector('script[data-gmaps]')) return;
-    
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_KEY}&libraries=places`;
     script.async = true;
     script.dataset.gmaps = true;
-    script.onload = () => {};
     document.head.appendChild(script);
   }, []);
 
+  // Init autocomplete
   useEffect(() => {
     if (open !== 'dest' || !window.google) return;
     if (!acRef.current) acRef.current = new window.google.maps.places.AutocompleteService();
   }, [open]);
 
+  // Get suggestions
   useEffect(() => {
     if (!destInput || !acRef.current) { setSuggestions([]); return; }
     acRef.current.getPlacePredictions({ input: destInput, types: ['(cities)'] }, (results, status) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+      if (status === window.google?.maps.places.PlacesServiceStatus.OK) {
         setSuggestions(results.slice(0, 5));
       } else {
         setSuggestions([]);
@@ -85,10 +86,18 @@ export default function SearchBar({ search }) {
     });
   }, [destInput]);
 
+  // Update dropdown position only when open changes
+  useEffect(() => {
+    if (!open || !wrapRef.current) return;
+    const rect = wrapRef.current.getBoundingClientRect();
+    setDropdownPos({ top: rect.bottom + 8, left: rect.left });
+  }, [open]);
+
+  // Close on outside click
   useEffect(() => {
     const handler = e => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target) &&
-          !document.getElementById('sb-portal')?.contains(e.target)) {
+      const portal = document.getElementById('sb-portal');
+      if (wrapRef.current && !wrapRef.current.contains(e.target) && !portal?.contains(e.target)) {
         setOpen(null);
       }
     };
@@ -121,115 +130,25 @@ export default function SearchBar({ search }) {
     }
   }, [checkin, checkout, setCheckin, setCheckout]);
 
+  const clearDest = useCallback(() => {
+    setDestInput(''); setDest(''); setSuggestions([]);
+    inputRef.current?.focus();
+  }, [setDest]);
+
   const now = new Date();
-  const calBase = [0, 1].map(i => {
+  const calBase = useMemo(() => [0, 1].map(i => {
     const d = new Date(now.getFullYear(), now.getMonth() + calOffset + i, 1);
     return { year: d.getFullYear(), month: d.getMonth() };
-  });
+  }), [calOffset]); // eslint-disable-line
 
-  const clearDest = () => { setDestInput(''); setDest(''); setSuggestions([]); inputRef.current?.focus(); };
+  const isMobile = window.innerWidth <= 768;
 
-  // Get position of search bar for desktop dropdown positioning
-  const getDropdownStyle = () => {
-    if (!wrapRef.current) return {};
-    const rect = wrapRef.current.getBoundingClientRect();
-    return {
-      position: 'fixed',
-      top: rect.bottom + 8,
-      left: rect.left,
-    };
+  const dropdownStyle = isMobile ? {} : {
+    position: 'fixed',
+    top: dropdownPos.top,
+    left: dropdownPos.left,
+    zIndex: 9999,
   };
-
-  const Dropdowns = () => (
-    <div id="sb-portal">
-      {open === 'dest' && (
-        <div className="sb-dropdown sb-dropdown--dest sb-dropdown--portal" style={getDropdownStyle()}>
-          <div className="sb-dest-input-wrap">
-            <span className="sb-dest-icon">🔍</span>
-            <input
-              ref={inputRef}
-              className="sb-dest-input"
-              placeholder="Search destinations"
-              value={destInput}
-              onChange={handleDestInput}
-              onKeyDown={e => { if (e.key === 'Enter' && destInput) { setDest(destInput); setOpen(null); setTimeout(runSearch, 50); } }}
-              autoFocus
-            />
-            {destInput && <button className="sb-dest-clear" onClick={clearDest}>✕</button>}
-          </div>
-          <div className="sb-dest-list">
-            {destInput && suggestions.length > 0 ? (
-              <>
-                <div className="sb-dest-section-label">Suggestions</div>
-                {suggestions.map(s => (
-                  <button key={s.place_id} className="sb-dest-item"
-                    onClick={() => selectDest(s.structured_formatting.main_text, s.structured_formatting.main_text)}>
-                    <div className="sb-dest-item-icon">📍</div>
-                    <div className="sb-dest-item-text">
-                      <div className="sb-dest-item-main">{s.structured_formatting.main_text}</div>
-                      <div className="sb-dest-item-sub">{s.structured_formatting.secondary_text}</div>
-                    </div>
-                  </button>
-                ))}
-              </>
-            ) : (
-              <>
-                <div className="sb-dest-section-label">Suggested destinations</div>
-                {SUGGESTED.map(d => (
-                  <button key={d.value} className="sb-dest-item" onClick={() => selectDest(d.value, d.label)}>
-                    <div className="sb-dest-item-icon sb-dest-item-icon--emoji">{d.emoji}</div>
-                    <div className="sb-dest-item-text">
-                      <div className="sb-dest-item-main">{d.label}</div>
-                      <div className="sb-dest-item-sub">{d.sublabel}</div>
-                    </div>
-                  </button>
-                ))}
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {open === 'cal' && (
-        <div className="sb-dropdown sb-dropdown--cal sb-dropdown--portal" style={getDropdownStyle()}>
-          <div className="sb-cal-nav">
-            <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.max(0, o-1))} disabled={calOffset === 0}>←</button>
-            <span className="sb-cal-nav-label">{MONTHS[calBase[0].month]} {calBase[0].year} – {MONTHS[calBase[1].month]} {calBase[1].year}</span>
-            <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.min(10, o+1))}>→</button>
-          </div>
-          <div className="cal-months">
-            {calBase.map(({ year, month }) => (
-              <CalendarMonth key={`${year}-${month}`} year={year} month={month}
-                checkin={checkin} checkout={checkout} onSelectDay={handleDayClick} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {open === 'guests' && (
-        <div className="sb-dropdown sb-dropdown--guests sb-dropdown--portal" style={getDropdownStyle()}>
-          <div className="sb-dd-label">Who's coming?</div>
-          {[
-            { key: 'adults', label: 'Adults', sub: 'Ages 13+' },
-            { key: 'children', label: 'Children', sub: 'Ages 2–12' },
-            { key: 'infants', label: 'Infants', sub: 'Under 2' },
-          ].map(({ key, label, sub }) => (
-            <div className="guest-row" key={key}>
-              <div>
-                <div className="guest-type">{label}</div>
-                <div className="guest-sub">{sub}</div>
-              </div>
-              <div className="guest-counter">
-                <button className="counter-btn" disabled={guests[key] === 0} onClick={() => adjustGuest(key, -1)}>−</button>
-                <span className="counter-val">{guests[key]}</span>
-                <button className="counter-btn" onClick={() => adjustGuest(key, 1)}>+</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <div className="sb-outer" ref={wrapRef}>
@@ -250,7 +169,98 @@ export default function SearchBar({ search }) {
         </div>
         <button className="sb-search-btn" onClick={runSearch}>🔍</button>
       </div>
-      {open && createPortal(<Dropdowns />, document.body)}
+
+      {open && createPortal(
+        <div id="sb-portal">
+          {open === 'dest' && (
+            <div className="sb-dropdown sb-dropdown--dest" style={dropdownStyle}>
+              <div className="sb-dest-input-wrap">
+                <span className="sb-dest-icon">🔍</span>
+                <input
+                  ref={inputRef}
+                  className="sb-dest-input"
+                  placeholder="Search destinations"
+                  value={destInput}
+                  onChange={handleDestInput}
+                  onKeyDown={e => { if (e.key === 'Enter' && destInput) { setDest(destInput); setOpen(null); setTimeout(runSearch, 50); } }}
+                  autoFocus
+                />
+                {destInput && <button className="sb-dest-clear" onClick={clearDest}>✕</button>}
+              </div>
+              <div className="sb-dest-list">
+                {destInput && suggestions.length > 0 ? (
+                  <>
+                    <div className="sb-dest-section-label">Suggestions</div>
+                    {suggestions.map(s => (
+                      <button key={s.place_id} className="sb-dest-item"
+                        onClick={() => selectDest(s.structured_formatting.main_text, s.structured_formatting.main_text)}>
+                        <div className="sb-dest-item-icon">📍</div>
+                        <div className="sb-dest-item-text">
+                          <div className="sb-dest-item-main">{s.structured_formatting.main_text}</div>
+                          <div className="sb-dest-item-sub">{s.structured_formatting.secondary_text}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <div className="sb-dest-section-label">Suggested destinations</div>
+                    {SUGGESTED.map(d => (
+                      <button key={d.value} className="sb-dest-item" onClick={() => selectDest(d.value, d.label)}>
+                        <div className="sb-dest-item-icon sb-dest-item-icon--emoji">{d.emoji}</div>
+                        <div className="sb-dest-item-text">
+                          <div className="sb-dest-item-main">{d.label}</div>
+                          <div className="sb-dest-item-sub">{d.sublabel}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {open === 'cal' && (
+            <div className="sb-dropdown sb-dropdown--cal" style={dropdownStyle}>
+              <div className="sb-cal-nav">
+                <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.max(0, o-1))} disabled={calOffset === 0}>←</button>
+                <span className="sb-cal-nav-label">{MONTHS[calBase[0].month]} {calBase[0].year} – {MONTHS[calBase[1].month]} {calBase[1].year}</span>
+                <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.min(10, o+1))}>→</button>
+              </div>
+              <div className="cal-months">
+                {calBase.map(({ year, month }) => (
+                  <CalendarMonth key={`${year}-${month}`} year={year} month={month}
+                    checkin={checkin} checkout={checkout} onSelectDay={handleDayClick} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {open === 'guests' && (
+            <div className="sb-dropdown sb-dropdown--guests" style={dropdownStyle}>
+              <div className="sb-dd-label">Who's coming?</div>
+              {[
+                { key: 'adults', label: 'Adults', sub: 'Ages 13+' },
+                { key: 'children', label: 'Children', sub: 'Ages 2–12' },
+                { key: 'infants', label: 'Infants', sub: 'Under 2' },
+              ].map(({ key, label, sub }) => (
+                <div className="guest-row" key={key}>
+                  <div>
+                    <div className="guest-type">{label}</div>
+                    <div className="guest-sub">{sub}</div>
+                  </div>
+                  <div className="guest-counter">
+                    <button className="counter-btn" disabled={guests[key] === 0} onClick={() => adjustGuest(key, -1)}>−</button>
+                    <span className="counter-val">{guests[key]}</span>
+                    <button className="counter-btn" onClick={() => adjustGuest(key, 1)}>+</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
