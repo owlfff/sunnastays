@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StayCard from '../components/StayCard';
 import Footer from '../components/Footer';
@@ -41,6 +41,24 @@ const TESTIMONIALS = [
 export default function Home() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState(0);
+  const [featuredStays, setFeaturedStays] = useState(FEATURED);
+
+  useEffect(() => {
+    searchStays({}).then(results => {
+      if (results && results.length > 0) {
+        // Use real properties, pad with mock if less than 4
+        const real = results.slice(0, 4);
+        if (real.length < 4) {
+          const mocks = FEATURED.slice(0, 4 - real.length);
+          setFeaturedStays([...real, ...mocks]);
+        } else {
+          setFeaturedStays(real);
+        }
+      }
+    }).catch(() => {
+      // Fall back to mock data silently
+    });
+  }, []);
 
   return (
     <div className="home">
@@ -120,7 +138,7 @@ export default function Home() {
           <h2>Handpicked <em>halal</em> homes</h2>
           <p className="section-sub">Every property is personally reviewed and certified to meet SunnaStays standards.</p>
           <div className="stays-grid">
-            {FEATURED.map(stay => <StayCard key={stay.id} stay={stay} />)}
+            {featuredStays.map(stay => <StayCard key={stay.id} stay={stay} />)}
           </div>
           <div className="stays-cta">
             <button className="btn-secondary" onClick={() => navigate('/search')}>View all stays →</button>
