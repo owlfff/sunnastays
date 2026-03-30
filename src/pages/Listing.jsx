@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
-import { getStay } from '../api';
+import { getStay, getReviewsForProperty } from '../api';
 import './Listing.css';
 
 export default function Listing() {
@@ -13,6 +13,7 @@ export default function Listing() {
   const [loading, setLoading]     = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
+  const [reviews, setReviews] = useState([]);
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -24,7 +25,11 @@ export default function Listing() {
   useEffect(() => {
     setLoading(true);
     getStay(slug)
-      .then(data => { setStay(data); setLoading(false); })
+      .then(data => {
+        setStay(data);
+        setLoading(false);
+        if (data?.id) getReviewsForProperty(data.id).then(setReviews).catch(() => {});
+      })
       .catch(() => setLoading(false));
   }, [slug]);
 
@@ -205,6 +210,32 @@ export default function Listing() {
         </div>
       </div>
 
+      {reviews.length > 0 && (
+        <div className="container listing-reviews">
+          <hr className="listing-divider" />
+          <h3 className="reviews-title">
+            ★ {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)} · {reviews.length} review{reviews.length > 1 ? 's' : ''}
+          </h3>
+          <div className="reviews-grid">
+            {reviews.map(r => (
+              <div key={r.id} className="review-card-item">
+                <div className="review-card-header">
+                  <div className="review-avatar">{r.guest_name?.[0] || '?'}</div>
+                  <div>
+                    <div className="review-guest-name">{r.guest_name}</div>
+                    <div className="review-stars-small">
+                      {[1,2,3,4,5].map(s => (
+                        <span key={s} style={{color: s <= r.rating ? 'var(--gold)' : 'var(--sand-deep)'}}>★</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <p className="review-comment">{r.comment}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <Footer />
 
       {showBooking && (

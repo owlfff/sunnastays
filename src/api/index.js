@@ -197,6 +197,18 @@ export async function updateBookingStatus(bookingId, status) {
   return { success: true };
 }
 
+export async function getReviewsForProperty(propertyId) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('property_id', propertyId)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
 export async function getCurrentUser() {
   const { data: { user } } = await supabase.auth.getUser();
   return user;

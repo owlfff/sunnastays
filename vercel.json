@@ -1,3 +1,8 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "crons": [
+    {
+      "path": "/api/send-review-emails-cron",
+      "schedule": "0 10 * * *"
+    }
+  ]
 }

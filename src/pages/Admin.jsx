@@ -12,6 +12,7 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState('properties');
   const [bookings, setBookings] = useState([]);
   const [bookingFilter, setBookingFilter] = useState('all');
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     supabase
@@ -19,6 +20,12 @@ export default function Admin() {
       .select('*, properties(name, city, country)')
       .order('created_at', { ascending: false })
       .then(({ data }) => setBookings(data || []));
+
+    supabase
+      .from('reviews')
+      .select('*, properties(name)')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setReviews(data || []));
 
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) { navigate('/signin'); return; }
@@ -92,6 +99,9 @@ export default function Admin() {
           <button className={`admin-tab ${activeTab==='bookings'?'active':''}`} onClick={()=>setActiveTab('bookings')}>
             Bookings {bookings.filter(b=>b.status==='pending').length > 0 && <span className="dash-badge">{bookings.filter(b=>b.status==='pending').length}</span>}
           </button>
+          <button className={`admin-tab ${activeTab==='reviews'?'active':''}`} onClick={()=>setActiveTab('reviews')}>
+            Reviews {reviews.filter(r=>r.status==='pending').length > 0 && <span className="dash-badge">{reviews.filter(r=>r.status==='pending').length}</span>}
+          </button>
         </div>
 
         {activeTab === 'bookings' && (
@@ -139,6 +149,51 @@ export default function Admin() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'reviews' && (
+          <div>
+            <div className="dash-filters" style={{marginBottom:20}}>
+              {['pending','approved','rejected'].map(s => (
+                <button key={s} className={`dash-filter-btn ${s==='pending'?'active':''}`}
+                  onClick={e => {
+                    document.querySelectorAll('.dash-filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                  }}>
+                  {s.charAt(0).toUpperCase()+s.slice(1)} ({reviews.filter(r=>r.status===s).length})
+                </button>
+              ))}
+            </div>
+            <div className="dash-bookings-list">
+              {reviews.filter(r => r.status === 'pending').map(r => (
+                <div key={r.id} className="dash-booking-card">
+                  <div className="dash-booking-header">
+                    <div>
+                      <div className="dash-booking-prop">{r.properties?.name}</div>
+                      <div className="dash-booking-loc">by {r.guest_name}</div>
+                    </div>
+                    <div style={{display:'flex',gap:6}}>
+                      {[1,2,3,4,5].map(s => <span key={s} style={{color: s<=r.rating?'var(--gold)':'var(--sand-deep)',fontSize:18}}>★</span>)}
+                    </div>
+                  </div>
+                  <p style={{fontSize:14,color:'var(--ink-mid)',margin:'0 0 14px',fontWeight:300,lineHeight:1.6}}>{r.comment}</p>
+                  <div className="dash-booking-actions">
+                    <button className="dash-btn-confirm" onClick={async () => {
+                      await supabase.from('reviews').update({status:'approved'}).eq('id',r.id);
+                      setReviews(prev => prev.map(x => x.id===r.id ? {...x,status:'approved'} : x));
+                    }}>✓ Approve</button>
+                    <button className="dash-btn-reject" onClick={async () => {
+                      await supabase.from('reviews').update({status:'rejected'}).eq('id',r.id);
+                      setReviews(prev => prev.map(x => x.id===r.id ? {...x,status:'rejected'} : x));
+                    }}>✕ Reject</button>
+                  </div>
+                </div>
+              ))}
+              {reviews.filter(r=>r.status==='pending').length === 0 && (
+                <div className="dashboard-empty"><div className="dashboard-empty-icon">⭐</div><p>No pending reviews</p></div>
+              )}
+            </div>
           </div>
         )}
 
