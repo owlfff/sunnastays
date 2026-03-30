@@ -28,7 +28,7 @@ export default function Listing() {
       .then(data => {
         setStay(data);
         setLoading(false);
-        if (data?.id) getReviewsForProperty(data.id).then(setReviews).catch(() => {});
+        if (data?.id) getReviewsForProperty(data.id).then(r => { console.log('reviews:', r); setReviews(r); }).catch(e => console.error('reviews error:', e));
       })
       .catch(() => setLoading(false));
   }, [slug]);
@@ -146,7 +146,7 @@ export default function Listing() {
           <div className="booking-card">
             <div className="booking-price">£{stay.price} <span>per night</span></div>
             <div className="booking-rating">
-              <span style={{ color: 'var(--gold)' }}>★</span> {stay.rating} · <span>{stay.reviewCount} reviews</span>
+              <span style={{ color: 'var(--gold)' }}>★</span> {reviews.length > 0 ? (reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1) : stay.rating} · <span>{reviews.length > 0 ? reviews.length : stay.reviewCount} review{(reviews.length > 0 ? reviews.length : stay.reviewCount) !== 1 ? 's' : ''}</span>
             </div>
 
             <div className="halal-cert-badge">🟢 SunnaStays Halal Guarantee included</div>
