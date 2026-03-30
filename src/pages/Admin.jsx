@@ -9,8 +9,17 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [filter, setFilter] = useState('pending');
+  const [activeTab, setActiveTab] = useState('properties');
+  const [bookings, setBookings] = useState([]);
+  const [bookingFilter, setBookingFilter] = useState('all');
 
   useEffect(() => {
+    supabase
+      .from('bookings')
+      .select('*, properties(name, city, country)')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setBookings(data || []));
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) { navigate('/signin'); return; }
       setUser(user);
@@ -44,6 +53,12 @@ export default function Admin() {
     rejected: properties.filter(p => p.status === 'rejected').length,
   };
 
+  const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmt = d => { const dt = new Date(d); return dt.getDate() + ' ' + MONTHS_SHORT[dt.getMonth()] + ' ' + dt.getFullYear(); };
+
+  const filteredBookings = bookingFilter === 'all' ? bookings : bookings.filter(b => b.status === bookingFilter);
+  const totalRevenue = bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.total_price || 0), 0);
+
   return (
     <div className="admin-page">
       <div className="admin-header">
@@ -62,7 +77,74 @@ export default function Admin() {
       </div>
 
       <div className="admin-body">
-        <h1 className="admin-title">Property Listings</h1>
+        {/* STATS */}
+        <div className="admin-stats">
+          <div className="admin-stat"><div className="admin-stat-num">{bookings.length}</div><div className="admin-stat-label">Total bookings</div></div>
+          <div className="admin-stat"><div className="admin-stat-num" style={{color:'var(--terra)'}}>{bookings.filter(b=>b.status==='pending').length}</div><div className="admin-stat-label">Pending</div></div>
+          <div className="admin-stat"><div className="admin-stat-num" style={{color:'var(--success)'}}>{bookings.filter(b=>b.status==='confirmed').length}</div><div className="admin-stat-label">Confirmed</div></div>
+          <div className="admin-stat"><div className="admin-stat-num">£{totalRevenue.toLocaleString()}</div><div className="admin-stat-label">Total revenue</div></div>
+          <div className="admin-stat"><div className="admin-stat-num">{properties.length}</div><div className="admin-stat-label">Properties</div></div>
+        </div>
+
+        {/* TABS */}
+        <div className="admin-tabs">
+          <button className={`admin-tab ${activeTab==='properties'?'active':''}`} onClick={()=>setActiveTab('properties')}>Properties</button>
+          <button className={`admin-tab ${activeTab==='bookings'?'active':''}`} onClick={()=>setActiveTab('bookings')}>
+            Bookings {bookings.filter(b=>b.status==='pending').length > 0 && <span className="dash-badge">{bookings.filter(b=>b.status==='pending').length}</span>}
+          </button>
+        </div>
+
+        {activeTab === 'bookings' && (
+          <div>
+            <div className="dash-filters" style={{marginBottom:20}}>
+              {['all','pending','confirmed','rejected'].map(s => (
+                <button key={s} className={`dash-filter-btn ${bookingFilter===s?'active':''}`} onClick={()=>setBookingFilter(s)}>
+                  {s==='all'?'All':s.charAt(0).toUpperCase()+s.slice(1)} ({s==='all'?bookings.length:bookings.filter(b=>b.status===s).length})
+                </button>
+              ))}
+            </div>
+            {filteredBookings.length === 0 ? (
+              <div className="dashboard-empty"><div className="dashboard-empty-icon">📋</div><p>No {bookingFilter} bookings</p></div>
+            ) : (
+              <div className="dash-bookings-list">
+                {filteredBookings.map(b => (
+                  <div key={b.id} className="dash-booking-card">
+                    <div className="dash-booking-header">
+                      <div>
+                        <div className="dash-booking-prop">{b.properties?.name}</div>
+                        <div className="dash-booking-loc">📍 {b.properties?.city}, {b.properties?.country}</div>
+                      </div>
+                      <div className="dash-booking-status" style={{
+                        background: b.status==='confirmed'?'rgba(74,124,89,0.1)':b.status==='rejected'?'rgba(192,57,43,0.1)':'rgba(196,98,45,0.1)',
+                        color: b.status==='confirmed'?'var(--success)':b.status==='rejected'?'#c0392b':'var(--terra)',
+                        fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:20
+                      }}>{b.status}</div>
+                    </div>
+                    <div className="dash-booking-details">
+                      <div className="dash-booking-detail"><span>Guest</span><strong>{b.guest_name}</strong></div>
+                      <div className="dash-booking-detail"><span>Email</span><strong>{b.guest_email}</strong></div>
+                      <div className="dash-booking-detail"><span>Phone</span><strong>{b.guest_phone}</strong></div>
+                      <div className="dash-booking-detail"><span>Check-in</span><strong>{fmt(b.checkin)}</strong></div>
+                      <div className="dash-booking-detail"><span>Check-out</span><strong>{fmt(b.checkout)}</strong></div>
+                      <div className="dash-booking-detail"><span>Guests</span><strong>{b.guests}</strong></div>
+                      <div className="dash-booking-detail"><span>Total</span><strong style={{color:'var(--terra)'}}>£{b.total_price}</strong></div>
+                      <div className="dash-booking-detail"><span>Booked</span><strong>{fmt(b.created_at)}</strong></div>
+                    </div>
+                    {b.stripe_session_id && (
+                      <div style={{fontSize:11,color:'var(--ink-soft)',marginTop:8}}>
+                        Stripe: {b.stripe_session_id}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'properties' && (
+          <div>
+            <h1 className="admin-title">Property Listings</h1>
         <p className="admin-sub">Review and approve halal-certified property submissions</p>
 
         <div className="admin-stats">
@@ -163,6 +245,8 @@ export default function Admin() {
                 )}
               </div>
             ))}
+          </div>
+        )}
           </div>
         )}
       </div>
