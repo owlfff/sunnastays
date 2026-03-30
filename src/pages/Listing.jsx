@@ -95,7 +95,7 @@ export default function Listing() {
         <div className="listing-left">
           <h1 className="listing-title">{stay.name}</h1>
           <div className="listing-meta-row">
-            <span>★ <strong>{stay.rating}</strong> · {stay.reviewCount} reviews</span>
+            <span>★ <strong>{reviews.length > 0 ? (reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1) : stay.rating}</strong> · {reviews.length > 0 ? reviews.length : stay.reviewCount} review{(reviews.length > 0 ? reviews.length : stay.reviewCount) !== 1 ? "s" : ""}</span>
             <span className="listing-dot">·</span>
             <span>📍 {stay.location}</span>
             <span className="halal-tick listing-halal">✓ Halal certified</span>
