@@ -39,7 +39,7 @@
 }
 .nav-logo-text {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 22px; font-weight: 600;
+  font-size: 22px; font-weight: 700;
   color: var(--ink);
 }
 .nav-logo-text span { color: var(--terra); }
