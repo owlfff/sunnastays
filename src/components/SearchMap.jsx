@@ -45,7 +45,7 @@ export default function SearchMap({ stays, onHover, hoveredId }) {
         { elementType: 'labels.text.stroke', stylers: [{ color: '#f2ede4' }] },
         { featureType: 'road', elementType: 'geometry.fill', stylers: [{ color: '#EDE5D8' }] },
         { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#d4c4a0' }, { weight: 1.5 }] },
-        { featureType: 'road.highway', elementType: 'geometry.fill', stylers: [{ color: '#f5e6cc' }] },
+        { featureType: 'road.highway', elementType: 'geometry.fill', stylers: [{ color: '#E8D9C4' }] },
         { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#c4a870' }, { weight: 1 }] },
         { featureType: 'road.arterial', elementType: 'geometry.fill', stylers: [{ color: '#EDE5D8' }] },
         { featureType: 'road.local', elementType: 'geometry.fill', stylers: [{ color: '#EDE5D8' }] },
