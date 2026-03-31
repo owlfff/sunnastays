@@ -38,6 +38,8 @@ export default function SearchMap({ stays, onHover, hoveredId }) {
       disableDefaultUI: true,
       zoomControl: true,
       mapTypeControl: false,
+      gestureHandling: 'greedy',
+      keyboardShortcuts: false,
       streetViewControl: false,
       styles: [
         { elementType: 'geometry', stylers: [{ color: '#f2ede4' }] },
