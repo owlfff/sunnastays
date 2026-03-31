@@ -172,13 +172,13 @@ export default function SearchBar({ search }) {
 
       {open && createPortal(
         <div id="sb-portal">
-      {/* Mobile close button */}
-      <div className="sb-mobile-close" onClick={() => setOpen(null)}>
-        <span>✕</span>
-      </div>
           {open === 'dest' && (
             <div className="sb-dropdown sb-dropdown--dest" style={dropdownStyle}>
-              <div className="sb-dest-input-wrap">
+              <div className="sb-mobile-header">
+            <div className="sb-mobile-title">Where to?</div>
+            <button className="sb-mobile-close-btn" onClick={() => setOpen(null)}>✕</button>
+          </div>
+          <div className="sb-dest-input-wrap">
                 <span className="sb-dest-icon">🔍</span>
                 <input
                   ref={inputRef}
@@ -226,7 +226,11 @@ export default function SearchBar({ search }) {
 
           {open === 'cal' && (
             <div className="sb-dropdown sb-dropdown--cal" style={dropdownStyle}>
-              <div className="sb-cal-nav">
+              <div className="sb-mobile-header">
+            <div className="sb-mobile-title">When?</div>
+            <button className="sb-mobile-close-btn" onClick={() => setOpen(null)}>✕</button>
+          </div>
+          <div className="sb-cal-nav">
                 <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.max(0, o-1))} disabled={calOffset === 0}>←</button>
                 <span className="sb-cal-nav-label">{MONTHS[calBase[0].month]} {calBase[0].year} – {MONTHS[calBase[1].month]} {calBase[1].year}</span>
                 <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.min(10, o+1))}>→</button>
@@ -242,7 +246,10 @@ export default function SearchBar({ search }) {
 
           {open === 'guests' && (
             <div className="sb-dropdown sb-dropdown--guests" style={dropdownStyle}>
-              <div className="sb-dd-label">Who's coming?</div>
+              <div className="sb-mobile-header">
+            <div className="sb-mobile-title">Who's coming?</div>
+            <button className="sb-mobile-close-btn" onClick={() => setOpen(null)}>✕</button>
+          </div>
               {[
                 { key: 'adults', label: 'Adults', sub: 'Ages 13+' },
                 { key: 'children', label: 'Children', sub: 'Ages 2–12' },
