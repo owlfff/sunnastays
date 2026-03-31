@@ -172,6 +172,10 @@ export default function SearchBar({ search }) {
 
       {open && createPortal(
         <div id="sb-portal">
+      {/* Mobile close button */}
+      <div className="sb-mobile-close" onClick={() => setOpen(null)}>
+        <span>✕</span>
+      </div>
           {open === 'dest' && (
             <div className="sb-dropdown sb-dropdown--dest" style={dropdownStyle}>
               <div className="sb-dest-input-wrap">
