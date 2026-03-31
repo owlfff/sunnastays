@@ -161,7 +161,13 @@
   .nav-search-wrap {
     display: none;
   }
-  .nav-right .nav-signin { display: none; }
   .nav-host-btn { display: none; }
   .nav-logo-text--desktop { display: block; }
+  .nav-right {
+    gap: 4px;
+  }
+  .nav-signin {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
 }
