@@ -250,7 +250,7 @@ export default function SearchBar({ search }) {
             <div className="sb-mobile-title">Who's coming?</div>
             <div style={{display:'flex', gap:8}}>
               <button className="sb-mobile-close-btn" onClick={() => setOpen(null)}>✕</button>
-              <button className="sb-mobile-done-btn" onClick={() => { setOpen(null); runSearch(); }}>Done</button>
+              <button className="sb-mobile-done-btn" onClick={() => { setOpen(null); runSearch(); }}>🔍 Search</button>
             </div>
           </div>
               {[
