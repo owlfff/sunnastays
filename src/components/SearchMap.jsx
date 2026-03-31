@@ -40,8 +40,22 @@ export default function SearchMap({ stays, onHover, hoveredId }) {
       mapTypeControl: false,
       streetViewControl: false,
       styles: [
+        { elementType: 'geometry', stylers: [{ color: '#f5f0e8' }] },
+        { elementType: 'labels.text.fill', stylers: [{ color: '#7a6548' }] },
+        { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f0e8' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+        { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#e8dfc8' }] },
+        { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#f0e6d0' }] },
+        { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#d4c4a0' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#c8dde8' }] },
+        { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#8aabba' }] },
+        { featureType: 'park', elementType: 'geometry', stylers: [{ color: '#ddecd4' }] },
+        { featureType: 'landscape.natural', elementType: 'geometry', stylers: [{ color: '#ede8dc' }] },
+        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#ddecd4' }] },
         { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
         { featureType: 'transit', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+        { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#c9b99a' }] },
+        { featureType: 'administrative.land_parcel', elementType: 'labels.text.fill', stylers: [{ color: '#ae9a7a' }] },
       ],
     });
     mapInstanceRef.current = map;
