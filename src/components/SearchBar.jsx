@@ -248,7 +248,10 @@ export default function SearchBar({ search }) {
             <div className="sb-dropdown sb-dropdown--guests" style={dropdownStyle}>
               <div className="sb-mobile-header">
             <div className="sb-mobile-title">Who's coming?</div>
-            <button className="sb-mobile-close-btn" onClick={() => setOpen(null)}>✕</button>
+            <div style={{display:'flex', gap:8}}>
+              <button className="sb-mobile-close-btn" onClick={() => setOpen(null)}>✕</button>
+              <button className="sb-mobile-done-btn" onClick={() => { setOpen(null); runSearch(); }}>Done</button>
+            </div>
           </div>
               {[
                 { key: 'adults', label: 'Adults', sub: 'Ages 13+' },

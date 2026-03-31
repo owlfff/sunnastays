@@ -425,3 +425,21 @@
     display: flex; align-items: center; justify-content: center;
   }
 }
+
+.sb-mobile-done-btn {
+  display: none;
+}
+@media (max-width: 768px) {
+  .sb-mobile-done-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 20px;
+    background: var(--terra);
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+}
