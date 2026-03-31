@@ -103,6 +103,9 @@ export default function SearchMap({ stays, onHover, hoveredId }) {
       window.google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
         map.setZoom(Math.min(map.getZoom() - 1, 10));
       });
+    } else if (staysWithCoords.length === 1) {
+      map.setCenter({ lat: parseFloat(staysWithCoords[0].lat), lng: parseFloat(staysWithCoords[0].lng) });
+      map.setZoom(15);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded, stays]);

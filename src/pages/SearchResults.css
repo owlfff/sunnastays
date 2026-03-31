@@ -124,7 +124,7 @@
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .sr-layout { grid-template-columns: 1fr; }
-  .sr-map    { display: none; }
+  .sr-map-panel { position: relative; top: 0; height: 300px; margin-bottom: 20px; }
   .sr-results { padding: 20px; }
   .sr-filter-bar { padding: 12px 20px; }
   .sr-grid { grid-template-columns: 1fr; }

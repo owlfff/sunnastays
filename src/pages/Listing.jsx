@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
 import { getStay, getReviewsForProperty } from '../api';
 import './Listing.css';
+import SearchMap from '../components/SearchMap';
 
 export default function Listing() {
   const { slug } = useParams();
@@ -209,6 +210,17 @@ export default function Listing() {
           </button>
         </div>
       </div>
+
+      {stay.lat && stay.lng && (
+        <div className="container listing-map-section">
+          <hr className="listing-divider" />
+          <h3 className="listing-section-title">Where you'll be</h3>
+          <div className="listing-address-line">📍 {stay.address || stay.location}</div>
+          <div className="listing-map-wrap">
+            <SearchMap stays={[stay]} onHover={() => {}} hoveredId={null} />
+          </div>
+        </div>
+      )}
 
       {reviews.length > 0 && (
         <div className="container listing-reviews">
