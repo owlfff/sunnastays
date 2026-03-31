@@ -142,7 +142,7 @@
 @media (max-width: 900px) {
   .nav { padding: 0 16px; gap: 12px; }
   .nav-logo-text--desktop { display: none; }
-  .nav-signin:not(:last-of-type) { display: none; }
+  .nav-signin { display: block; }
 }
 
 @media (max-width: 600px) {
