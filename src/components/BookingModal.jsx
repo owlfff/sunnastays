@@ -89,10 +89,7 @@ export default function BookingModal({ stay, onClose }) {
   }, [stay.id]);
 
   const now = new Date();
-  const calMonths = [0, 1].map(i => {
-    const d = new Date(now.getFullYear(), now.getMonth() + calOffset + i, 1);
-    return { year: d.getFullYear(), month: d.getMonth() };
-  });
+
 
   const handleDayClick = (dt) => {
     if (!checkin || (checkin && checkout) || dt <= checkin) {
