@@ -67,7 +67,6 @@ export default function BookingModal({ stay, onClose }) {
   const [confirmed] = useState(false);
   const [error, setError] = useState(null);
   
-  const [calOffset, setCalOffset] = useState(0);
   const [unavailableRanges, setUnavailableRanges] = useState([]);
   const [fieldErrors, setFieldErrors] = useState({});
   const [attempted, setAttempted] = useState(false);
@@ -254,13 +253,11 @@ export default function BookingModal({ stay, onClose }) {
             <div className="bm-body">
               {step === 1 && (
                 <div className="bm-step-content">
-                  <div className="bm-cal-nav">
-                    <button className="bm-cal-nav-btn" onClick={() => setCalOffset(o => Math.max(0, o-1))} disabled={calOffset === 0}>←</button>
-                    <span className="bm-cal-nav-label">{MONTHS[calMonths[0].month]} {calMonths[0].year} – {MONTHS[calMonths[1].month]} {calMonths[1].year}</span>
-                    <button className="bm-cal-nav-btn" onClick={() => setCalOffset(o => Math.min(10, o+1))}>→</button>
-                  </div>
-                  <div className="bm-calendars">
-                    {calMonths.map(({year,month}) => (
+                  <div className="bm-calendars-scroll">
+                    {Array.from({length: 12}, (_, i) => {
+                      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+                      return { year: d.getFullYear(), month: d.getMonth() };
+                    }).map(({year, month}) => (
                       <CalendarMonth key={year+'-'+month} year={year} month={month}
                         checkin={checkin} checkout={checkout}
                         onSelectDay={handleDayClick}

@@ -230,14 +230,23 @@ export default function SearchBar({ search }) {
             <div className="sb-mobile-title">When?</div>
             <button className="sb-mobile-close-btn" onClick={() => setOpen(null)}>✕</button>
           </div>
-          <div className="sb-cal-nav">
+          <div className="sb-cal-nav sb-cal-nav--desktop">
                 <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.max(0, o-1))} disabled={calOffset === 0}>←</button>
                 <span className="sb-cal-nav-label">{MONTHS[calBase[0].month]} {calBase[0].year} – {MONTHS[calBase[1].month]} {calBase[1].year}</span>
                 <button className="sb-cal-nav-btn" onClick={() => setCalOffset(o => Math.min(10, o+1))}>→</button>
               </div>
-              <div className="cal-months">
+              <div className="cal-months cal-months--desktop">
                 {calBase.map(({ year, month }) => (
                   <CalendarMonth key={`${year}-${month}`} year={year} month={month}
+                    checkin={checkin} checkout={checkout} onSelectDay={handleDayClick} />
+                ))}
+              </div>
+              <div className="cal-months-scroll--mobile">
+                {Array.from({length: 12}, (_, i) => {
+                  const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+                  return { year: d.getFullYear(), month: d.getMonth() };
+                }).map(({ year, month }) => (
+                  <CalendarMonth key={year+'-'+month} year={year} month={month}
                     checkin={checkin} checkout={checkout} onSelectDay={handleDayClick} />
                 ))}
               </div>

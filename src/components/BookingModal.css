@@ -72,6 +72,18 @@
 
 /* CALENDAR */
 .bm-calendars { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.bm-calendars-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-right: 4px;
+}
+.bm-calendars-scroll::-webkit-scrollbar { display: none; }
 .bm-cal-month {}
 .bm-cal-title { font-size: 13px; font-weight: 600; color: var(--ink); text-align: center; margin-bottom: 8px; }
 .bm-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
