@@ -241,7 +241,7 @@ export default function SearchBar({ search }) {
                     checkin={checkin} checkout={checkout} onSelectDay={handleDayClick} />
                 ))}
               </div>
-              <div className="cal-months-scroll--mobile">
+              <div className="cal-months-scroll--mobile" style={{display: window.innerWidth <= 768 ? "flex" : "none", flexDirection: "column", gap: "32px", overflowY: "auto", maxHeight: "calc(100vh - 200px)"}}>
                 {Array.from({length: 12}, (_, i) => {
                   const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
                   return { year: d.getFullYear(), month: d.getMonth() };
