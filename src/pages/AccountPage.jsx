@@ -43,18 +43,20 @@ export default function AccountPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    await supabase.from('profiles').upsert({
-      user_id:      user.id,
-      display_name: form.display_name,
-      phone:        form.phone,
-      bio:          form.bio,
-      avatar_emoji: form.avatar_emoji,
-      updated_at:   new Date().toISOString(),
-    });
+    const { error } = await supabase
+      .from('profiles')
+      .upsert({
+        user_id:      user.id,
+        display_name: form.display_name,
+        phone:        form.phone,
+        bio:          form.bio,
+        avatar_emoji: form.avatar_emoji,
+        updated_at:   new Date().toISOString(),
+      }, { onConflict: 'user_id' });
+    console.log('Save error:', error);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
-    // Notify nav to refresh profile
     window.dispatchEvent(new CustomEvent('profile-updated'));
   };
 
