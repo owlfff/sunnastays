@@ -1,0 +1,70 @@
+.account-page { min-height: 100vh; background: var(--cream); }
+
+.account-header {
+  background: var(--ink); padding: 0 48px; height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.account-header-left { display: flex; align-items: center; gap: 16px; }
+.account-header-right { display: flex; align-items: center; gap: 10px; }
+
+.account-body {
+  max-width: 600px; margin: 0 auto; padding: 40px 24px 80px;
+}
+
+.account-card {
+  background: var(--white); border-radius: 24px;
+  padding: 32px; border: 1.5px solid var(--sand-dark);
+  box-shadow: var(--shadow);
+}
+
+.account-avatar-section {
+  display: flex; align-items: center; gap: 20px; margin-bottom: 24px;
+}
+.account-avatar-display {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: var(--sand); border: 2px solid var(--sand-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; flex-shrink: 0;
+}
+.account-avatar-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 700; color: var(--ink); margin-bottom: 4px;
+}
+.account-avatar-email { font-size: 14px; color: var(--ink-soft); font-weight: 300; }
+
+.account-avatar-picker { margin-bottom: 20px; }
+.avatar-grid {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+}
+.avatar-option {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--sand); border: 1.5px solid var(--sand-dark);
+  font-size: 22px; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar-option:hover { border-color: var(--terra); transform: scale(1.1); }
+.avatar-option.selected { border-color: var(--terra); background: rgba(196,98,45,0.1); }
+
+.account-section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.account-divider {
+  border: none; border-top: 1px solid var(--sand-dark);
+  margin: 24px 0;
+}
+.account-info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--sand-dark);
+  font-size: 14px;
+}
+.account-info-row span { color: var(--ink-soft); }
+.account-info-row strong { color: var(--ink); }
+.account-save-btn {
+  width: 100%; justify-content: center;
+  border-radius: 14px; padding: 15px; margin-top: 24px;
+  font-size: 15px;
+}
+.account-loading { text-align: center; padding: 80px; color: var(--ink-soft); }

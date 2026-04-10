@@ -171,3 +171,26 @@
     padding: 6px 8px;
   }
 }
+
+.nav-avatar-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 5px;
+  border-radius: 24px;
+  background: var(--sand);
+  border: 1.5px solid var(--sand-dark);
+  cursor: pointer; transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+.nav-avatar-btn:hover { border-color: var(--terra); }
+.nav-avatar-emoji {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--white); border: 1px solid var(--sand-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.nav-avatar-name {
+  font-size: 13px; font-weight: 500; color: var(--ink);
+  max-width: 100px; overflow: hidden;
+  text-overflow: ellipsis;
+}

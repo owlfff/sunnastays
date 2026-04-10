@@ -10,6 +10,7 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Admin from './pages/Admin';
 import BookingSuccess from './pages/BookingSuccess';
+import AccountPage from './pages/AccountPage';
 import ReviewPage from './pages/ReviewPage';
 import HostDashboard from './pages/HostDashboard';
 import GuestDashboard from './pages/GuestDashboard';
@@ -34,6 +35,7 @@ export default function App() {
               <Route path="/signup"      element={<SignUp />} />
               <Route path="/signin"      element={<SignIn />} />
               <Route path="/booking-success" element={<BookingSuccess />} />
+              <Route path="/account" element={<AccountPage />} />
               <Route path="/review" element={<ReviewPage />} />
             </Routes>
           </>
