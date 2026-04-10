@@ -211,3 +211,16 @@
   .dash-booking-details { grid-template-columns: repeat(2, 1fr); }
   .dashboard-header { padding: 0 16px; }
 }
+
+.msg-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--terra);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+}

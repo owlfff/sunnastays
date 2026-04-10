@@ -20,6 +20,7 @@ export default function GuestDashboard() {
   const [loading, setLoading]   = useState(true);
   const [filter, setFilter]     = useState('all');
   const [openThread, setOpenThread] = useState(null);
+  const [unreadCounts, setUnreadCounts] = useState({});
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -36,8 +37,26 @@ export default function GuestDashboard() {
       .select('*, properties(name, city, country, photos, address, lat, lng)')
       .eq('guest_id', userId)
       .order('created_at', { ascending: false });
-    setBookings(data || []);
+    const bookingData = data || [];
+    setBookings(bookingData);
     setLoading(false);
+
+    // Fetch unread counts for each booking
+    if (bookingData.length > 0) {
+      const threadIds = bookingData.map(b => `booking-${b.id}`);
+      supabase.from('messages')
+        .select('thread_id')
+        .in('thread_id', threadIds)
+        .eq('read_by_guest', false)
+        .neq('sender_type', 'guest')
+        .then(({ data: unread }) => {
+          const counts = {};
+          (unread || []).forEach(m => {
+            counts[m.thread_id] = (counts[m.thread_id] || 0) + 1;
+          });
+          setUnreadCounts(counts);
+        });
+    }
   };
 
   const filtered = filter === 'all' ? bookings : bookings.filter(b => b.status === filter);
@@ -171,6 +190,9 @@ export default function GuestDashboard() {
                       onClick={e => { e.preventDefault(); e.stopPropagation(); setOpenThread(openThread === b.id ? null : b.id); }}
                     >
                       💬 {openThread === b.id ? 'Close messages' : 'Message host'}
+                      {unreadCounts[`booking-${b.id}`] > 0 && openThread !== b.id && (
+                        <span className="msg-badge">{unreadCounts[`booking-${b.id}`]}</span>
+                      )}
                     </button>
                     {openThread === b.id && user && (
                       <div style={{marginTop:14}}>

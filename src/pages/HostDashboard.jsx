@@ -23,6 +23,7 @@ export default function HostDashboard() {
   const [activeTab, setActiveTab]     = useState('bookings');
   const [bookingFilter, setBookingFilter] = useState('pending');
   const [openThread, setOpenThread] = useState(null);
+  const [unreadCounts, setUnreadCounts] = useState({});
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -43,8 +44,26 @@ export default function HostDashboard() {
       .select('*, properties(name, city, country, photos)')
       .order('created_at', { ascending: false });
     setListings(props || []);
-    setBookings(books || []);
+    const bookingData = books || [];
+    setBookings(bookingData);
     setLoading(false);
+
+    // Fetch unread counts
+    if (bookingData.length > 0) {
+      const threadIds = bookingData.map(b => `booking-${b.id}`);
+      supabase.from('messages')
+        .select('thread_id')
+        .in('thread_id', threadIds)
+        .eq('read_by_host', false)
+        .neq('sender_type', 'host')
+        .then(({ data: unread }) => {
+          const counts = {};
+          (unread || []).forEach(m => {
+            counts[m.thread_id] = (counts[m.thread_id] || 0) + 1;
+          });
+          setUnreadCounts(counts);
+        });
+    }
   };
 
   const handleBookingAction = async (bookingId, status) => {
@@ -171,6 +190,9 @@ export default function HostDashboard() {
                           onClick={e => { e.preventDefault(); e.stopPropagation(); setOpenThread(openThread === b.id ? null : b.id); }}
                         >
                           💬 {openThread === b.id ? 'Close messages' : 'Message guest'}
+                          {unreadCounts[`booking-${b.id}`] > 0 && openThread !== b.id && (
+                            <span className="msg-badge">{unreadCounts[`booking-${b.id}`]}</span>
+                          )}
                         </button>
                         {openThread === b.id && user && (
                           <div style={{marginBottom:14}}>

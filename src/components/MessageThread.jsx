@@ -17,6 +17,13 @@ export default function MessageThread({ bookingId, propertyId, currentUserId, cu
 
   useEffect(() => {
     loadMessages();
+    // Mark messages as read
+    const readField = senderType === 'host' ? 'read_by_host' : 'read_by_guest';
+    supabase.from('messages')
+      .update({ [readField]: true })
+      .eq('thread_id', tid)
+      .eq(readField, false)
+      .then(() => {});
 
     // Real-time subscription
     const channel = supabase
