@@ -8,6 +8,7 @@ import './Nav.css';
 export default function Nav() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const search = useSearch();
@@ -20,6 +21,10 @@ export default function Nav() {
         if (data) setProfile(data);
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
