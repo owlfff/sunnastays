@@ -5,6 +5,7 @@ const INITIAL_STATE = {
   name: '', type: '', city: '', country: '', bedrooms: '1', maxGuests: '2', description: '',
   address: '', lat: null, lng: null,
   instantBooking: false,
+  cancellationPolicy: 'moderate',
   photos: [],
   price: '', minStay: '1 night', cleaningFee: '',
   halalChecks: {

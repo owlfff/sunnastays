@@ -410,3 +410,14 @@
   padding: 8px;
   font-weight: 300;
 }
+
+.bm-cancellation-notice {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--sand);
+  border: 1px solid var(--sand-dark);
+  font-size: 13px;
+  color: var(--ink-mid);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}

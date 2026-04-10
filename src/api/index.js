@@ -58,6 +58,7 @@ function formatProperty(p, index) {
     lng:            p.lng,
     address:        p.address,
     instantBooking: p.instant_booking,
+    cancellationPolicy: p.cancellation_policy || 'moderate',
   };
 }
 
@@ -121,6 +122,7 @@ export async function submitListing(payload) {
       status:      'pending',
       address:     payload.address || null,
       instant_booking: payload.instantBooking || false,
+      cancellation_policy: payload.cancellationPolicy || 'moderate',
       lat:         payload.lat || null,
       lng:         payload.lng || null,
       photos:      photoUrls,

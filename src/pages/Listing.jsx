@@ -132,6 +132,39 @@ export default function Listing() {
 
           <hr className="listing-divider" />
 
+          <div className="cancellation-section">
+            <h4 className="cancellation-title">Cancellation policy</h4>
+            {stay.cancellationPolicy === 'flexible' && (
+              <div className="cancellation-policy cancellation-policy--flexible">
+                <div className="cp-icon">🟢</div>
+                <div>
+                  <div className="cp-name">Flexible</div>
+                  <div className="cp-desc">Free cancellation up to 24 hours before check-in. After that, the first night is non-refundable.</div>
+                </div>
+              </div>
+            )}
+            {stay.cancellationPolicy === 'moderate' && (
+              <div className="cancellation-policy cancellation-policy--moderate">
+                <div className="cp-icon">🟡</div>
+                <div>
+                  <div className="cp-name">Moderate</div>
+                  <div className="cp-desc">Free cancellation up to 5 days before check-in. After that, the first night and service fee are non-refundable.</div>
+                </div>
+              </div>
+            )}
+            {stay.cancellationPolicy === 'strict' && (
+              <div className="cancellation-policy cancellation-policy--strict">
+                <div className="cp-icon">🔴</div>
+                <div>
+                  <div className="cp-name">Strict</div>
+                  <div className="cp-desc">50% refund up to 7 days before check-in. No refund after that.</div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <hr className="listing-divider" />
+
           <div className="amenities-title">What this place offers</div>
           <div className="amenity-grid">
             {stay.amenities?.map(a => (

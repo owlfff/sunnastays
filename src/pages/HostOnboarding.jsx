@@ -208,6 +208,26 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
           </div>
         </div>
       </div>
+      <div className="form-group" style={{marginTop:8}}>
+        <label className="form-label">Cancellation policy</label>
+        <div style={{display:'flex',gap:12,marginTop:4}}>
+          {[
+            { value: 'flexible', label: 'Flexible', desc: 'Full refund up to 24hrs before check-in', icon: '🟢' },
+            { value: 'moderate', label: 'Moderate', desc: 'Full refund up to 5 days before check-in', icon: '🟡' },
+            { value: 'strict', label: 'Strict', desc: '50% refund up to 7 days before check-in', icon: '🔴' },
+          ].map(p => (
+            <div key={p.value}
+              className={form.cancellationPolicy === p.value ? 'type-tile selected' : 'type-tile'}
+              onClick={() => update('cancellationPolicy', p.value)}
+              style={{flex:1,padding:'14px 10px'}}>
+              <div className="ti">{p.icon}</div>
+              <div className="tn">{p.label}</div>
+              <div style={{fontSize:11,color:'var(--ink-soft)',marginTop:4,fontWeight:300,lineHeight:1.4}}>{p.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="step-nav">
         <button className="btn-back" onClick={() => goStep(2)}>← Back</button>
         <button className="btn-next" onClick={() => goStep(4)}>Continue →</button>

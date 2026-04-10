@@ -373,6 +373,12 @@ export default function BookingModal({ stay, onClose }) {
                     <div className="bm-confirm-row"><span>Email</span><strong>{form.email}</strong></div>
                     <div className="bm-confirm-row bm-confirm-total"><span>Total</span><strong>£{total}</strong></div>
                   </div>
+                  <div className="bm-cancellation-notice">
+                    {stay.cancellationPolicy === 'flexible' && <span>🟢 <strong>Flexible:</strong> Free cancellation up to 24hrs before check-in.</span>}
+                    {stay.cancellationPolicy === 'moderate' && <span>🟡 <strong>Moderate:</strong> Free cancellation up to 5 days before check-in.</span>}
+                    {stay.cancellationPolicy === 'strict' && <span>🔴 <strong>Strict:</strong> 50% refund up to 7 days before check-in.</span>}
+                    {!stay.cancellationPolicy && <span>🟡 <strong>Moderate:</strong> Free cancellation up to 5 days before check-in.</span>}
+                  </div>
                   <div className="bm-terms">By confirming you agree to SunnaStays guest policies. Payment will be collected after confirmation.</div>
                   {error && <div className="auth-error">{error}</div>}
                   <div className="bm-nav">
