@@ -244,6 +244,7 @@ export default function Listing() {
               className="btn-secondary message-host-btn"
               onClick={async e => {
                 e.preventDefault();
+                e.stopPropagation();
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) { navigate('/signin?redirect=' + encodeURIComponent('/stays/' + stay.slug + '?message=true')); return; }
                 setShowMessages(m => !m);

@@ -168,7 +168,7 @@ export default function GuestDashboard() {
                     <div className="guest-halal-badge">🟢 SunnaStays Halal Guarantee applies</div>
                     <button
                       className="guest-message-btn"
-                      onClick={() => setOpenThread(openThread === b.id ? null : b.id)}
+                      onClick={e => { e.preventDefault(); e.stopPropagation(); setOpenThread(openThread === b.id ? null : b.id); }}
                     >
                       💬 {openThread === b.id ? 'Close messages' : 'Message host'}
                     </button>

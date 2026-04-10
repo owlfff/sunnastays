@@ -25,9 +25,10 @@ export default function MessageThread({ bookingId, propertyId, currentUserId, cu
         event: 'INSERT',
         schema: 'public',
         table: 'messages',
-        filter: `thread_id=eq.${tid}`,
       }, payload => {
-        setMessages(prev => [...prev, payload.new]);
+        if (payload.new.thread_id === tid) {
+          setMessages(prev => [...prev, payload.new]);
+        }
       })
       .subscribe();
 

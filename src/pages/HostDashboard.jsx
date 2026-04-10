@@ -168,7 +168,7 @@ export default function HostDashboard() {
                         <button
                           className="guest-message-btn"
                           style={{marginBottom:10}}
-                          onClick={() => setOpenThread(openThread === b.id ? null : b.id)}
+                          onClick={e => { e.preventDefault(); e.stopPropagation(); setOpenThread(openThread === b.id ? null : b.id); }}
                         >
                           💬 {openThread === b.id ? 'Close messages' : 'Message guest'}
                         </button>
