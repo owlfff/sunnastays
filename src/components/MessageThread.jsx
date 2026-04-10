@@ -32,7 +32,8 @@ export default function MessageThread({ bookingId, propertyId, currentUserId, cu
       .subscribe();
 
     return () => supabase.removeChannel(channel);
-  }, [bookingId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tid]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
