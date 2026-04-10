@@ -4,6 +4,7 @@ import { supabase } from '../supabase';
 import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
 import { getStay, getReviewsForProperty } from '../api';
+import MessageThread from '../components/MessageThread';
 import './Listing.css';
 import SearchMap from '../components/SearchMap';
 
@@ -14,8 +15,14 @@ export default function Listing() {
   const [loading, setLoading]     = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setCurrentUser(user));
+  }, []);
 
   useEffect(() => {
     if (searchParams.get('booking') === 'true') {
@@ -233,7 +240,32 @@ export default function Listing() {
               ⚡ Book instantly
             </button>
             <p className="booking-note">You won't be charged yet</p>
+            <button
+              className="btn-secondary message-host-btn"
+              onClick={async e => {
+                e.preventDefault();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) { navigate('/signin?redirect=' + encodeURIComponent('/stays/' + stay.slug + '?message=true')); return; }
+                setShowMessages(m => !m);
+              }}
+            >
+              💬 Message host
+            </button>
           </div>
+
+          {showMessages && currentUser && (
+            <div className="listing-messages">
+              <MessageThread
+                bookingId={null}
+                threadId={`property-${stay.id}-user-${currentUser.id}`}
+                propertyId={stay.id}
+                currentUserId={currentUser.id}
+                currentUserName={currentUser.email}
+                senderType="guest"
+                otherName={stay.host?.name || 'Host'}
+              />
+            </div>
+          )}
 
           <button
             className="wishlist-btn"

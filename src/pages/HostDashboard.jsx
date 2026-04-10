@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { updateBookingStatus } from '../api';
 import './HostDashboard.css';
+import MessageThread from '../components/MessageThread';
 
 const STATUS_COLOURS = {
   pending:   { bg: 'rgba(196,98,45,0.1)',  color: '#C4622D' },
@@ -21,6 +22,7 @@ export default function HostDashboard() {
   const [loading, setLoading]         = useState(true);
   const [activeTab, setActiveTab]     = useState('bookings');
   const [bookingFilter, setBookingFilter] = useState('pending');
+  const [openThread, setOpenThread] = useState(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -161,6 +163,26 @@ export default function HostDashboard() {
                           <div className="dash-booking-actions">
                             <button className="dash-btn-confirm" onClick={() => handleBookingAction(b.id, 'confirmed')}>✓ Confirm booking</button>
                             <button className="dash-btn-reject" onClick={() => handleBookingAction(b.id, 'rejected')}>✕ Decline</button>
+                          </div>
+                        )}
+                        <button
+                          className="guest-message-btn"
+                          style={{marginBottom:10}}
+                          onClick={() => setOpenThread(openThread === b.id ? null : b.id)}
+                        >
+                          💬 {openThread === b.id ? 'Close messages' : 'Message guest'}
+                        </button>
+                        {openThread === b.id && user && (
+                          <div style={{marginBottom:14}}>
+                            <MessageThread
+                              bookingId={b.id}
+                              threadId={`booking-${b.id}`}
+                              propertyId={b.properties?.id}
+                              currentUserId={user.id}
+                              currentUserName="Host"
+                              senderType="host"
+                              otherName={b.guest_name}
+                            />
                           </div>
                         )}
                         {b.status === 'confirmed' && (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import './GuestDashboard.css';
+import MessageThread from '../components/MessageThread';
 
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fmt = d => { const dt = new Date(d); return `${dt.getDate()} ${MONTHS_SHORT[dt.getMonth()]} ${dt.getFullYear()}`; };
@@ -18,6 +19,7 @@ export default function GuestDashboard() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [filter, setFilter]     = useState('all');
+  const [openThread, setOpenThread] = useState(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -164,6 +166,25 @@ export default function GuestDashboard() {
                     )}
 
                     <div className="guest-halal-badge">🟢 SunnaStays Halal Guarantee applies</div>
+                    <button
+                      className="guest-message-btn"
+                      onClick={() => setOpenThread(openThread === b.id ? null : b.id)}
+                    >
+                      💬 {openThread === b.id ? 'Close messages' : 'Message host'}
+                    </button>
+                    {openThread === b.id && user && (
+                      <div style={{marginTop:14}}>
+                        <MessageThread
+                          bookingId={b.id}
+                          threadId={`booking-${b.id}`}
+                          propertyId={b.property_id}
+                          currentUserId={user.id}
+                          currentUserName={b.guest_name || user.email}
+                          senderType="guest"
+                          otherName="Host"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               );
