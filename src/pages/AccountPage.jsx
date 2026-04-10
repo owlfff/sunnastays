@@ -26,7 +26,7 @@ export default function AccountPage() {
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (profile) {
@@ -44,7 +44,7 @@ export default function AccountPage() {
   const handleSave = async () => {
     setSaving(true);
     await supabase.from('profiles').upsert({
-      id:           user.id,
+      user_id:      user.id,
       display_name: form.display_name,
       phone:        form.phone,
       bio:          form.bio,

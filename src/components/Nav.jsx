@@ -9,12 +9,25 @@ export default function Nav() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const search = useSearch();
 
   React.useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      setUser(user);
+      if (user) {
+        const { data } = await supabase.from('profiles').select('display_name, avatar_emoji').eq('user_id', user.id).single();
+        if (data) setProfile(data);
+      }
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        const { data } = await supabase.from('profiles').select('display_name, avatar_emoji').eq('user_id', session.user.id).single();
+        if (data) setProfile(data);
+      } else {
+        setProfile(null);
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -47,6 +60,10 @@ export default function Nav() {
           <>
             <button className="nav-link nav-signin" onClick={() => navigate('/dashboard/guest')}>My trips</button>
             <button className="nav-link nav-signin" onClick={() => navigate('/dashboard/host')}>My listings</button>
+            <button className="nav-avatar-btn" onClick={() => navigate('/account')}>
+              <span className="nav-avatar-emoji">{profile?.avatar_emoji || '👤'}</span>
+              <span className="nav-avatar-name">{profile?.display_name || user.email.split('@')[0]}</span>
+            </button>
             <button className="nav-link nav-signin" onClick={handleSignOut}>Sign out</button>
           </>
         ) : (
