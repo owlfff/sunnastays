@@ -14,13 +14,8 @@ export default function Listing() {
   const [loading, setLoading]     = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => setCurrentUser(user));
-  }, []);
 
   useEffect(() => {
     if (searchParams.get('booking') === 'true') {
