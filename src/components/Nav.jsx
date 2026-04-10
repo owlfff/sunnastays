@@ -14,26 +14,22 @@ export default function Nav() {
   const search = useSearch();
 
   React.useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      setUser(user);
-      if (user) {
-        const { data } = await supabase.from('profiles').select('display_name, avatar_emoji').eq('user_id', user.id).single();
-        if (data) setProfile(data);
-      }
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+    const loadProfile = async (userId) => {
+      const { data } = await supabase.from('profiles').select('display_name, avatar_emoji').eq('user_id', userId).single();
+      if (data) setProfile(data);
+    };
 
-  React.useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data } = await supabase.from('profiles').select('display_name, avatar_emoji').eq('user_id', session.user.id).single();
-        if (data) setProfile(data);
-      } else {
-        setProfile(null);
-      }
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      if (user) loadProfile(user.id);
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) loadProfile(session.user.id);
+      else setProfile(null);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
