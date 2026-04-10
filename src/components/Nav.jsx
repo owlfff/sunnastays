@@ -30,7 +30,18 @@ export default function Nav() {
       else setProfile(null);
     });
 
-    return () => subscription.unsubscribe();
+    // Listen for profile updates from account page
+    const handleProfileUpdate = () => {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) loadProfile(user.id);
+      });
+    };
+    window.addEventListener('profile-updated', handleProfileUpdate);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('profile-updated', handleProfileUpdate);
+    };
   }, []);
 
   const handleSignOut = async () => {

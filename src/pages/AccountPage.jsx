@@ -54,6 +54,8 @@ export default function AccountPage() {
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+    // Notify nav to refresh profile
+    window.dispatchEvent(new CustomEvent('profile-updated'));
   };
 
   if (loading) return (
