@@ -38,11 +38,14 @@ export default function HostDashboard() {
     const { data: props } = await supabase
       .from('properties')
       .select('*')
+      .eq('host_id', userId)
       .order('created_at', { ascending: false });
-    const { data: books } = await supabase
+    const propertyIds = (props || []).map(p => p.id);
+    const { data: books } = propertyIds.length > 0 ? await supabase
       .from('bookings')
       .select('*, properties(name, city, country, photos)')
-      .order('created_at', { ascending: false });
+      .in('property_id', propertyIds)
+      .order('created_at', { ascending: false }) : { data: [] };
     setListings(props || []);
     const bookingData = books || [];
     setBookings(bookingData);
