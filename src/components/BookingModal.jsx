@@ -55,12 +55,12 @@ function FieldError({ msg }) {
   return msg ? <div className="bm-field-error">{msg}</div> : null;
 }
 
-export default function BookingModal({ stay, onClose }) {
+export default function BookingModal({ stay, onClose, initialCheckin, initialCheckout, initialGuests }) {
   const [step, setStep] = useState(1);
-  const [checkin, setCheckin] = useState(null);
-  const [checkout, setCheckout] = useState(null);
+  const [checkin, setCheckin] = useState(initialCheckin || null);
+  const [checkout, setCheckout] = useState(initialCheckout || null);
   const maxGuests = stay.maxGuests || stay.max_guests || 2;
-  const [guests, setGuests] = useState(1);
+  const [guests, setGuests] = useState(initialGuests || 1);
   const [message, setMessage] = useState('');
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [loading, setLoading] = useState(false);
@@ -196,7 +196,7 @@ export default function BookingModal({ stay, onClose }) {
              step === 1 ? 'Choose your dates' :
              step === 2 ? 'Your details' : 'Review & confirm'}
           </div>
-          <button className="bm-close" onClick={onClose}>✕</button>
+          <button className="bm-close" onClick={() => onClose(checkin, checkout, guests)}>✕</button>
         </div>
 
         {confirmed ? (
@@ -232,7 +232,7 @@ export default function BookingModal({ stay, onClose }) {
               </div>
               <div className="bm-success-halal">🟢 SunnaStays Halal Guarantee applies to this booking</div>
             </div>
-            <button className="btn-primary bm-done-btn" onClick={onClose}>
+            <button className="btn-primary bm-done-btn" onClick={() => onClose(checkin, checkout, guests)}>
               {'View booking details'}
             </button>
           </div>

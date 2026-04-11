@@ -14,6 +14,9 @@ export default function Listing() {
   const [loading, setLoading]     = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
+  const [selectedCheckin, setSelectedCheckin] = useState(null);
+  const [selectedCheckout, setSelectedCheckout] = useState(null);
+  const [selectedGuests, setSelectedGuests] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [searchParams] = useSearchParams();
 
@@ -195,16 +198,22 @@ export default function Listing() {
               <div className="date-row">
                 <div className="date-cell">
                   <div className="date-label">Check-in</div>
-                  <div className="date-value">Add date</div>
+                  <div className={`date-value ${selectedCheckin ? '' : 'date-value--empty'}`}>
+                    {selectedCheckin ? selectedCheckin.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : 'Add date'}
+                  </div>
                 </div>
                 <div className="date-cell">
                   <div className="date-label">Check-out</div>
-                  <div className="date-value">Add date</div>
+                  <div className={`date-value ${selectedCheckout ? '' : 'date-value--empty'}`}>
+                    {selectedCheckout ? selectedCheckout.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : 'Add date'}
+                  </div>
                 </div>
               </div>
               <div className="guests-cell">
                 <div className="date-label">Guests</div>
-                <div className="date-value">Add guests</div>
+                <div className={`date-value ${selectedGuests > 1 ? '' : 'date-value--empty'}`}>
+                  {selectedGuests > 1 ? `${selectedGuests} guests` : 'Add guests'}
+                </div>
               </div>
             </div>
 
@@ -294,7 +303,15 @@ export default function Listing() {
       {showBooking && (
         <BookingModal
           stay={stay}
-          onClose={() => setShowBooking(false)}
+          initialCheckin={selectedCheckin}
+          initialCheckout={selectedCheckout}
+          initialGuests={selectedGuests}
+          onClose={(checkin, checkout, guests) => {
+            if (checkin) setSelectedCheckin(checkin);
+            if (checkout) setSelectedCheckout(checkout);
+            if (guests) setSelectedGuests(guests);
+            setShowBooking(false);
+          }}
         />
       )}
     </div>

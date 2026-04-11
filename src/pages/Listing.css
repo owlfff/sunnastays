@@ -347,3 +347,5 @@
 .listing-messages {
   margin-top: 16px;
 }
+
+.date-value--empty { color: var(--ink-soft); font-weight: 300; }
