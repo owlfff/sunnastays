@@ -47,7 +47,6 @@ export default function SearchMap({ stays, onHover, hoveredId }) {
         { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f0e8' }] },
         { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#b8d4e0' }] },
         { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#7aaabb' }] },
-        { featureType: 'park', elementType: 'geometry', stylers: [{ color: '#d4e8c8' }] },
         { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d4e8c8' }] },
         { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#f2ede4' }] },
         { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#EDE5D8' }] },
