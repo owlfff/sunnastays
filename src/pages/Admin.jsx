@@ -9,6 +9,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [filter, setFilter] = useState('pending');
+  const [checking, setChecking] = useState(true);
   const [activeTab, setActiveTab] = useState('properties');
   const [bookings, setBookings] = useState([]);
   const [bookingFilter, setBookingFilter] = useState('all');
@@ -35,6 +36,7 @@ export default function Admin() {
         .eq('user_id', user.id)
         .single();
       if (!profile || profile.role !== 'admin') { navigate('/'); return; }
+      setChecking(false);
       setUser(user);
       loadProperties();
     });
@@ -71,6 +73,8 @@ export default function Admin() {
 
   const filteredBookings = bookingFilter === 'all' ? bookings : bookings.filter(b => b.status === bookingFilter);
   const totalRevenue = bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.total_price || 0), 0);
+
+  if (checking) return null;
 
   return (
     <div className="admin-page">
