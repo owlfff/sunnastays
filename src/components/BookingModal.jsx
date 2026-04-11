@@ -188,7 +188,7 @@ export default function BookingModal({ stay, onClose, initialCheckin, initialChe
   };
 
   return (
-    <div className="bm-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="bm-overlay" onClick={e => e.target === e.currentTarget && onClose(checkin, checkout, guests)}>
       <div className="bm-modal">
         <div className="bm-header">
           <div className="bm-title">
