@@ -56,7 +56,7 @@ function FieldError({ msg }) {
 }
 
 export default function BookingModal({ stay, onClose, initialCheckin, initialCheckout, initialGuests }) {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(initialCheckin && initialCheckout ? 2 : 1);
   const [checkin, setCheckin] = useState(initialCheckin || null);
   const [checkout, setCheckout] = useState(initialCheckout || null);
   const maxGuests = stay.maxGuests || stay.max_guests || 2;
