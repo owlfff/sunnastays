@@ -150,27 +150,6 @@ export default function BookingModal({ stay, onClose, initialCheckin, initialChe
     });
   }, []);
 
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) return;
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('display_name, phone, email, full_name')
-        .eq('user_id', user.id)
-        .single();
-      if (profile) {
-        setForm(f => ({
-          ...f,
-          name:  profile.display_name || profile.full_name || f.name,
-          email: profile.email || user.email || f.email,
-          phone: profile.phone || f.phone,
-        }));
-      } else {
-        setForm(f => ({ ...f, email: user.email || f.email }));
-      }
-    });
-  }, []);
-
   const handleSubmit = async () => {
     setLoading(true);
     setError(null);
