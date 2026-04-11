@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '../supabase';
 import { submitListing } from '../api';
 
@@ -22,6 +22,27 @@ export function useOnboarding() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted]   = useState(false);
   const [error, setError]           = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, full_name, email, phone')
+        .eq('user_id', user.id)
+        .single();
+      if (profile) {
+        setForm(f => ({
+          ...f,
+          hostName:  profile.display_name || profile.full_name || f.hostName || '',
+          hostEmail: profile.email || user.email || f.hostEmail || '',
+          hostPhone: profile.phone || f.hostPhone || '',
+        }));
+      } else if (user.email) {
+        setForm(f => ({ ...f, hostEmail: user.email }));
+      }
+    });
+  }, []);
 
   const update = useCallback((field, value) => {
     setForm(f => ({ ...f, [field]: value }));
