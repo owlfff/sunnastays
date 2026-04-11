@@ -52,7 +52,6 @@ export default function AccountPage() {
         bio:          form.bio,
         avatar_emoji: form.avatar_emoji,
       }, { onConflict: 'user_id' });
-    console.log('Save error:', error);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
