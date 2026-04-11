@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { supabase } from '../supabase';
 import { submitListing } from '../api';
 
 const INITIAL_STATE = {
@@ -59,7 +60,8 @@ export function useOnboarding() {
     setSubmitting(true);
     setError(null);
     try {
-      await submitListing(form);
+      const { data: { user } } = await supabase.auth.getUser();
+      await submitListing({ ...form, hostId: user?.id });
       setSubmitted(true);
     } catch (e) {
       setError('Something went wrong. Please try again.');

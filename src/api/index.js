@@ -123,6 +123,7 @@ export async function submitListing(payload) {
       address:     payload.address || null,
       instant_booking: payload.instantBooking || false,
       cancellation_policy: payload.cancellationPolicy || 'moderate',
+      host_id: payload.hostId || null,
       lat:         payload.lat || null,
       lng:         payload.lng || null,
       photos:      photoUrls,
