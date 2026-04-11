@@ -185,7 +185,13 @@ export default function Listing() {
 
             <div className="halal-cert-badge">🟢 SunnaStays Halal Guarantee included</div>
 
-            <div className="date-inputs">
+            <div className="date-inputs" onClick={async e => {
+                e.preventDefault();
+                e.stopPropagation();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) { navigate('/signin?redirect=' + encodeURIComponent('/stays/' + stay.slug + '?booking=true')); return; }
+                setShowBooking(true);
+              }} style={{cursor:'pointer'}}>
               <div className="date-row">
                 <div className="date-cell">
                   <div className="date-label">Check-in</div>
