@@ -51,7 +51,6 @@ export default function AccountPage() {
         phone:        form.phone,
         bio:          form.bio,
         avatar_emoji: form.avatar_emoji,
-        updated_at:   new Date().toISOString(),
       }, { onConflict: 'user_id' });
     console.log('Save error:', error);
     setSaving(false);
