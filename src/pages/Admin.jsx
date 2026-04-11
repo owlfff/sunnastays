@@ -27,8 +27,14 @@ export default function Admin() {
       .order('created_at', { ascending: false })
       .then(({ data }) => setReviews(data || []));
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { navigate('/signin'); return; }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+      if (!profile || profile.role !== 'admin') { navigate('/'); return; }
       setUser(user);
       loadProperties();
     });
