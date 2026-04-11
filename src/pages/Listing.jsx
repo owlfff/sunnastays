@@ -264,7 +264,7 @@ export default function Listing() {
           <div className="container">
             <hr className="listing-divider" />
             <h3 className="listing-section-title">Where you'll be</h3>
-            <div className="listing-address-line">📍 {stay.address || stay.location}</div>
+            <div className="listing-address-line">📍 {stay.location}</div>
           </div>
           <div className="listing-map-wrap">
             <SearchMap stays={[stay]} onHover={() => {}} hoveredId={null} />
