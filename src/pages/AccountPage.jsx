@@ -43,7 +43,7 @@ export default function AccountPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    const { error } = await supabase
+    await supabase
       .from('profiles')
       .upsert({
         user_id:      user.id,
