@@ -25,8 +25,10 @@ export default function Nav() {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) loadProfile(session.user.id);
+      const user = session?.user ?? null;
+      if (user && !user.email_confirmed_at) return;
+      setUser(user);
+      if (user) loadProfile(user.id);
       else setProfile(null);
     });
 
