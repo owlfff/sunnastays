@@ -13,6 +13,11 @@ const INITIAL_STATE = {
     alcoholFree: false, noNonHalalMeat: false, petFree: false,
     halalKitchen: false, prayerSpace: false, mosqueInfo: false, noInappropriateDecor: false,
   },
+  houseRules: {
+    noSmoking: false, noParties: false, noPets: false,
+    quietHours: false, noUnmahrems: false, shoesOff: false,
+  },
+  customRules: '',
   fullName: '', email: '', phone: '', termsAccepted: false,
 };
 
@@ -52,6 +57,13 @@ export function useOnboarding() {
     setForm(f => ({
       ...f,
       halalChecks: { ...f.halalChecks, [key]: !f.halalChecks[key] },
+    }));
+  }, []);
+
+  const toggleHouseRule = useCallback((key) => {
+    setForm(f => ({
+      ...f,
+      houseRules: { ...f.houseRules, [key]: !f.houseRules[key] },
     }));
   }, []);
 
@@ -99,7 +111,7 @@ export function useOnboarding() {
   }, []);
 
   return {
-    step, goStep, form, update, toggleHalalCheck,
+    step, goStep, form, update, toggleHalalCheck, toggleHouseRule,
     addPhoto, removePhoto, submitting, submitted, error,
     checkedCount, totalChecks, hostFee, hostEarns,
     handleSubmit, reset,

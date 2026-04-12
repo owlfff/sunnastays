@@ -5,7 +5,7 @@ import { useOnboarding } from '../hooks/useOnboarding';
 import AddressPicker from '../components/AddressPicker';
 import './HostOnboarding.css';
 
-const STEPS = ['Property', 'Photos', 'Pricing', 'Halal', 'Submit'];
+const STEPS = ['Property', 'Photos', 'Pricing', 'Halal', 'Rules', 'Submit'];
 
 const PROPERTY_TYPES = [
   { icon: '🏢', label: 'Apartment' },
@@ -266,9 +266,61 @@ function StepHalal({ form, toggleHalalCheck, goStep }) {
   );
 }
 
-// ── Step 5: Submit ────────────────────────────────────────────
+// ── Step 5: House Rules ───────────────────────────────────────
+const HOUSE_RULES = [
+  { key: 'noSmoking',   label: 'No smoking',                  desc: 'Smoking is not permitted anywhere on the property.' },
+  { key: 'noParties',   label: 'No parties or events',        desc: 'Gatherings beyond the listed guest count are not allowed.' },
+  { key: 'noPets',      label: 'No pets',                     desc: 'Pets are not permitted on the property.' },
+  { key: 'quietHours',  label: 'Quiet hours after 10 pm',     desc: 'Guests must observe quiet hours between 10 pm and 8 am.' },
+  { key: 'noUnmahrems', label: 'No unrelated mixed-gender gatherings', desc: 'Unrelated mixed-gender gatherings are not permitted on the property.' },
+  { key: 'shoesOff',    label: 'Shoes off indoors',           desc: 'Guests are required to remove footwear before entering.' },
+];
+
+function StepRules({ form, toggleHouseRule, update, goStep }) {
+  const activeCount = Object.values(form.houseRules).filter(Boolean).length;
+  return (
+    <>
+      <div className="step-title">House rules</div>
+      <div className="step-subtitle">Select the rules that apply to your property. Guests must agree to these before booking.</div>
+      <div className="halal-check-list">
+        {HOUSE_RULES.map(({ key, label, desc }) => {
+          const checked = form.houseRules[key];
+          return (
+            <div key={key} className={`halal-check-item ${checked ? 'checked' : ''}`}
+              onClick={() => toggleHouseRule(key)}>
+              <div className="check-box">{checked ? '✓' : ''}</div>
+              <div className="check-text">
+                <h4>{label}</h4>
+                <p>{desc}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="form-group" style={{ marginTop: 24 }}>
+        <label className="form-label">Additional rules <span style={{ fontWeight: 300, color: 'var(--ink-soft)' }}>(optional)</span></label>
+        <textarea className="form-input form-textarea"
+          placeholder="e.g. No loud music after 9 pm · Guests must register vehicle plates…"
+          value={form.customRules}
+          onChange={e => update('customRules', e.target.value)} />
+      </div>
+      {activeCount > 0 && (
+        <div className="halal-note" style={{ background: 'rgba(196,98,45,0.07)', color: 'var(--terra-dark)' }}>
+          {activeCount} rule{activeCount !== 1 ? 's' : ''} selected — guests will see these before booking.
+        </div>
+      )}
+      <div className="step-nav">
+        <button className="btn-back" onClick={() => goStep(4)}>← Back</button>
+        <button className="btn-next" onClick={() => goStep(6)}>Continue →</button>
+      </div>
+    </>
+  );
+}
+
+// ── Step 6: Submit ────────────────────────────────────────────
 function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error, handleSubmit, goStep }) {
   const loc = [form.city, form.country].filter(Boolean).join(', ') || '—';
+  const rulesCount = Object.values(form.houseRules).filter(Boolean).length;
   return (
     <>
       <div className="step-title">Review & submit</div>
@@ -281,6 +333,7 @@ function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error
           ['Nightly rate', form.price ? `£${form.price} / night` : '—'],
           ['Photos', `${form.photos.length} uploaded`],
           ['Halal standards', `${checkedCount} / ${totalChecks} items confirmed`],
+          ['House rules', rulesCount > 0 ? `${rulesCount} rule${rulesCount !== 1 ? 's' : ''} set` : 'None'],
         ].map(([k, v]) => (
           <div key={k} className="summary-row">
             <span className="summary-key">{k}</span>
@@ -314,7 +367,7 @@ function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error
       </div>
       {error && <div className="form-error">{error}</div>}
       <div className="step-nav">
-        <button className="btn-back" onClick={() => goStep(4)}>← Back</button>
+        <button className="btn-back" onClick={() => goStep(5)}>← Back</button>
         <button className="btn-next btn-submit" onClick={handleSubmit} disabled={submitting}>
           {submitting ? 'Submitting…' : 'Submit listing ✓'}
         </button>
@@ -346,7 +399,7 @@ export default function HostOnboarding() {
         <div className="onboard-header">
           <p className="onboard-arabic">كن مضيفاً معنا</p>
           <h2>List your <em>property</em></h2>
-          <p>Join SunnaStays in 5 simple steps. Our team reviews every listing within 48 hours.</p>
+          <p>Join SunnaStays in 6 simple steps. Our team reviews every listing within 48 hours.</p>
         </div>
 
         <div className="progress-track">
@@ -370,7 +423,8 @@ export default function HostOnboarding() {
               {ob.step === 2 && <StepPhotos    form={ob.form} addPhoto={ob.addPhoto} removePhoto={ob.removePhoto} goStep={ob.goStep} />}
               {ob.step === 3 && <StepPricing   form={ob.form} update={ob.update} goStep={ob.goStep} hostFee={ob.hostFee} hostEarns={ob.hostEarns} />}
               {ob.step === 4 && <StepHalal     form={ob.form} toggleHalalCheck={ob.toggleHalalCheck} goStep={ob.goStep} />}
-              {ob.step === 5 && <StepSubmit    form={ob.form} update={ob.update} checkedCount={ob.checkedCount} totalChecks={ob.totalChecks} submitting={ob.submitting} error={ob.error} handleSubmit={ob.handleSubmit} goStep={ob.goStep} />}
+              {ob.step === 5 && <StepRules     form={ob.form} toggleHouseRule={ob.toggleHouseRule} update={ob.update} goStep={ob.goStep} />}
+              {ob.step === 6 && <StepSubmit    form={ob.form} update={ob.update} checkedCount={ob.checkedCount} totalChecks={ob.totalChecks} submitting={ob.submitting} error={ob.error} handleSubmit={ob.handleSubmit} goStep={ob.goStep} />}
             </>
           )}
         </div>

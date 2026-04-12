@@ -127,6 +127,10 @@ export async function submitListing(payload) {
       lat:         payload.lat || null,
       lng:         payload.lng || null,
       photos:      photoUrls,
+      house_rules: {
+        ...payload.houseRules,
+        custom: payload.customRules || '',
+      },
     }]);
 
   if (error) throw new Error(error.message);
