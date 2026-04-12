@@ -193,6 +193,10 @@ export default function Listing() {
                 e.stopPropagation();
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) { navigate('/signin?redirect=' + encodeURIComponent('/stays/' + stay.slug + '?booking=true')); return; }
+                if (!user.email_confirmed_at) {
+                  alert('Please verify your email address before booking. Check your inbox for a verification link.');
+                  return;
+                }
                 setShowBooking(true);
               }} style={{cursor:'pointer'}}>
               <div className="date-row">
@@ -240,6 +244,10 @@ export default function Listing() {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) {
                   navigate('/signin?redirect=' + encodeURIComponent('/stays/' + stay.slug + '?booking=true'));
+                  return;
+                }
+                if (!user.email_confirmed_at) {
+                  alert('Please verify your email address before booking. Check your inbox for a verification link.');
                   return;
                 }
                 setShowBooking(true);

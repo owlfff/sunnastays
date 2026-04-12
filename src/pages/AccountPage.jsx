@@ -89,6 +89,12 @@ export default function AccountPage() {
             <div>
               <div className="account-avatar-name">{form.display_name || user?.email}</div>
               <div className="account-avatar-email">{user?.email}</div>
+              <div className="account-verified-badge">
+                {user?.email_confirmed_at 
+                  ? <span style={{color:'var(--success)',fontSize:13,fontWeight:500}}>✓ Email verified</span>
+                  : <span style={{color:'var(--terra)',fontSize:13,fontWeight:500}}>⚠ Email not verified</span>
+                }
+              </div>
             </div>
           </div>
 
