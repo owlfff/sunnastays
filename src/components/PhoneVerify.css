@@ -31,3 +31,23 @@
   letter-spacing: 8px;
   text-align: center;
 }
+
+.pv-phone-row {
+  display: flex;
+  gap: 8px;
+}
+.pv-country-select {
+  width: 110px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 12px;
+  padding: 10px 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--white);
+  outline: none;
+  cursor: pointer;
+}
+.pv-country-select:focus { border-color: var(--terra); }
+.pv-number-input { flex: 1; }
