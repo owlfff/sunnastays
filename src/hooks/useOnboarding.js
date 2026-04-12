@@ -39,12 +39,12 @@ export function useOnboarding() {
       if (profile) {
         setForm(f => ({
           ...f,
-          hostName:  profile.display_name || profile.full_name || f.hostName || '',
-          hostEmail: profile.email || user.email || f.hostEmail || '',
-          hostPhone: profile.phone || f.hostPhone || '',
+          fullName: profile.full_name || profile.display_name || f.fullName || '',
+          email:    profile.email || user.email || f.email || '',
+          phone:    profile.phone || f.phone || '',
         }));
       } else if (user.email) {
-        setForm(f => ({ ...f, hostEmail: user.email }));
+        setForm(f => ({ ...f, email: user.email }));
       }
     });
   }, []);
