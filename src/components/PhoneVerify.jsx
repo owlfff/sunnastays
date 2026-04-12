@@ -27,7 +27,7 @@ const COUNTRY_CODES = [
 
 function formatLocalNumber(raw) {
   // Remove leading 0, spaces, dashes
-  return raw.replace(/^0/, '').replace(/[\s\-]/g, '');
+  return raw.replace(/^0/, '').replace(/[\s-]/g, '');
 }
 
 export default function PhoneVerify({ onVerified, onSkip, initialPhone }) {
@@ -36,7 +36,7 @@ export default function PhoneVerify({ onVerified, onSkip, initialPhone }) {
   const [localNumber, setLocalNumber] = useState(() => {
     if (!initialPhone) return '';
     // Strip country code if present
-    const cleaned = initialPhone.replace(/[\s\-]/g, '');
+    const cleaned = initialPhone.replace(/[\s-]/g, '');
     for (const c of COUNTRY_CODES) {
       if (cleaned.startsWith(c.code)) return cleaned.slice(c.code.length);
     }
