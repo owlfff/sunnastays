@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import './AccountPage.css';
+import PhoneVerify from '../components/PhoneVerify';
 
 const AVATARS = ['👤','😊','🧑','👨','👩','🧔','👱','🧕','👲','🎩','😎','🤓','🧑‍💼','👨‍💼','👩‍💼'];
 
@@ -11,6 +12,8 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showPhoneVerify, setShowPhoneVerify] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
   const [form, setForm] = useState({
     display_name: '',
     phone: '',
@@ -36,6 +39,7 @@ export default function AccountPage() {
           bio:          profile.bio || '',
           avatar_emoji: profile.avatar_emoji || '👤',
         });
+        setPhoneVerified(profile.phone_verified || false);
       }
       setLoading(false);
     });
@@ -125,12 +129,38 @@ export default function AccountPage() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Phone number</label>
-            <input className="form-input" type="tel"
-              placeholder="+44 7700 000000"
-              value={form.phone}
-              onChange={e => setForm(f => ({...f, phone: e.target.value}))} />
+            <label className="form-label">Phone number
+              {phoneVerified && <span style={{color:'var(--success)',fontSize:12,marginLeft:8,fontWeight:500}}>✓ Verified</span>}
+              {!phoneVerified && form.phone && <span style={{color:'var(--terra)',fontSize:12,marginLeft:8,fontWeight:500}}>Not verified</span>}
+            </label>
+            <div style={{display:'flex',gap:8}}>
+              <input className="form-input" type="tel"
+                placeholder="+44 7700 000000"
+                value={form.phone}
+                onChange={e => setForm(f => ({...f, phone: e.target.value}))}
+                style={{flex:1}} />
+              {!phoneVerified && (
+                <button type="button" className="btn-secondary"
+                  style={{padding:'0 16px',borderRadius:12,whiteSpace:'nowrap',fontSize:13}}
+                  onClick={() => setShowPhoneVerify(true)}>
+                  Verify
+                </button>
+              )}
+            </div>
           </div>
+
+          {showPhoneVerify && (
+            <div style={{background:'var(--sand)',borderRadius:16,padding:20,marginBottom:16}}>
+              <PhoneVerify
+                onVerified={(phone) => {
+                  setPhoneVerified(true);
+                  setShowPhoneVerify(false);
+                  setForm(f => ({...f, phone}));
+                }}
+                onSkip={() => setShowPhoneVerify(false)}
+              />
+            </div>
+          )}
 
           <div className="form-group">
             <label className="form-label">About you <span style={{fontWeight:300,color:'var(--ink-soft)'}}>(optional)</span></label>

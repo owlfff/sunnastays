@@ -1,0 +1,33 @@
+.phone-verify {
+  text-align: center;
+  padding: 8px 0;
+}
+.pv-icon { font-size: 48px; margin-bottom: 16px; }
+.pv-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--ink); margin-bottom: 8px;
+}
+.pv-sub {
+  font-size: 14px; color: var(--ink-soft);
+  font-weight: 300; line-height: 1.6;
+  margin-bottom: 20px;
+}
+.pv-btn {
+  width: 100%; justify-content: center;
+  border-radius: 14px; padding: 14px;
+  margin-top: 8px;
+}
+.pv-skip {
+  background: none; border: none;
+  color: var(--ink-soft); font-size: 13px;
+  cursor: pointer; margin-top: 12px;
+  font-family: 'DM Sans', sans-serif;
+  text-decoration: underline;
+}
+.pv-skip:hover { color: var(--ink); }
+.pv-code-input {
+  font-size: 24px !important;
+  letter-spacing: 8px;
+  text-align: center;
+}
