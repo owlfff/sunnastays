@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { supabase } from '../supabase';
 import './PhoneVerify.css';
 
-export default function PhoneVerify({ onVerified, onSkip }) {
-  const [step, setStep] = useState(1); // 1=enter phone, 2=enter code
-  const [phone, setPhone] = useState('');
+export default function PhoneVerify({ onVerified, onSkip, initialPhone }) {
+  const [step, setStep] = useState(1);
+  const [phone, setPhone] = useState(initialPhone || '');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

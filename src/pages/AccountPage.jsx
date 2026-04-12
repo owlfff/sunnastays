@@ -152,6 +152,7 @@ export default function AccountPage() {
           {showPhoneVerify && (
             <div style={{background:'var(--sand)',borderRadius:16,padding:20,marginBottom:16}}>
               <PhoneVerify
+                initialPhone={form.phone}
                 onVerified={(phone) => {
                   setPhoneVerified(true);
                   setShowPhoneVerify(false);
