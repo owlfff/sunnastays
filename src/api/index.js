@@ -59,6 +59,7 @@ function formatProperty(p, index) {
     address:        p.address,
     instantBooking: p.instant_booking,
     cancellationPolicy: p.cancellation_policy || 'moderate',
+    houseRules: p.house_rules || {},
   };
 }
 

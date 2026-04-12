@@ -1,3 +1,20 @@
+/* HOUSE RULES */
+.house-rules-title {
+  font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 14px;
+}
+.house-rules-list {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.house-rule-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--ink-mid);
+}
+.house-rule-icon { font-size: 18px; flex-shrink: 0; }
+.house-rule-custom {
+  grid-column: 1 / -1;
+  color: var(--ink-soft); font-size: 13px;
+}
+
 .listing-page {
   padding-top: var(--nav-height);
   background: var(--cream);

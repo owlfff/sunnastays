@@ -168,6 +168,43 @@ export default function Listing() {
 
           <hr className="listing-divider" />
 
+          {(() => {
+            const RULE_LABELS = {
+              noSmoking:   { icon: '🚭', label: 'No smoking' },
+              noParties:   { icon: '🎉', label: 'No parties or events' },
+              noPets:      { icon: '🐾', label: 'No pets' },
+              quietHours:  { icon: '🌙', label: 'Quiet hours after 10 pm' },
+              noUnmahrems: { icon: '🤝', label: 'No unrelated mixed-gender gatherings' },
+              shoesOff:    { icon: '👟', label: 'Shoes off indoors' },
+            };
+            const active = Object.entries(stay.houseRules || {})
+              .filter(([k, v]) => k !== 'custom' && v === true);
+            const custom = stay.houseRules?.custom;
+            if (!active.length && !custom) return null;
+            return (
+              <>
+                <div className="house-rules-section">
+                  <h4 className="house-rules-title">🏠 House rules</h4>
+                  <div className="house-rules-list">
+                    {active.map(([key]) => (
+                      <div key={key} className="house-rule-item">
+                        <span className="house-rule-icon">{RULE_LABELS[key]?.icon}</span>
+                        <span>{RULE_LABELS[key]?.label || key}</span>
+                      </div>
+                    ))}
+                    {custom && (
+                      <div className="house-rule-item house-rule-custom">
+                        <span className="house-rule-icon">📋</span>
+                        <span>{custom}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <hr className="listing-divider" />
+              </>
+            );
+          })()}
+
           <div className="amenities-title">What this place offers</div>
           <div className="amenity-grid">
             {stay.amenities?.map(a => (
