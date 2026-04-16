@@ -18,6 +18,7 @@ export default function Listing() {
   const [selectedCheckout, setSelectedCheckout] = useState(null);
   const [selectedGuests, setSelectedGuests] = useState(1);
   const [reviews, setReviews] = useState([]);
+  const [lightbox, setLightbox] = useState(null);
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -67,13 +68,13 @@ export default function Listing() {
       <div className="listing-hero">
         {stay.photos && stay.photos.length > 0 ? (
           <>
-            <div className="listing-img-main">
-              <img src={stay.photos[0]} alt={stay.name} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'20px 0 0 20px' }} />
+            <div className="listing-img-main" onClick={() => setLightbox({ photos: stay.photos, index: 0 })}>
+              <img src={stay.photos[0]} alt={stay.name} />
             </div>
             <div className="listing-img-grid">
               {[stay.photos[1] || stay.photos[0], stay.photos[2] || stay.photos[0]].map((url, i) => (
-                <div key={i} className="listing-img-sub">
-                  <img src={url} alt={stay.name} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius: i === 0 ? '0 20px 0 0' : '0 0 20px 0' }} />
+                <div key={i} className="listing-img-sub" onClick={() => setLightbox({ photos: stay.photos, index: i + 1 < stay.photos.length ? i + 1 : 0 })}>
+                  <img src={url} alt={stay.name} />
                 </div>
               ))}
             </div>
@@ -344,6 +345,20 @@ export default function Listing() {
         </div>
       )}
       <Footer />
+
+      {lightbox && (
+        <div className="listing-lightbox" onClick={() => setLightbox(null)}>
+          <button className="listing-lightbox-close" onClick={() => setLightbox(null)}>✕</button>
+          {lightbox.index > 0 && (
+            <button className="listing-lightbox-prev" onClick={e => { e.stopPropagation(); setLightbox(l => ({ ...l, index: l.index - 1 })); }}>‹</button>
+          )}
+          <img src={lightbox.photos[lightbox.index]} alt="" className="listing-lightbox-img" onClick={e => e.stopPropagation()} />
+          {lightbox.index < lightbox.photos.length - 1 && (
+            <button className="listing-lightbox-next" onClick={e => { e.stopPropagation(); setLightbox(l => ({ ...l, index: l.index + 1 })); }}>›</button>
+          )}
+          <div className="listing-lightbox-counter">{lightbox.index + 1} / {lightbox.photos.length}</div>
+        </div>
+      )}
 
       {showBooking && (
         <BookingModal
