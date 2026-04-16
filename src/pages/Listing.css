@@ -26,8 +26,8 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 8px;
-  height: 420px;
-  padding: 24px 48px 0;
+  height: 380px;
+  padding: 20px 48px 20px;
   max-width: 1296px;
   margin: 0 auto;
   overflow: hidden;
