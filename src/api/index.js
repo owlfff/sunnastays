@@ -89,9 +89,19 @@ export async function getStay(slug) {
 
   if (error || !data) return MOCK_LISTING;
 
+  let hostName = 'Host';
+  if (data.host_id) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name, full_name')
+      .eq('user_id', data.host_id)
+      .single();
+    if (profile) hostName = profile.display_name || profile.full_name || 'Host';
+  }
+
   return {
     ...formatProperty(data, 0),
-    host: { name:'Host', since: new Date(data.created_at).getFullYear(), languages:['English'], isSuperhost:false, emoji:'👤' },
+    host: { name: hostName, since: new Date(data.created_at).getFullYear(), languages:['English'], isSuperhost:false, emoji:'👤' },
     amenities: [
       { icon:'📶', label:'Fast wifi' },
       { icon:'❄️', label:'Air conditioning' },
