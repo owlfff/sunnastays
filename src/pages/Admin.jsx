@@ -88,7 +88,7 @@ export default function Admin() {
   const fmt = d => { const dt = new Date(d); return dt.getDate() + ' ' + MONTHS_SHORT[dt.getMonth()] + ' ' + dt.getFullYear(); };
 
   const filteredBookings = bookingFilter === 'all' ? bookings : bookings.filter(b => b.status === bookingFilter);
-  const totalRevenue = bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.total_price || 0), 0);
+  const sunnaEarnings = Math.round(bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.total_price || 0), 0) * 0.08);
 
   if (checking) return null;
 
@@ -115,7 +115,7 @@ export default function Admin() {
           <div className="admin-stat"><div className="admin-stat-num">{bookings.length}</div><div className="admin-stat-label">Total bookings</div></div>
           <div className="admin-stat"><div className="admin-stat-num" style={{color:'var(--terra)'}}>{bookings.filter(b=>b.status==='pending').length}</div><div className="admin-stat-label">Pending</div></div>
           <div className="admin-stat"><div className="admin-stat-num" style={{color:'var(--success)'}}>{bookings.filter(b=>b.status==='confirmed').length}</div><div className="admin-stat-label">Confirmed</div></div>
-          <div className="admin-stat"><div className="admin-stat-num">£{totalRevenue.toLocaleString()}</div><div className="admin-stat-label">Total revenue</div></div>
+          <div className="admin-stat"><div className="admin-stat-num">£{sunnaEarnings.toLocaleString()}</div><div className="admin-stat-label">SunnaStays earnings</div></div>
           <div className="admin-stat"><div className="admin-stat-num">{properties.length}</div><div className="admin-stat-label">Properties</div></div>
         </div>
 
