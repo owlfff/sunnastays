@@ -58,7 +58,7 @@ export default function Listing() {
   );
 
   const nights = 5;
-  const serviceFee = Math.round(stay.price * nights * 0.08);
+  const serviceFee = Math.round(stay.price * nights * 0.10);
   const total = stay.price * nights + serviceFee;
 
   return (

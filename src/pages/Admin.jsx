@@ -88,7 +88,7 @@ export default function Admin() {
   const fmt = d => { const dt = new Date(d); return dt.getDate() + ' ' + MONTHS_SHORT[dt.getMonth()] + ' ' + dt.getFullYear(); };
 
   const filteredBookings = bookingFilter === 'all' ? bookings : bookings.filter(b => b.status === bookingFilter);
-  const sunnaEarnings = Math.round(bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.total_price || 0), 0) * 0.08);
+  const sunnaEarnings = Math.round(bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.total_price || 0), 0) * (10 / 110));
 
   if (checking) return null;
 
@@ -264,7 +264,7 @@ export default function Admin() {
             {filtered.map(p => {
               const host = hostProfiles[p.host_id];
               const hostName = host?.display_name || host?.full_name || '—';
-              const fee = Math.round(p.price * 0.08);
+              const fee = Math.round(p.price * 0.03);
               const hostEarns = p.price - fee;
               return (
                 <div key={p.id} className="admin-card">
@@ -300,7 +300,7 @@ export default function Admin() {
                   <div className="admin-section-label">Revenue breakdown</div>
                   <div className="admin-revenue-block">
                     <div className="admin-revenue-row"><span>Nightly rate</span><span>£{p.price}</span></div>
-                    <div className="admin-revenue-row admin-revenue-row--fee"><span>SunnaStays fee (8%)</span><span>+£{fee}</span></div>
+                    <div className="admin-revenue-row admin-revenue-row--fee"><span>SunnaStays host fee (3%)</span><span>+£{fee}</span></div>
                     <div className="admin-revenue-row"><span>Host receives</span><span>£{hostEarns}</span></div>
                     <div className="admin-revenue-row admin-revenue-row--total"><span>SunnaStays earns / night</span><span>£{fee}</span></div>
                   </div>

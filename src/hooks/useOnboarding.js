@@ -82,7 +82,7 @@ export function useOnboarding() {
 
   const checkedCount = Object.values(form.halalChecks).filter(Boolean).length;
   const totalChecks  = Object.keys(form.halalChecks).length;
-  const hostFee      = form.price ? Math.round(parseFloat(form.price) * 0.08) : 0;
+  const hostFee      = form.price ? Math.round(parseFloat(form.price) * 0.03) : 0;
   const hostEarns    = form.price ? Math.round(parseFloat(form.price) - hostFee) : 0;
 
   const handleSubmit = useCallback(async () => {

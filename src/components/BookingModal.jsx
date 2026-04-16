@@ -111,7 +111,7 @@ export default function BookingModal({ stay, onClose, initialCheckin, initialChe
   const fmt = d => d ? `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}` : '—';
   const nights = checkin && checkout ? Math.round((checkout - checkin) / (1000*60*60*24)) : 0;
   const subtotal = nights * stay.price;
-  const serviceFee = Math.round(subtotal * 0.12);
+  const serviceFee = Math.round(subtotal * 0.10);
   const total = subtotal + serviceFee;
 
   const validateStep2 = () => {
@@ -311,7 +311,7 @@ export default function BookingModal({ stay, onClose, initialCheckin, initialChe
                   {nights > 0 && (
                     <div className="bm-price-preview">
                       <div className="bm-price-row"><span>£{stay.price} × {nights} night{nights>1?'s':''}</span><span>£{subtotal}</span></div>
-                      <div className="bm-price-row"><span>Service fee (12%)</span><span>£{serviceFee}</span></div>
+                      <div className="bm-price-row"><span>Service fee (10%)</span><span>£{serviceFee}</span></div>
                       <div className="bm-price-row bm-price-total"><span>Total</span><span>£{total}</span></div>
                     </div>
                   )}

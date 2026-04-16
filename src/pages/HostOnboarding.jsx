@@ -172,7 +172,7 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
   return (
     <>
       <div className="step-title">Set your price</div>
-      <div className="step-subtitle">Set your nightly rate — we'll show you what you earn after our 8% host fee.</div>
+      <div className="step-subtitle">Set your nightly rate — we'll show you what you earn after our 3% host fee.</div>
       <div className="form-group">
         <label className="form-label">Nightly price (GBP)</label>
         <div className="price-input-wrap">
@@ -189,7 +189,7 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
       </div>
       <div className="price-breakdown">
         <div className="price-row"><span>Your nightly rate</span><span>{form.price ? `£${form.price}` : '£—'}</span></div>
-        <div className="price-row"><span>SunnaStays host fee (8%)</span><span>{form.price ? `−£${hostFee}` : '−£—'}</span></div>
+        <div className="price-row"><span>SunnaStays host fee (3%)</span><span>{form.price ? `−£${hostFee}` : '−£—'}</span></div>
         <div className="price-row price-row--total"><span>You receive per night</span><span>{form.price ? `£${hostEarns}` : '£—'}</span></div>
       </div>
       <div className="form-row" style={{ marginTop: 22 }}>
