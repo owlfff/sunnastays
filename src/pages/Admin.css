@@ -284,3 +284,20 @@
   align-items: center; justify-content: center;
 }
 .admin-lightbox-close:hover { background: rgba(255,255,255,0.3); }
+.admin-lightbox-prev,
+.admin-lightbox-next {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,0.15); border: none;
+  color: white; font-size: 40px; width: 52px; height: 52px;
+  border-radius: 50%; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; line-height: 1;
+  transition: background 0.15s;
+}
+.admin-lightbox-prev { left: 20px; }
+.admin-lightbox-next { right: 20px; }
+.admin-lightbox-prev:hover,
+.admin-lightbox-next:hover { background: rgba(255,255,255,0.3); }
+.admin-lightbox-counter {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 500;
+}

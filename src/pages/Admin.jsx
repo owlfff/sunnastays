@@ -10,7 +10,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [filter, setFilter] = useState('pending');
-  const [lightboxPhoto, setLightboxPhoto] = useState(null);
+  const [lightbox, setLightbox] = useState(null); // { photos: [], index: 0 }
   const [checking, setChecking] = useState(true);
   const [activeTab, setActiveTab] = useState('properties');
   const [bookings, setBookings] = useState([]);
@@ -309,7 +309,7 @@ export default function Admin() {
                     <div className="admin-photos">
                       {p.photos.map((url, i) => (
                         <img key={i} src={url} alt={`Property ${i+1}`} className="admin-photo"
-                          onClick={() => setLightboxPhoto(url)} />
+                          onClick={() => setLightbox({ photos: p.photos, index: i })} />
                       ))}
                     </div>
                   ) : (
@@ -346,10 +346,17 @@ export default function Admin() {
           </div>
         )}
 
-          {lightboxPhoto && (
-            <div className="admin-lightbox" onClick={() => setLightboxPhoto(null)}>
-              <img src={lightboxPhoto} alt="Full size" className="admin-lightbox-img" />
-              <button className="admin-lightbox-close" onClick={() => setLightboxPhoto(null)}>✕</button>
+          {lightbox && (
+            <div className="admin-lightbox" onClick={() => setLightbox(null)}>
+              <button className="admin-lightbox-close" onClick={() => setLightbox(null)}>✕</button>
+              {lightbox.index > 0 && (
+                <button className="admin-lightbox-prev" onClick={e => { e.stopPropagation(); setLightbox(l => ({ ...l, index: l.index - 1 })); }}>‹</button>
+              )}
+              <img src={lightbox.photos[lightbox.index]} alt="Full size" className="admin-lightbox-img" onClick={e => e.stopPropagation()} />
+              {lightbox.index < lightbox.photos.length - 1 && (
+                <button className="admin-lightbox-next" onClick={e => { e.stopPropagation(); setLightbox(l => ({ ...l, index: l.index + 1 })); }}>›</button>
+              )}
+              <div className="admin-lightbox-counter">{lightbox.index + 1} / {lightbox.photos.length}</div>
             </div>
           )}
           </div>
