@@ -37,6 +37,7 @@
 
 .listing-img-main {
   border-radius: 20px 0 0 20px;
+  overflow: hidden;
   display: flex; align-items: center; justify-content: center;
 }
 .listing-img-emoji { font-size: 80px; }
