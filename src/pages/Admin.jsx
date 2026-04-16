@@ -344,6 +344,7 @@ export default function Admin() {
               );
             })}
           </div>
+        )}
 
           {lightboxPhoto && (
             <div className="admin-lightbox" onClick={() => setLightboxPhoto(null)}>
@@ -351,7 +352,6 @@ export default function Admin() {
               <button className="admin-lightbox-close" onClick={() => setLightboxPhoto(null)}>✕</button>
             </div>
           )}
-        )}
           </div>
         )}
       </div>
