@@ -216,3 +216,71 @@
 @media (max-width: 900px) {
   .admin-stats { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ADDRESS */
+.admin-address {
+  font-size: 13px; color: var(--ink-mid);
+  margin-bottom: 14px; line-height: 1.5;
+}
+
+/* SECTION LABEL */
+.admin-section-label {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--ink-soft); margin-bottom: 8px; margin-top: 14px;
+}
+
+/* HOST BLOCK */
+.admin-host-block {
+  background: var(--cream); border-radius: 10px;
+  padding: 12px 14px; margin-bottom: 4px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.admin-host-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px;
+}
+.admin-host-row span { color: var(--ink-soft); }
+.admin-host-row strong { color: var(--ink); font-weight: 600; }
+
+/* REVENUE BLOCK */
+.admin-revenue-block {
+  background: var(--cream); border-radius: 10px;
+  padding: 12px 14px; margin-bottom: 14px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.admin-revenue-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: var(--ink-mid);
+}
+.admin-revenue-row--fee span:last-child { color: var(--success); font-weight: 600; }
+.admin-revenue-row--total {
+  border-top: 1px solid var(--sand-dark);
+  margin-top: 4px; padding-top: 8px;
+  font-weight: 700; color: var(--ink);
+}
+
+/* PHOTOS — clickable */
+.admin-photo { cursor: zoom-in; }
+.admin-photo:hover { opacity: 0.85; transform: scale(1.03); transition: all 0.15s; }
+
+/* LIGHTBOX */
+.admin-lightbox {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.88);
+  display: flex; align-items: center; justify-content: center;
+  cursor: zoom-out;
+}
+.admin-lightbox-img {
+  max-width: 90vw; max-height: 88vh;
+  border-radius: 12px; object-fit: contain;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+}
+.admin-lightbox-close {
+  position: fixed; top: 20px; right: 24px;
+  background: rgba(255,255,255,0.15); border: none;
+  color: white; font-size: 20px; width: 40px; height: 40px;
+  border-radius: 50%; cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+}
+.admin-lightbox-close:hover { background: rgba(255,255,255,0.3); }

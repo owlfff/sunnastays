@@ -6,9 +6,11 @@ import './Admin.css';
 export default function Admin() {
   const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
+  const [hostProfiles, setHostProfiles] = useState({});
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [filter, setFilter] = useState('pending');
+  const [lightboxPhoto, setLightboxPhoto] = useState(null);
   const [checking, setChecking] = useState(true);
   const [activeTab, setActiveTab] = useState('properties');
   const [bookings, setBookings] = useState([]);
@@ -48,7 +50,21 @@ export default function Admin() {
       .from('properties')
       .select('*')
       .order('created_at', { ascending: false });
-    if (!error) setProperties(data);
+    if (!error && data) {
+      setProperties(data);
+      const hostIds = [...new Set(data.map(p => p.host_id).filter(Boolean))];
+      if (hostIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('user_id, display_name, full_name, email, phone, created_at')
+          .in('user_id', hostIds);
+        if (profiles) {
+          const map = {};
+          profiles.forEach(p => { map[p.user_id] = p; });
+          setHostProfiles(map);
+        }
+      }
+    }
     setLoading(false);
   };
 
@@ -245,72 +261,96 @@ export default function Admin() {
           <div className="admin-empty">No {filter} properties</div>
         ) : (
           <div className="admin-grid">
-            {filtered.map(p => (
-              <div key={p.id} className="admin-card">
-                <div className="admin-card-header">
-                  <div>
-                    <div className="admin-card-name">{p.name || '—'}</div>
-                    <div className="admin-card-loc">📍 {p.city}, {p.country}</div>
+            {filtered.map(p => {
+              const host = hostProfiles[p.host_id];
+              const hostName = host?.display_name || host?.full_name || '—';
+              const fee = Math.round(p.price * 0.08);
+              const hostEarns = p.price - fee;
+              return (
+                <div key={p.id} className="admin-card">
+                  <div className="admin-card-header">
+                    <div>
+                      <div className="admin-card-name">{p.name || '—'}</div>
+                      <div className="admin-card-loc">📍 {p.city}, {p.country}</div>
+                    </div>
+                    <div className={`admin-status admin-status--${p.status}`}>
+                      {p.status}
+                    </div>
                   </div>
-                  <div className={`admin-status admin-status--${p.status}`}>
-                    {p.status}
+
+                  <div className="admin-card-details">
+                    <div className="admin-detail"><span>Type</span><strong>{p.type || '—'}</strong></div>
+                    <div className="admin-detail"><span>Nightly rate</span><strong>£{p.price}</strong></div>
+                    <div className="admin-detail"><span>Bedrooms</span><strong>{p.bedrooms}</strong></div>
+                    <div className="admin-detail"><span>Max guests</span><strong>{p.max_guests}</strong></div>
                   </div>
+
+                  {p.address && (
+                    <div className="admin-address">📍 {p.address}</div>
+                  )}
+
+                  <div className="admin-section-label">Host</div>
+                  <div className="admin-host-block">
+                    <div className="admin-host-row"><span>Name</span><strong>{hostName}</strong></div>
+                    {host?.email && <div className="admin-host-row"><span>Email</span><strong>{host.email}</strong></div>}
+                    {host?.phone && <div className="admin-host-row"><span>Phone</span><strong>{host.phone}</strong></div>}
+                    {host?.created_at && <div className="admin-host-row"><span>Member since</span><strong>{new Date(host.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}</strong></div>}
+                  </div>
+
+                  <div className="admin-section-label">Revenue breakdown</div>
+                  <div className="admin-revenue-block">
+                    <div className="admin-revenue-row"><span>Nightly rate</span><span>£{p.price}</span></div>
+                    <div className="admin-revenue-row admin-revenue-row--fee"><span>SunnaStays fee (8%)</span><span>+£{fee}</span></div>
+                    <div className="admin-revenue-row"><span>Host receives</span><span>£{hostEarns}</span></div>
+                    <div className="admin-revenue-row admin-revenue-row--total"><span>SunnaStays earns / night</span><span>£{fee}</span></div>
+                  </div>
+
+                  {p.photos && p.photos.length > 0 ? (
+                    <div className="admin-photos">
+                      {p.photos.map((url, i) => (
+                        <img key={i} src={url} alt={`Property ${i+1}`} className="admin-photo"
+                          onClick={() => setLightboxPhoto(url)} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="admin-no-photos">No photos uploaded</div>
+                  )}
+
+                  {p.description && (
+                    <p className="admin-card-desc">{p.description}</p>
+                  )}
+
+                  <div className="admin-card-submitted">
+                    Submitted {new Date(p.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </div>
+
+                  {p.status === 'pending' && (
+                    <div className="admin-card-actions">
+                      <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>✓ Approve</button>
+                      <button className="admin-btn-reject" onClick={() => updateStatus(p.id, 'rejected')}>✕ Reject</button>
+                    </div>
+                  )}
+                  {p.status === 'approved' && (
+                    <div className="admin-card-actions">
+                      <button className="admin-btn-reject" onClick={() => updateStatus(p.id, 'rejected')}>✕ Revoke approval</button>
+                    </div>
+                  )}
+                  {p.status === 'rejected' && (
+                    <div className="admin-card-actions">
+                      <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>✓ Approve instead</button>
+                    </div>
+                  )}
                 </div>
-
-                <div className="admin-card-details">
-                  <div className="admin-detail"><span>Type</span><strong>{p.type || '—'}</strong></div>
-                  <div className="admin-detail"><span>Price</span><strong>£{p.price} / night</strong></div>
-                  <div className="admin-detail"><span>Bedrooms</span><strong>{p.bedrooms}</strong></div>
-                  <div className="admin-detail"><span>Max guests</span><strong>{p.max_guests}</strong></div>
-                </div>
-
-                {p.photos && p.photos.length > 0 ? (
-                  <div className="admin-photos">
-                    {p.photos.map((url, i) => (
-                      <img key={i} src={url} alt={`Property ${i+1}`} className="admin-photo" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="admin-no-photos">No photos uploaded</div>
-                )}
-
-                {p.description && (
-                  <p className="admin-card-desc">{p.description}</p>
-                )}
-
-                <div className="admin-card-submitted">
-                  Submitted {new Date(p.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </div>
-
-                {p.status === 'pending' && (
-                  <div className="admin-card-actions">
-                    <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>
-                      ✓ Approve
-                    </button>
-                    <button className="admin-btn-reject" onClick={() => updateStatus(p.id, 'rejected')}>
-                      ✕ Reject
-                    </button>
-                  </div>
-                )}
-
-                {p.status === 'approved' && (
-                  <div className="admin-card-actions">
-                    <button className="admin-btn-reject" onClick={() => updateStatus(p.id, 'rejected')}>
-                      ✕ Revoke approval
-                    </button>
-                  </div>
-                )}
-
-                {p.status === 'rejected' && (
-                  <div className="admin-card-actions">
-                    <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>
-                      ✓ Approve instead
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
+
+          {lightboxPhoto && (
+            <div className="admin-lightbox" onClick={() => setLightboxPhoto(null)}>
+              <img src={lightboxPhoto} alt="Full size" className="admin-lightbox-img" />
+              <button className="admin-lightbox-close" onClick={() => setLightboxPhoto(null)}>✕</button>
+            </div>
+          )}
         )}
           </div>
         )}
