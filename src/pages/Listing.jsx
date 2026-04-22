@@ -54,7 +54,17 @@ export default function Listing() {
         setStay(data);
         setLoading(false);
         if (data?.id) getReviewsForProperty(data.id).then(r => { setReviews(r); }).catch(() => {});
-        if (data?.lat && data?.lng) fetchNearestMosque(data.lat, data.lng);
+        if (data?.lat && data?.lng) {
+          fetchNearestMosque(data.lat, data.lng);
+        } else if (data?.location) {
+          // Geocode city/country via Nominatim as fallback
+          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(data.location)}&format=json&limit=1`)
+            .then(r => r.json())
+            .then(results => {
+              if (results?.[0]) fetchNearestMosque(parseFloat(results[0].lat), parseFloat(results[0].lon));
+            })
+            .catch(() => {});
+        }
       })
       .catch(() => setLoading(false));
   }, [slug, fetchNearestMosque]);
