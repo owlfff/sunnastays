@@ -18,6 +18,7 @@ const INITIAL_STATE = {
     quietHours: false, noUnmahrems: false, shoesOff: false,
   },
   customRules: '',
+  amenities: [],
   fullName: '', email: '', phone: '', termsAccepted: false,
 };
 
@@ -67,6 +68,15 @@ export function useOnboarding() {
     }));
   }, []);
 
+  const toggleAmenity = useCallback((key) => {
+    setForm(f => ({
+      ...f,
+      amenities: f.amenities.includes(key)
+        ? f.amenities.filter(a => a !== key)
+        : [...f.amenities, key],
+    }));
+  }, []);
+
   const addPhoto = useCallback((photo) => {
     setForm(f => ({ ...f, photos: [...f.photos, photo] }));
   }, []);
@@ -111,7 +121,7 @@ export function useOnboarding() {
   }, []);
 
   return {
-    step, goStep, form, update, toggleHalalCheck, toggleHouseRule,
+    step, goStep, form, update, toggleHalalCheck, toggleHouseRule, toggleAmenity,
     addPhoto, removePhoto, submitting, submitted, error,
     checkedCount, totalChecks, hostFee, hostEarns,
     handleSubmit, reset,

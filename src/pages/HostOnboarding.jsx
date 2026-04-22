@@ -16,6 +16,25 @@ const PROPERTY_TYPES = [
   { icon: '🏕️', label: 'Unique stay' },
 ];
 
+const AMENITIES = [
+  { key: 'wifi',      icon: '📶', label: 'Fast WiFi' },
+  { key: 'ac',        icon: '❄️', label: 'Air conditioning' },
+  { key: 'heating',   icon: '🔥', label: 'Heating' },
+  { key: 'kitchen',   icon: '🍳', label: 'Full kitchen' },
+  { key: 'washer',    icon: '🧺', label: 'Washing machine' },
+  { key: 'parking',   icon: '🅿️', label: 'Free parking' },
+  { key: 'pool',      icon: '🏊', label: 'Pool' },
+  { key: 'gym',       icon: '💪', label: 'Gym' },
+  { key: 'tv',        icon: '📺', label: 'TV' },
+  { key: 'workspace', icon: '💻', label: 'Workspace' },
+  { key: 'balcony',   icon: '🌿', label: 'Balcony / Terrace' },
+  { key: 'garden',    icon: '🌳', label: 'Garden' },
+  { key: 'elevator',  icon: '🛗', label: 'Lift' },
+  { key: 'cot',       icon: '👶', label: 'Baby cot' },
+  { key: 'iron',      icon: '👔', label: 'Iron & board' },
+  { key: 'bbq',       icon: '🍖', label: 'BBQ' },
+];
+
 const HALAL_CHECKS = [
   { key: 'alcoholFree',          required: true,  title: 'Alcohol-free property',      desc: 'No alcohol is stored, consumed, or served on the property at any time.' },
   { key: 'noNonHalalMeat',       required: true,  title: 'No non-halal meat',           desc: 'Pork and non-halal meat products are not present or permitted on the property.' },
@@ -27,7 +46,7 @@ const HALAL_CHECKS = [
 ];
 
 // ── Step 1 ────────────────────────────────────────────────────
-function StepProperty({ form, update, goStep, navigate }) {
+function StepProperty({ form, update, toggleAmenity, goStep, navigate }) {
   return (
     <>
       <div className="step-title">Property details</div>
@@ -79,6 +98,19 @@ function StepProperty({ form, update, goStep, navigate }) {
         <textarea className="form-input form-textarea"
           placeholder="Describe your property…"
           value={form.description} onChange={e => update('description', e.target.value)} />
+      </div>
+      <div className="form-group">
+        <label className="form-label">Amenities <span style={{ fontWeight: 300, color: 'var(--ink-soft)' }}>(select all that apply)</span></label>
+        <div className="amenity-picker">
+          {AMENITIES.map(a => (
+            <div key={a.key}
+              className={`amenity-tile ${form.amenities.includes(a.key) ? 'selected' : ''}`}
+              onClick={() => toggleAmenity(a.key)}>
+              <span className="amenity-tile-icon">{a.icon}</span>
+              <span className="amenity-tile-label">{a.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
       <div className="step-nav">
         <button className="btn-back" onClick={() => navigate('/')}>← Back to home</button>
@@ -419,7 +451,7 @@ export default function HostOnboarding() {
         <div className="step-card">
           {ob.submitted ? <SuccessState navigate={navigate} /> : (
             <>
-              {ob.step === 1 && <StepProperty  form={ob.form} update={ob.update} goStep={ob.goStep} navigate={navigate} />}
+              {ob.step === 1 && <StepProperty  form={ob.form} update={ob.update} toggleAmenity={ob.toggleAmenity} goStep={ob.goStep} navigate={navigate} />}
               {ob.step === 2 && <StepPhotos    form={ob.form} addPhoto={ob.addPhoto} removePhoto={ob.removePhoto} goStep={ob.goStep} />}
               {ob.step === 3 && <StepPricing   form={ob.form} update={ob.update} goStep={ob.goStep} hostFee={ob.hostFee} hostEarns={ob.hostEarns} />}
               {ob.step === 4 && <StepHalal     form={ob.form} toggleHalalCheck={ob.toggleHalalCheck} goStep={ob.goStep} />}

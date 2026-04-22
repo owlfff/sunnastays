@@ -208,14 +208,18 @@ export default function Listing() {
             );
           })()}
 
-          <div className="amenities-title">What this place offers</div>
-          <div className="amenity-grid">
-            {stay.amenities?.map(a => (
-              <div key={a.label} className="amenity">
-                <span className="amenity-icon">{a.icon}</span> {a.label}
+          {stay.amenities?.length > 0 && (
+            <>
+              <div className="amenities-title">What this place offers</div>
+              <div className="amenity-grid">
+                {stay.amenities.map(a => (
+                  <div key={a.label} className="amenity">
+                    <span className="amenity-icon">{a.icon}</span> {a.label}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
 
         {/* BOOKING CARD */}

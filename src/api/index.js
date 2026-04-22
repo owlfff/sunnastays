@@ -25,6 +25,25 @@ const MOCK_LISTING = {
   images: ['🕌', '🌅', '🛏️'],
 };
 
+const AMENITIES_MAP = {
+  wifi:      { icon: '📶', label: 'Fast WiFi' },
+  ac:        { icon: '❄️', label: 'Air conditioning' },
+  heating:   { icon: '🔥', label: 'Heating' },
+  kitchen:   { icon: '🍳', label: 'Full kitchen' },
+  washer:    { icon: '🧺', label: 'Washing machine' },
+  parking:   { icon: '🅿️', label: 'Free parking' },
+  pool:      { icon: '🏊', label: 'Pool' },
+  gym:       { icon: '💪', label: 'Gym' },
+  tv:        { icon: '📺', label: 'TV' },
+  workspace: { icon: '💻', label: 'Workspace' },
+  balcony:   { icon: '🌿', label: 'Balcony / Terrace' },
+  garden:    { icon: '🌳', label: 'Garden' },
+  elevator:  { icon: '🛗', label: 'Lift' },
+  cot:       { icon: '👶', label: 'Baby cot' },
+  iron:      { icon: '👔', label: 'Iron & board' },
+  bbq:       { icon: '🍖', label: 'BBQ' },
+};
+
 const GRADIENTS = [
   'linear-gradient(135deg, #D4C4A0, #E8A87C)',
   'linear-gradient(135deg, #c8b89a, #b87045)',
@@ -60,6 +79,7 @@ function formatProperty(p, index) {
     instantBooking: p.instant_booking,
     cancellationPolicy: p.cancellation_policy || 'moderate',
     houseRules: p.house_rules || {},
+    amenities: (p.amenities || []).map(key => AMENITIES_MAP[key]).filter(Boolean),
   };
 }
 
@@ -102,11 +122,6 @@ export async function getStay(slug) {
   return {
     ...formatProperty(data, 0),
     host: { name: hostName, since: new Date(data.created_at).getFullYear(), languages:['English'], isSuperhost:false, emoji:'👤' },
-    amenities: [
-      { icon:'📶', label:'Fast wifi' },
-      { icon:'❄️', label:'Air conditioning' },
-      { icon:'🍳', label:'Full kitchen' },
-    ],
     halalStandards: [
       'Alcohol-free — no alcohol stored or served',
       'Halal kitchen — certified utensils and appliances',
@@ -142,6 +157,7 @@ export async function submitListing(payload) {
         ...payload.houseRules,
         custom: payload.customRules || '',
       },
+      amenities: payload.amenities || [],
     }]);
 
   if (error) throw new Error(error.message);
