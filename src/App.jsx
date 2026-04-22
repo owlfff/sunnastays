@@ -14,6 +14,7 @@ import AccountPage from './pages/AccountPage';
 import ReviewPage from './pages/ReviewPage';
 import HostDashboard from './pages/HostDashboard';
 import GuestDashboard from './pages/GuestDashboard';
+import HalalCharter from './pages/HalalCharter';
 import './styles/global.css';
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="/booking-success" element={<BookingSuccess />} />
               <Route path="/account" element={<AccountPage />} />
               <Route path="/review" element={<ReviewPage />} />
+              <Route path="/halal-charter" element={<HalalCharter />} />
             </Routes>
           </>
         } />

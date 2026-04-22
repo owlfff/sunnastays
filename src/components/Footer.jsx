@@ -26,7 +26,7 @@ export default function Footer() {
           <div className="footer-col">
             <h4>Hosting</h4>
             <button onClick={() => navigate('/host')}>List your property</button>
-            <button>Halal Charter</button>
+            <button onClick={() => navigate('/halal-charter')}>Halal Charter</button>
             <button>Host resources</button>
             <button>Verification</button>
           </div>
