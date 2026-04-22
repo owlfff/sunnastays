@@ -24,18 +24,30 @@ export default function Listing() {
 
   const fetchNearestMosque = useCallback(async function fetchNearestMosque(lat, lng) {
     try {
-      const query = `[out:json][timeout:10];
-        node[amenity=place_of_worship][religion=muslim](around:10000,${lat},${lng});
-        out 5;`;
+      // Query nodes, ways, and relations — many mosques are mapped as buildings (ways), not points
+      const query = `[out:json][timeout:15];
+(
+  node[amenity=place_of_worship][religion~"muslim|islam"](around:5000,${lat},${lng});
+  way[amenity=place_of_worship][religion~"muslim|islam"](around:5000,${lat},${lng});
+  node[amenity=mosque](around:5000,${lat},${lng});
+  way[amenity=mosque](around:5000,${lat},${lng});
+);
+out center 20;`;
       const res = await fetch('https://overpass-api.de/api/interpreter', {
         method: 'POST', body: query,
       });
       const data = await res.json();
       if (!data.elements?.length) return;
-      // Pick the closest one using Haversine
+      // Ways have center coords; nodes have lat/lon directly
       const closest = data.elements
-        .map(el => ({ ...el, dist: haversine(lat, lng, el.lat, el.lon) }))
+        .map(el => {
+          const elLat = el.lat ?? el.center?.lat;
+          const elLon = el.lon ?? el.center?.lon;
+          return { ...el, elLat, elLon, dist: haversine(lat, lng, elLat, elLon) };
+        })
+        .filter(el => el.elLat != null)
         .sort((a, b) => a.dist - b.dist)[0];
+      if (!closest) return;
       const name = closest.tags?.name || closest.tags?.['name:en'] || 'Local mosque';
       setMosque({ name, miles: closest.dist.toFixed(1) });
     } catch (_) {}
@@ -56,14 +68,17 @@ export default function Listing() {
         if (data?.id) getReviewsForProperty(data.id).then(r => { setReviews(r); }).catch(() => {});
         if (data?.lat && data?.lng) {
           fetchNearestMosque(data.lat, data.lng);
-        } else if (data?.location) {
-          // Geocode city/country via Nominatim as fallback
-          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(data.location)}&format=json&limit=1`)
-            .then(r => r.json())
-            .then(results => {
-              if (results?.[0]) fetchNearestMosque(parseFloat(results[0].lat), parseFloat(results[0].lon));
-            })
-            .catch(() => {});
+        } else {
+          // Geocode via Nominatim — use full address if available, else city/country
+          const geocodeQuery = data?.address || data?.location;
+          if (geocodeQuery) {
+            fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(geocodeQuery)}&format=json&limit=1`)
+              .then(r => r.json())
+              .then(results => {
+                if (results?.[0]) fetchNearestMosque(parseFloat(results[0].lat), parseFloat(results[0].lon));
+              })
+              .catch(() => {});
+          }
         }
       })
       .catch(() => setLoading(false));
