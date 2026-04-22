@@ -182,11 +182,6 @@ export default function Listing() {
               {stay.halalStandards?.map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
-              {mosque && (
-                <li className="halal-list-mosque">
-                  🕌 Nearest mosque: <strong>{mosque.name}</strong> — {mosque.miles} miles away
-                </li>
-              )}
             </ul>
           </div>
 
@@ -347,16 +342,21 @@ export default function Listing() {
         </div>
       </div>
 
-      {stay.lat && stay.lng && (
+      {(stay.lat && stay.lng || mosque) && (
         <div className="listing-map-section">
           <div className="container">
             <hr className="listing-divider" />
             <h3 className="listing-section-title">Where you'll be</h3>
             <div className="listing-address-line">📍 {stay.location}</div>
+            {mosque && (
+              <div className="listing-mosque-line">🕌 Nearest mosque: <strong>{mosque.name}</strong> — {mosque.miles} miles away</div>
+            )}
           </div>
-          <div className="listing-map-wrap">
-            <SearchMap stays={[stay]} onHover={() => {}} hoveredId={null} />
-          </div>
+          {stay.lat && stay.lng && (
+            <div className="listing-map-wrap">
+              <SearchMap stays={[stay]} onHover={() => {}} hoveredId={null} />
+            </div>
+          )}
         </div>
       )}
 

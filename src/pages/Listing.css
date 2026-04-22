@@ -353,6 +353,10 @@
 }
 .listing-address-line {
   font-size: 14px; color: var(--ink-soft);
+  margin-bottom: 8px; font-weight: 300;
+}
+.listing-mosque-line {
+  font-size: 14px; color: var(--ink-soft);
   margin-bottom: 16px; font-weight: 300;
 }
 .listing-map-wrap {
