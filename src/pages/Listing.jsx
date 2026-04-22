@@ -102,8 +102,12 @@ export default function Listing() {
         <div className="listing-left">
           <h1 className="listing-title">{stay.name}</h1>
           <div className="listing-meta-row">
-            <span>★ <strong>{reviews.length > 0 ? (reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1) : stay.rating}</strong> · {reviews.length > 0 ? reviews.length : stay.reviewCount} review{(reviews.length > 0 ? reviews.length : stay.reviewCount) !== 1 ? "s" : ""}</span>
-            <span className="listing-dot">·</span>
+            {reviews.length > 0 && (
+              <>
+                <span>★ <strong>{(reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1)}</strong> · {reviews.length} review{reviews.length !== 1 ? 's' : ''}</span>
+                <span className="listing-dot">·</span>
+              </>
+            )}
             <span>📍 {stay.location}</span>
             <span className="halal-tick listing-halal">✓ Halal certified</span>
           </div>
@@ -140,33 +144,11 @@ export default function Listing() {
 
           <div className="cancellation-section">
             <h4 className="cancellation-title">Cancellation policy</h4>
-            {stay.cancellationPolicy === 'flexible' && (
-              <div className="cancellation-policy cancellation-policy--flexible">
-                <div className="cp-icon">🟢</div>
-                <div>
-                  <div className="cp-name">Flexible</div>
-                  <div className="cp-desc">Free cancellation up to 24 hours before check-in. After that, the first night is non-refundable.</div>
-                </div>
-              </div>
-            )}
-            {stay.cancellationPolicy === 'moderate' && (
-              <div className="cancellation-policy cancellation-policy--moderate">
-                <div className="cp-icon">🟡</div>
-                <div>
-                  <div className="cp-name">Moderate</div>
-                  <div className="cp-desc">Free cancellation up to 5 days before check-in. After that, the first night and service fee are non-refundable.</div>
-                </div>
-              </div>
-            )}
-            {stay.cancellationPolicy === 'strict' && (
-              <div className="cancellation-policy cancellation-policy--strict">
-                <div className="cp-icon">🔴</div>
-                <div>
-                  <div className="cp-name">Strict</div>
-                  <div className="cp-desc">50% refund up to 7 days before check-in. No refund after that.</div>
-                </div>
-              </div>
-            )}
+            <p className="cp-desc">
+              {stay.cancellationPolicy === 'flexible' && 'Free cancellation up to 24 hours before check-in. After that, the first night is non-refundable.'}
+              {stay.cancellationPolicy === 'moderate' && 'Free cancellation up to 5 days before check-in. After that, the first night and service fee are non-refundable.'}
+              {stay.cancellationPolicy === 'strict' && '50% refund up to 7 days before check-in. No refund after that.'}
+            </p>
           </div>
 
           <hr className="listing-divider" />
@@ -226,9 +208,11 @@ export default function Listing() {
         <div className="listing-right">
           <div className="booking-card">
             <div className="booking-price">£{stay.price} <span>per night</span></div>
-            <div className="booking-rating">
-              <span style={{ color: 'var(--gold)' }}>★</span> {reviews.length > 0 ? (reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1) : stay.rating} · <span>{reviews.length > 0 ? reviews.length : stay.reviewCount} review{(reviews.length > 0 ? reviews.length : stay.reviewCount) !== 1 ? 's' : ''}</span>
-            </div>
+            {reviews.length > 0 && (
+              <div className="booking-rating">
+                <span style={{ color: 'var(--gold)' }}>★</span> {(reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1)} · <span>{reviews.length} review{reviews.length !== 1 ? 's' : ''}</span>
+              </div>
+            )}
 
             <div className="halal-cert-badge">🟢 SunnaStays Halal Guarantee included</div>
 
