@@ -22,24 +22,6 @@ export default function Listing() {
   const [mosque, setMosque] = useState(null);
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    if (searchParams.get('booking') === 'true') {
-      setShowBooking(true);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    setLoading(true);
-    getStay(slug)
-      .then(data => {
-        setStay(data);
-        setLoading(false);
-        if (data?.id) getReviewsForProperty(data.id).then(r => { setReviews(r); }).catch(() => {});
-        if (data?.lat && data?.lng) fetchNearestMosque(data.lat, data.lng);
-      })
-      .catch(() => setLoading(false));
-  }, [slug, fetchNearestMosque]);
-
   const fetchNearestMosque = useCallback(async function fetchNearestMosque(lat, lng) {
     try {
       const query = `[out:json][timeout:10];
@@ -58,6 +40,24 @@ export default function Listing() {
       setMosque({ name, miles: closest.dist.toFixed(1) });
     } catch (_) {}
   }, []);
+
+  useEffect(() => {
+    if (searchParams.get('booking') === 'true') {
+      setShowBooking(true);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    setLoading(true);
+    getStay(slug)
+      .then(data => {
+        setStay(data);
+        setLoading(false);
+        if (data?.id) getReviewsForProperty(data.id).then(r => { setReviews(r); }).catch(() => {});
+        if (data?.lat && data?.lng) fetchNearestMosque(data.lat, data.lng);
+      })
+      .catch(() => setLoading(false));
+  }, [slug, fetchNearestMosque]);
 
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 3958.8;
