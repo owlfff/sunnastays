@@ -102,9 +102,14 @@ export default function Listing() {
         <div className="listing-left">
           <h1 className="listing-title">{stay.name}</h1>
           <div className="listing-meta-row">
-            {reviews.length > 0 && (
+            {reviews.length > 0 ? (
               <>
                 <span>★ <strong>{(reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1)}</strong> · {reviews.length} review{reviews.length !== 1 ? 's' : ''}</span>
+                <span className="listing-dot">·</span>
+              </>
+            ) : (
+              <>
+                <span className="listing-no-reviews">No reviews yet</span>
                 <span className="listing-dot">·</span>
               </>
             )}

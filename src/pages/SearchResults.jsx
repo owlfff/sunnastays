@@ -6,11 +6,22 @@ import Footer from '../components/Footer';
 import { searchStays } from '../api';
 import './SearchResults.css';
 
-const FILTERS = [
-  { label: '💰 Price range' },
-  { label: '🏠 Property type' },
-  { label: '🕌 Near mosque' },
-  { label: '⭐ Top rated' },
+const PRICE_OPTIONS = [
+  { label: 'Any price',   min: null, max: null },
+  { label: 'Under £100',  min: null, max: 100 },
+  { label: '£100–£200',   min: 100,  max: 200 },
+  { label: '£200–£350',   min: 200,  max: 350 },
+  { label: '£350+',       min: 350,  max: null },
+];
+
+const TYPE_OPTIONS = ['Apartment', 'House', 'Riad / Dar', 'Boutique hotel', 'Villa', 'Unique stay'];
+
+const BEDROOM_OPTIONS = [
+  { label: 'Any', min: null },
+  { label: '1+',  min: 1 },
+  { label: '2+',  min: 2 },
+  { label: '3+',  min: 3 },
+  { label: '4+',  min: 4 },
 ];
 
 export default function SearchResults() {
@@ -22,11 +33,17 @@ export default function SearchResults() {
   const checkout    = searchParams.get('checkout') || '';
   const guests      = searchParams.get('guests') || '';
 
-  const [stays, setStays]       = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [sort, setSort]         = useState('rating');
+  const [stays, setStays]         = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [sort, setSort]           = useState('rating');
   const [hoveredId, setHoveredId] = useState(null);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [priceFilter, setPriceFilter]   = useState(PRICE_OPTIONS[0]);
+  const [typeFilter, setTypeFilter]     = useState(null);
+  const [bedsFilter, setBedsFilter]     = useState(BEDROOM_OPTIONS[0]);
   const handleHover = useCallback((id) => setHoveredId(id), []);
+
+  const toggleDropdown = (name) => setOpenDropdown(o => o === name ? null : name);
 
   useEffect(() => {
     setLoading(true);
@@ -35,12 +52,19 @@ export default function SearchResults() {
       .catch(() => setLoading(false));
   }, [destination, checkin, checkout, guests]);
 
-  const sorted = useMemo(() => [...stays].sort((a, b) => {
-    if (sort === 'rating')     return b.rating - a.rating;
-    if (sort === 'price_asc')  return a.price - b.price;
-    if (sort === 'price_desc') return b.price - a.price;
-    return 0;
-  }), [stays, sort]);
+  const sorted = useMemo(() => {
+    let results = [...stays];
+    if (priceFilter.min != null) results = results.filter(s => s.price >= priceFilter.min);
+    if (priceFilter.max != null) results = results.filter(s => s.price <= priceFilter.max);
+    if (typeFilter)              results = results.filter(s => s.type === typeFilter);
+    if (bedsFilter.min != null)  results = results.filter(s => parseInt(s.bedrooms) >= bedsFilter.min);
+    results.sort((a, b) => {
+      if (sort === 'price_asc')  return a.price - b.price;
+      if (sort === 'price_desc') return b.price - a.price;
+      return 0;
+    });
+    return results;
+  }, [stays, sort, priceFilter, typeFilter, bedsFilter]);
 
   const destLabel  = destination || 'Anywhere';
   const dateLabel  = checkin && checkout ? `${checkin} – ${checkout}` : 'Any week';
@@ -49,15 +73,77 @@ export default function SearchResults() {
   return (
     <div className="sr-page">
       {/* FILTER BAR */}
-      <div className="sr-filter-bar">
-        <button className="filter-chip active" onClick={() => navigate('/')}>
+      <div className="sr-filter-bar" onClick={() => setOpenDropdown(null)}>
+        <button className="filter-chip active" onClick={e => { e.stopPropagation(); navigate('/'); }}>
           🗺️ {destLabel}
         </button>
         <button className="filter-chip active">📅 {dateLabel}</button>
         <button className="filter-chip active">👥 {guestLabel}</button>
-        {FILTERS.map(f => (
-          <button key={f.label} className="filter-chip">{f.label}</button>
-        ))}
+
+        <div className="filter-dropdown-wrap" onClick={e => e.stopPropagation()}>
+          <button className={`filter-chip ${priceFilter.min != null || priceFilter.max != null ? 'active' : ''}`}
+            onClick={() => toggleDropdown('price')}>
+            💰 {priceFilter.label}
+          </button>
+          {openDropdown === 'price' && (
+            <div className="filter-dropdown">
+              {PRICE_OPTIONS.map(o => (
+                <button key={o.label} className={`filter-dropdown-item ${priceFilter.label === o.label ? 'selected' : ''}`}
+                  onClick={() => { setPriceFilter(o); setOpenDropdown(null); }}>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="filter-dropdown-wrap" onClick={e => e.stopPropagation()}>
+          <button className={`filter-chip ${typeFilter ? 'active' : ''}`}
+            onClick={() => toggleDropdown('type')}>
+            🏠 {typeFilter || 'Property type'}
+          </button>
+          {openDropdown === 'type' && (
+            <div className="filter-dropdown">
+              <button className={`filter-dropdown-item ${!typeFilter ? 'selected' : ''}`}
+                onClick={() => { setTypeFilter(null); setOpenDropdown(null); }}>
+                Any type
+              </button>
+              {TYPE_OPTIONS.map(t => (
+                <button key={t} className={`filter-dropdown-item ${typeFilter === t ? 'selected' : ''}`}
+                  onClick={() => { setTypeFilter(t); setOpenDropdown(null); }}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="filter-dropdown-wrap" onClick={e => e.stopPropagation()}>
+          <button className={`filter-chip ${bedsFilter.min != null ? 'active' : ''}`}
+            onClick={() => toggleDropdown('beds')}>
+            🛏️ {bedsFilter.min != null ? `${bedsFilter.label} bedrooms` : 'Bedrooms'}
+          </button>
+          {openDropdown === 'beds' && (
+            <div className="filter-dropdown">
+              {BEDROOM_OPTIONS.map(o => (
+                <button key={o.label} className={`filter-dropdown-item ${bedsFilter.label === o.label ? 'selected' : ''}`}
+                  onClick={() => { setBedsFilter(o); setOpenDropdown(null); }}>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {(priceFilter.min != null || priceFilter.max != null || typeFilter || bedsFilter.min != null) && (
+          <button className="filter-chip filter-chip--clear" onClick={() => {
+            setPriceFilter(PRICE_OPTIONS[0]);
+            setTypeFilter(null);
+            setBedsFilter(BEDROOM_OPTIONS[0]);
+          }}>
+            ✕ Clear filters
+          </button>
+        )}
       </div>
 
       <div className="sr-layout" style={{minHeight: Math.max(sorted.length * 320, 400) + "px"}}>

@@ -129,6 +129,7 @@
 .listing-meta-row strong { color: var(--ink); }
 .listing-dot { opacity: 0.4; }
 .listing-halal { margin-left: auto; }
+.listing-no-reviews { font-size: 13px; color: var(--ink-soft); font-weight: 400; }
 
 .listing-divider {
   border: none; border-top: 1px solid var(--sand-dark);
