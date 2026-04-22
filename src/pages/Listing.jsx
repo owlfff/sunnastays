@@ -58,9 +58,11 @@ export default function Listing() {
     </div>
   );
 
-  const nights = 5;
-  const serviceFee = Math.round(stay.price * nights * 0.10);
-  const total = stay.price * nights + serviceFee;
+  const nights = selectedCheckin && selectedCheckout
+    ? Math.round((selectedCheckout - selectedCheckin) / (1000 * 60 * 60 * 24))
+    : 0;
+  const serviceFee = nights > 0 ? Math.round(stay.price * nights * 0.10) : 0;
+  const total = nights > 0 ? stay.price * nights + serviceFee : 0;
 
   return (
     <div className="listing-page">
@@ -253,19 +255,20 @@ export default function Listing() {
               </div>
               <div className="guests-cell">
                 <div className="date-label">Guests</div>
-                <div className={`date-value ${selectedGuests > 1 ? '' : 'date-value--empty'}`}>
-                  {selectedGuests > 1 ? `${selectedGuests} guests` : 'Add guests'}
+                <div className={`date-value ${selectedGuests >= 1 ? '' : 'date-value--empty'}`}>
+                  {selectedGuests >= 1 ? `${selectedGuests} guest${selectedGuests !== 1 ? 's' : ''}` : 'Add guests'}
                 </div>
               </div>
             </div>
 
+            {nights > 0 && (
             <div className="booking-total">
               <div className="booking-line">
-                <span>£{stay.price} × {nights} nights</span>
+                <span>£{stay.price} × {nights} night{nights !== 1 ? 's' : ''}</span>
                 <span>£{stay.price * nights}</span>
               </div>
               <div className="booking-line">
-                <span>SunnaStays service fee</span>
+                <span>SunnaStays service fee (10%)</span>
                 <span>£{serviceFee}</span>
               </div>
               <div className="booking-line booking-line--total">
@@ -273,6 +276,7 @@ export default function Listing() {
                 <span>£{total}</span>
               </div>
             </div>
+            )}
 
             <button
               className="btn-primary booking-btn"
