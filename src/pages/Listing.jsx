@@ -342,7 +342,7 @@ export default function Listing() {
         </div>
       </div>
 
-      {(stay.lat && stay.lng || mosque) && (
+      {((stay.lat && stay.lng) || mosque) && (
         <div className="listing-map-section">
           <div className="container">
             <hr className="listing-divider" />
