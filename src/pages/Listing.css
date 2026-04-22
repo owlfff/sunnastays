@@ -130,6 +130,7 @@
 .listing-dot { opacity: 0.4; }
 .listing-halal { margin-left: auto; }
 .listing-no-reviews { font-size: 13px; color: var(--ink-soft); font-weight: 400; }
+.halal-list-mosque { color: var(--ink-mid); margin-top: 4px; }
 
 .listing-divider {
   border: none; border-top: 1px solid var(--sand-dark);

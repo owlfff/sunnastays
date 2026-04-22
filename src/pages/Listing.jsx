@@ -19,6 +19,7 @@ export default function Listing() {
   const [selectedGuests, setSelectedGuests] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [lightbox, setLightbox] = useState(null);
+  const [mosque, setMosque] = useState(null);
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -33,10 +34,39 @@ export default function Listing() {
       .then(data => {
         setStay(data);
         setLoading(false);
-        if (data?.id) getReviewsForProperty(data.id).then(r => { console.log('reviews:', r); setReviews(r); }).catch(e => console.error('reviews error:', e));
+        if (data?.id) getReviewsForProperty(data.id).then(r => { setReviews(r); }).catch(() => {});
+        if (data?.lat && data?.lng) fetchNearestMosque(data.lat, data.lng);
       })
       .catch(() => setLoading(false));
   }, [slug]);
+
+  async function fetchNearestMosque(lat, lng) {
+    try {
+      const query = `[out:json][timeout:10];
+        node[amenity=place_of_worship][religion=muslim](around:10000,${lat},${lng});
+        out 5;`;
+      const res = await fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST', body: query,
+      });
+      const data = await res.json();
+      if (!data.elements?.length) return;
+      // Pick the closest one using Haversine
+      const closest = data.elements
+        .map(el => ({ ...el, dist: haversine(lat, lng, el.lat, el.lon) }))
+        .sort((a, b) => a.dist - b.dist)[0];
+      const name = closest.tags?.name || closest.tags?.['name:en'] || 'Local mosque';
+      setMosque({ name, miles: closest.dist.toFixed(1) });
+    } catch (_) {}
+  }
+
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 3958.8;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2
+      + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
 
   if (loading) return (
     <div className="listing-page">
@@ -142,6 +172,11 @@ export default function Listing() {
               {stay.halalStandards?.map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
+              {mosque && (
+                <li className="halal-list-mosque">
+                  🕌 Nearest mosque: <strong>{mosque.name}</strong> — {mosque.miles} miles away
+                </li>
+              )}
             </ul>
           </div>
 
