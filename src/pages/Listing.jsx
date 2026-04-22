@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import Footer from '../components/Footer';
@@ -38,9 +38,9 @@ export default function Listing() {
         if (data?.lat && data?.lng) fetchNearestMosque(data.lat, data.lng);
       })
       .catch(() => setLoading(false));
-  }, [slug]);
+  }, [slug, fetchNearestMosque]);
 
-  async function fetchNearestMosque(lat, lng) {
+  const fetchNearestMosque = useCallback(async function fetchNearestMosque(lat, lng) {
     try {
       const query = `[out:json][timeout:10];
         node[amenity=place_of_worship][religion=muslim](around:10000,${lat},${lng});
@@ -57,7 +57,7 @@ export default function Listing() {
       const name = closest.tags?.name || closest.tags?.['name:en'] || 'Local mosque';
       setMosque({ name, miles: closest.dist.toFixed(1) });
     } catch (_) {}
-  }
+  }, []);
 
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 3958.8;
