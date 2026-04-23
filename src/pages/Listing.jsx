@@ -349,13 +349,13 @@ out center 20;`;
                   </div>
                 );
                 if (halfDeadline > now) return (
-                  <div className="booking-cancellation-note booking-cancellation-note--partial">
+                  <div className="booking-cancellation-note">
                     50% refund if cancelled before <strong>{halfDeadline.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</strong>
                   </div>
                 );
               }
               return (
-                <div className="booking-cancellation-note booking-cancellation-note--none">
+                <div className="booking-cancellation-note">
                   This booking is non-refundable
                 </div>
               );
