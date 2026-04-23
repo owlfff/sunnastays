@@ -326,6 +326,24 @@ out center 20;`;
             </div>
             )}
 
+            {nights > 0 && selectedCheckin && (() => {
+              const deadline = new Date(selectedCheckin);
+              if (stay.cancellationPolicy === 'flexible') deadline.setDate(deadline.getDate() - 1);
+              else if (stay.cancellationPolicy === 'moderate') deadline.setDate(deadline.getDate() - 5);
+              else if (stay.cancellationPolicy === 'strict') deadline.setDate(deadline.getDate() - 7);
+              const isPast = deadline < new Date();
+              if (isPast || stay.cancellationPolicy === 'strict') return (
+                <div className="booking-cancellation-note booking-cancellation-note--none">
+                  This booking is non-refundable
+                </div>
+              );
+              return (
+                <div className="booking-cancellation-note">
+                  Free cancellation before <strong>{deadline.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</strong>
+                </div>
+              );
+            })()}
+
             <button
               className="btn-primary booking-btn"
               onClick={async e => {
@@ -343,7 +361,7 @@ out center 20;`;
                 setShowBooking(true);
               }}
             >
-              ⚡ Book instantly
+              Reserve
             </button>
             <p className="booking-note">You won't be charged yet</p>
           </div>
