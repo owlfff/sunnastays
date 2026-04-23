@@ -21,6 +21,8 @@ export default function GuestDashboard() {
   const [filter, setFilter]     = useState('all');
   const [openThread, setOpenThread] = useState(null);
   const [unreadCounts, setUnreadCounts] = useState({});
+  const [cancellingId, setCancellingId] = useState(null);
+  const [cancelResult, setCancelResult] = useState({});
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -56,6 +58,29 @@ export default function GuestDashboard() {
           });
           setUnreadCounts(counts);
         });
+    }
+  };
+
+  const handleCancelBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to cancel this booking? This cannot be undone.')) return;
+    setCancellingId(bookingId);
+    try {
+      const res = await fetch('/api/cancel-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId, userId: user.id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCancelResult(prev => ({ ...prev, [bookingId]: data.message }));
+        loadBookings(user.id);
+      } else {
+        setCancelResult(prev => ({ ...prev, [bookingId]: data.error || 'Something went wrong' }));
+      }
+    } catch {
+      setCancelResult(prev => ({ ...prev, [bookingId]: 'Something went wrong. Please try again.' }));
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -185,6 +210,21 @@ export default function GuestDashboard() {
                     )}
 
                     <div className="guest-halal-badge">🟢 SunnaStays Halal Guarantee applies</div>
+
+                    {cancelResult[b.id] && (
+                      <div className="guest-cancel-result">{cancelResult[b.id]}</div>
+                    )}
+
+                    {isUpcoming && b.status === 'confirmed' && !cancelResult[b.id] && (
+                      <button
+                        className="guest-cancel-btn"
+                        onClick={() => handleCancelBooking(b.id)}
+                        disabled={cancellingId === b.id}
+                      >
+                        {cancellingId === b.id ? 'Cancelling…' : 'Cancel booking'}
+                      </button>
+                    )}
+
                     <button
                       className="guest-message-btn"
                       onClick={e => { e.preventDefault(); e.stopPropagation(); setOpenThread(openThread === b.id ? null : b.id); }}

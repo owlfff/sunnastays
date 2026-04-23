@@ -23,31 +23,35 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: `Webhook error: ${err.message}` });
   }
 
+  // Guest payment confirmed — create the booking record
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const meta = session.metadata;
 
-    // Save booking to database
     const { error } = await supabase.from('bookings').insert([{
-      property_id:  parseInt(meta.propertyId),
-      checkin:      meta.checkin,
-      checkout:     meta.checkout,
-      guests:       parseInt(meta.guests),
-      total_price:  parseFloat(meta.totalPrice),
-      status:       meta.instantBooking === 'true' ? 'confirmed' : 'pending',
-      guest_name:   meta.guestName,
-      guest_email:  meta.guestEmail,
-      guest_phone:  meta.guestPhone,
-      message:      meta.message,
-      stripe_session_id: session.id,
+      property_id:              parseInt(meta.propertyId),
+      guest_id:                 meta.guestId || null,
+      checkin:                  meta.checkin,
+      checkout:                 meta.checkout,
+      guests:                   parseInt(meta.guests),
+      total_price:              parseFloat(meta.totalPrice),
+      status:                   meta.instantBooking === 'true' ? 'confirmed' : 'pending',
+      guest_name:               meta.guestName,
+      guest_email:              meta.guestEmail,
+      guest_phone:              meta.guestPhone,
+      message:                  meta.message,
+      cancellation_policy:      meta.cancellationPolicy || 'moderate',
+      stripe_session_id:        session.id,
+      stripe_payment_intent_id: session.payment_intent,
+      payout_transferred:       false,
     }]);
 
     if (error) {
-      console.error('Supabase error:', error);
+      console.error('Supabase insert error:', error);
       return res.status(500).json({ error: 'Failed to save booking' });
     }
 
-    // Send email notifications
+    // Send booking email notification
     try {
       await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://sunnastays.com'}/api/send-booking-email`, {
         method: 'POST',
@@ -55,21 +59,32 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           type: 'host',
           booking: {
-            guestName:     meta.guestName,
-            guestEmail:    meta.guestEmail,
-            guestPhone:    meta.guestPhone,
-            checkin:       meta.checkin,
-            checkout:      meta.checkout,
-            guests:        meta.guests,
-            totalPrice:    meta.totalPrice,
-            instantBooking: meta.instantBooking === 'true',
-            message:       meta.message,
+            guestName:          meta.guestName,
+            guestEmail:         meta.guestEmail,
+            guestPhone:         meta.guestPhone,
+            checkin:            meta.checkin,
+            checkout:           meta.checkout,
+            guests:             meta.guests,
+            totalPrice:         meta.totalPrice,
+            instantBooking:     meta.instantBooking === 'true',
+            message:            meta.message,
           },
-          property: { name: session.line_items?.data?.[0]?.description || 'Property' },
+          property: { name: meta.propertyName || 'Property' },
         }),
       });
     } catch (e) {
       console.error('Email error:', e);
+    }
+  }
+
+  // Host completed Stripe Connect onboarding — mark their account as active
+  if (event.type === 'account.updated') {
+    const account = event.data.object;
+    if (account.charges_enabled && account.payouts_enabled) {
+      await supabase
+        .from('profiles')
+        .update({ stripe_account_status: 'active' })
+        .eq('stripe_account_id', account.id);
     }
   }
 

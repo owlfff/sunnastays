@@ -24,14 +24,51 @@ export default function HostDashboard() {
   const [bookingFilter, setBookingFilter] = useState('pending');
   const [openThread, setOpenThread] = useState(null);
   const [unreadCounts, setUnreadCounts] = useState({});
+  const [stripeStatus, setStripeStatus] = useState(null);
+  const [connectLoading, setConnectLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { navigate('/signin'); return; }
       setUser(user);
       loadData(user.id);
+
+      // Load Stripe Connect status
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('stripe_account_id, stripe_account_status')
+        .eq('user_id', user.id)
+        .single();
+      setStripeStatus(profile?.stripe_account_status || 'not_connected');
+
+      // If returning from Stripe onboarding, re-check status
+      if (window.location.search.includes('stripe=connected')) {
+        setStripeStatus('pending');
+      }
     });
   }, [navigate]);
+
+  const handleConnectStripe = async () => {
+    if (!user) return;
+    setConnectLoading(true);
+    try {
+      const res = await fetch('/api/create-connect-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          email: user.email,
+          returnUrl: `${window.location.origin}/dashboard/host`,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch (e) {
+      console.error('Stripe connect error:', e);
+    } finally {
+      setConnectLoading(false);
+    }
+  };
 
   const loadData = async (userId) => {
     setLoading(true);
@@ -131,6 +168,9 @@ export default function HostDashboard() {
           <button className={`dash-tab ${activeTab === 'listings' ? 'active' : ''}`} onClick={() => setActiveTab('listings')}>
             My listings
           </button>
+          <button className={`dash-tab ${activeTab === 'payments' ? 'active' : ''}`} onClick={() => setActiveTab('payments')}>
+            Payments {stripeStatus !== 'active' && <span className="dash-badge dash-badge--warn">!</span>}
+          </button>
         </div>
 
         {loading ? (
@@ -219,6 +259,44 @@ export default function HostDashboard() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'payments' && (
+              <div className="dash-payments-section">
+                <h3 className="dash-payments-title">Payout account</h3>
+                <p className="dash-payments-sub">
+                  Connect your bank account via Stripe to receive payouts automatically after each stay.
+                  SunnaStays takes a 3% host fee — you keep 97% of your nightly rate.
+                </p>
+                <div className={`dash-stripe-status dash-stripe-status--${stripeStatus}`}>
+                  {stripeStatus === 'active' && '✓ Connected — payouts are active'}
+                  {stripeStatus === 'pending' && '⏳ Stripe account connected — awaiting verification'}
+                  {stripeStatus === 'not_connected' && '⚠ Not connected — you won\'t receive automated payouts'}
+                </div>
+                {stripeStatus !== 'active' && (
+                  <button
+                    className="btn-primary dash-stripe-btn"
+                    onClick={handleConnectStripe}
+                    disabled={connectLoading}
+                  >
+                    {connectLoading ? 'Redirecting to Stripe…' : stripeStatus === 'pending' ? 'Continue Stripe setup' : 'Connect bank account'}
+                  </button>
+                )}
+                <div className="dash-payments-info">
+                  <div className="dash-payments-info-row">
+                    <span>Your cut</span><strong>97% of nightly rate</strong>
+                  </div>
+                  <div className="dash-payments-info-row">
+                    <span>SunnaStays fee</span><strong>3% of nightly rate</strong>
+                  </div>
+                  <div className="dash-payments-info-row">
+                    <span>Payout timing</span><strong>24 hours after guest check-out</strong>
+                  </div>
+                  <div className="dash-payments-info-row">
+                    <span>Currency</span><strong>GBP</strong>
+                  </div>
+                </div>
               </div>
             )}
 

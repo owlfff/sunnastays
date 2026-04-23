@@ -157,21 +157,25 @@ export default function BookingModal({ stay, onClose, initialCheckin, initialChe
       const checkinStr  = checkin.toISOString().split('T')[0];
       const checkoutStr = checkout.toISOString().split('T')[0];
 
+      const { data: { user } } = await supabase.auth.getUser();
+
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           booking: {
-            propertyId:     stay.id,
-            guestName:      form.name,
-            guestEmail:     form.email,
-            guestPhone:     form.phone,
-            checkin:        checkinStr,
-            checkout:       checkoutStr,
+            propertyId:         stay.id,
+            guestId:            user?.id || '',
+            guestName:          form.name,
+            guestEmail:         form.email,
+            guestPhone:         form.phone,
+            checkin:            checkinStr,
+            checkout:           checkoutStr,
             nights,
             guests,
-            totalPrice:     total,
-            instantBooking: stay.instantBooking,
+            totalPrice:         total,
+            instantBooking:     stay.instantBooking,
+            cancellationPolicy: stay.cancellationPolicy || 'moderate',
             message,
           },
           property: {
