@@ -246,6 +246,7 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
           {[
             { value: 'flexible', label: 'Flexible', desc: 'Full refund up to 24hrs before check-in', icon: '🟢' },
             { value: 'moderate', label: 'Moderate', desc: 'Full refund up to 5 days before check-in', icon: '🟡' },
+            { value: 'firm', label: 'Firm', desc: 'Full refund up to 30 days · 50% refund up to 7 days before check-in', icon: '🟠' },
             { value: 'strict', label: 'Strict', desc: '50% refund up to 7 days before check-in', icon: '🔴' },
           ].map(p => (
             <div key={p.value}

@@ -202,17 +202,6 @@ out center 20;`;
 
           <hr className="listing-divider" />
 
-          <div className="cancellation-section">
-            <h4 className="cancellation-title">Cancellation policy</h4>
-            <p className="cp-desc">
-              {stay.cancellationPolicy === 'flexible' && 'Free cancellation up to 24 hours before check-in. After that, the first night is non-refundable.'}
-              {stay.cancellationPolicy === 'moderate' && 'Free cancellation up to 5 days before check-in. After that, the first night and service fee are non-refundable.'}
-              {stay.cancellationPolicy === 'strict' && '50% refund up to 7 days before check-in. No refund after that.'}
-            </p>
-          </div>
-
-          <hr className="listing-divider" />
-
           {(() => {
             const RULE_LABELS = {
               noSmoking:   { icon: '🚭', label: 'No smoking' },
@@ -327,19 +316,47 @@ out center 20;`;
             )}
 
             {nights > 0 && selectedCheckin && (() => {
-              const deadline = new Date(selectedCheckin);
-              if (stay.cancellationPolicy === 'flexible') deadline.setDate(deadline.getDate() - 1);
-              else if (stay.cancellationPolicy === 'moderate') deadline.setDate(deadline.getDate() - 5);
-              else if (stay.cancellationPolicy === 'strict') deadline.setDate(deadline.getDate() - 7);
-              const isPast = deadline < new Date();
-              if (isPast || stay.cancellationPolicy === 'strict') return (
+              const policy = stay.cancellationPolicy;
+              const checkin = new Date(selectedCheckin);
+              const now = new Date();
+
+              if (policy === 'flexible') {
+                const deadline = new Date(checkin);
+                deadline.setDate(deadline.getDate() - 1);
+                if (deadline > now) return (
+                  <div className="booking-cancellation-note">
+                    Free cancellation before <strong>{deadline.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</strong>
+                  </div>
+                );
+              }
+              if (policy === 'moderate') {
+                const deadline = new Date(checkin);
+                deadline.setDate(deadline.getDate() - 5);
+                if (deadline > now) return (
+                  <div className="booking-cancellation-note">
+                    Free cancellation before <strong>{deadline.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</strong>
+                  </div>
+                );
+              }
+              if (policy === 'firm') {
+                const fullDeadline = new Date(checkin);
+                fullDeadline.setDate(fullDeadline.getDate() - 30);
+                const halfDeadline = new Date(checkin);
+                halfDeadline.setDate(halfDeadline.getDate() - 7);
+                if (fullDeadline > now) return (
+                  <div className="booking-cancellation-note">
+                    Free cancellation before <strong>{fullDeadline.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</strong>
+                  </div>
+                );
+                if (halfDeadline > now) return (
+                  <div className="booking-cancellation-note booking-cancellation-note--partial">
+                    50% refund if cancelled before <strong>{halfDeadline.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</strong>
+                  </div>
+                );
+              }
+              return (
                 <div className="booking-cancellation-note booking-cancellation-note--none">
                   This booking is non-refundable
-                </div>
-              );
-              return (
-                <div className="booking-cancellation-note">
-                  Free cancellation before <strong>{deadline.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</strong>
                 </div>
               );
             })()}
