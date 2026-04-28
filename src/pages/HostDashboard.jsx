@@ -26,6 +26,7 @@ export default function HostDashboard() {
   const [unreadCounts, setUnreadCounts] = useState({});
   const [stripeStatus, setStripeStatus] = useState(null);
   const [connectLoading, setConnectLoading] = useState(false);
+  const [connectError, setConnectError] = useState(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -51,6 +52,7 @@ export default function HostDashboard() {
   const handleConnectStripe = async () => {
     if (!user) return;
     setConnectLoading(true);
+    setConnectError(null);
     try {
       const res = await fetch('/api/create-connect-account', {
         method: 'POST',
@@ -62,10 +64,14 @@ export default function HostDashboard() {
         }),
       });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setConnectError(data.error || 'Could not connect to Stripe. Please try again.');
+        setConnectLoading(false);
+      }
     } catch (e) {
-      console.error('Stripe connect error:', e);
-    } finally {
+      setConnectError('Something went wrong. Please try again.');
       setConnectLoading(false);
     }
   };
@@ -280,8 +286,13 @@ export default function HostDashboard() {
                     onClick={handleConnectStripe}
                     disabled={connectLoading}
                   >
-                    {connectLoading ? 'Redirecting to Stripe…' : stripeStatus === 'pending' ? 'Continue Stripe setup' : 'Connect bank account'}
+                    {connectLoading ? 'Connecting…' : stripeStatus === 'pending' ? 'Continue Stripe setup' : 'Connect bank account'}
                   </button>
+                )}
+                {connectError && (
+                  <div style={{color:'#d9534f', fontSize:13, marginBottom:16, padding:'10px 14px', background:'#fdf3f0', borderRadius:10}}>
+                    {connectError}
+                  </div>
                 )}
                 <div className="dash-payments-info">
                   <div className="dash-payments-info-row">
