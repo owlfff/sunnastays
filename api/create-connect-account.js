@@ -32,6 +32,9 @@ export default async function handler(req, res) {
           transfers: { requested: true },
         },
         business_type: 'individual',
+        individual: {
+          email,
+        },
         settings: {
           payouts: { schedule: { interval: 'manual' } },
         },
@@ -51,6 +54,7 @@ export default async function handler(req, res) {
       refresh_url: returnUrl,
       return_url: returnUrl + '?stripe=connected',
       type: 'account_onboarding',
+      collect: 'eventually_due',
     });
 
     return res.status(200).json({ url: accountLink.url });
