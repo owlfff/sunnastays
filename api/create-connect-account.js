@@ -35,6 +35,11 @@ export default async function handler(req, res) {
         individual: {
           email,
         },
+        business_profile: {
+          mcc: '7011', // Hotels and accommodation
+          url: 'https://sunnastays.com',
+          product_description: 'Short-term property rental',
+        },
         settings: {
           payouts: { schedule: { interval: 'manual' } },
         },
@@ -42,10 +47,11 @@ export default async function handler(req, res) {
       accountId = account.id;
 
       // Save account ID to profile
-      await supabase
+      const { error: updateError, count } = await supabase
         .from('profiles')
         .update({ stripe_account_id: accountId, stripe_account_status: 'pending' })
         .eq('user_id', userId);
+      console.log('Supabase update result:', { updateError, count, userId, accountId });
     }
 
     // Generate onboarding link
