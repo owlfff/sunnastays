@@ -47,11 +47,10 @@ export default async function handler(req, res) {
       accountId = account.id;
 
       // Save account ID to profile
-      const { error: updateError, count } = await supabase
+      await supabase
         .from('profiles')
         .update({ stripe_account_id: accountId, stripe_account_status: 'pending' })
         .eq('user_id', userId);
-      console.log('Supabase update result:', { updateError, count, userId, accountId });
     }
 
     // Generate onboarding link
