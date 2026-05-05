@@ -53,6 +53,17 @@ const HALAL_CHECKS = [
 
 // ── Step 1 ────────────────────────────────────────────────────
 function StepProperty({ form, update, toggleAmenity, goStep, navigate }) {
+  const [error, setError] = React.useState(null);
+
+  const handleNext = () => {
+    if (!form.name.trim())        return setError('Please enter a property name.');
+    if (!form.address.trim())     return setError('Please enter an address.');
+    if (!form.type)               return setError('Please select a property type.');
+    if (!form.description.trim()) return setError('Please add a property description.');
+    setError(null);
+    goStep(2);
+  };
+
   return (
     <>
       <div className="step-title">Property details</div>
@@ -118,9 +129,10 @@ function StepProperty({ form, update, toggleAmenity, goStep, navigate }) {
           ))}
         </div>
       </div>
+      {error && <div className="form-error">{error}</div>}
       <div className="step-nav">
         <button className="btn-back" onClick={() => navigate('/')}>← Back to home</button>
-        <button className="btn-next" onClick={() => goStep(2)}>Continue →</button>
+        <button className="btn-next" onClick={handleNext}>Continue →</button>
       </div>
     </>
   );
@@ -131,6 +143,13 @@ function StepPhotos({ form, addPhoto, removePhoto, goStep }) {
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = React.useState(false);
   const [uploadError, setUploadError] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  const handleNext = () => {
+    if (form.photos.length < 5) return setError('Please upload at least 5 photos.');
+    setError(null);
+    goStep(3);
+  };
 
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
@@ -179,6 +198,7 @@ function StepPhotos({ form, addPhoto, removePhoto, goStep }) {
       </div>
 
       {uploadError && <div className="form-error">{uploadError}</div>}
+      {error && <div className="form-error">{error}</div>}
 
       {form.photos.length > 0 && (
         <div className="photo-grid">
@@ -198,7 +218,7 @@ function StepPhotos({ form, addPhoto, removePhoto, goStep }) {
 
       <div className="step-nav">
         <button className="btn-back" onClick={() => goStep(1)}>← Back</button>
-        <button className="btn-next" onClick={() => goStep(3)}>Continue →</button>
+        <button className="btn-next" onClick={handleNext}>Continue →</button>
       </div>
     </>
   );
@@ -207,6 +227,14 @@ function StepPhotos({ form, addPhoto, removePhoto, goStep }) {
 // ── Step 3: Pricing ───────────────────────────────────────────
 function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
   const QUICK_PRICES = [75, 120, 180, 250, 400];
+  const [error, setError] = React.useState(null);
+
+  const handleNext = () => {
+    if (!form.price || parseFloat(form.price) <= 0) return setError('Please set a nightly price.');
+    setError(null);
+    goStep(4);
+  };
+
   return (
     <>
       <div className="step-title">Set your price</div>
@@ -267,9 +295,10 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
         </div>
       </div>
 
+      {error && <div className="form-error">{error}</div>}
       <div className="step-nav">
         <button className="btn-back" onClick={() => goStep(2)}>← Back</button>
-        <button className="btn-next" onClick={() => goStep(4)}>Continue →</button>
+        <button className="btn-next" onClick={handleNext}>Continue →</button>
       </div>
     </>
   );
