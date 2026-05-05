@@ -17,22 +17,27 @@ const PROPERTY_TYPES = [
 ];
 
 const AMENITIES = [
-  { key: 'wifi',      icon: '📶', label: 'Fast WiFi' },
-  { key: 'ac',        icon: '❄️', label: 'Air conditioning' },
-  { key: 'heating',   icon: '🔥', label: 'Heating' },
-  { key: 'kitchen',   icon: '🍳', label: 'Full kitchen' },
-  { key: 'washer',    icon: '🧺', label: 'Washing machine' },
-  { key: 'parking',   icon: '🅿️', label: 'Free parking' },
-  { key: 'pool',      icon: '🏊', label: 'Pool' },
-  { key: 'gym',       icon: '💪', label: 'Gym' },
-  { key: 'tv',        icon: '📺', label: 'TV' },
-  { key: 'workspace', icon: '💻', label: 'Workspace' },
-  { key: 'balcony',   icon: '🌿', label: 'Balcony / Terrace' },
-  { key: 'garden',    icon: '🌳', label: 'Garden' },
-  { key: 'elevator',  icon: '🛗', label: 'Lift' },
-  { key: 'cot',       icon: '👶', label: 'Baby cot' },
-  { key: 'iron',      icon: '👔', label: 'Iron & board' },
-  { key: 'bbq',       icon: '🍖', label: 'BBQ' },
+  { key: 'wifi',           icon: '📶', label: 'Fast WiFi' },
+  { key: 'ac',             icon: '❄️', label: 'Air conditioning' },
+  { key: 'heating',        icon: '🔥', label: 'Heating' },
+  { key: 'kitchen',        icon: '🍳', label: 'Full kitchen' },
+  { key: 'washer',         icon: '🧺', label: 'Washing machine' },
+  { key: 'parking',        icon: '🅿️', label: 'Free parking' },
+  { key: 'pool',           icon: '🏊', label: 'Pool' },
+  { key: 'gym',            icon: '💪', label: 'Gym' },
+  { key: 'tv',             icon: '📺', label: 'TV' },
+  { key: 'workspace',      icon: '💻', label: 'Workspace' },
+  { key: 'balcony',        icon: '🌿', label: 'Balcony / Terrace' },
+  { key: 'garden',         icon: '🌳', label: 'Garden' },
+  { key: 'elevator',       icon: '🛗', label: 'Lift' },
+  { key: 'cot',            icon: '👶', label: 'Baby cot' },
+  { key: 'iron',           icon: '👔', label: 'Iron & board' },
+  { key: 'bbq',            icon: '🍖', label: 'BBQ' },
+  { key: 'bidet',          icon: '🚿', label: 'Bidet / shattaf' },
+  { key: 'bathtub',        icon: '🛁', label: 'Bathtub' },
+  { key: 'walkInShower',   icon: '🚿', label: 'Walk-in shower' },
+  { key: 'enSuite',        icon: '🚪', label: 'En-suite bathroom' },
+  { key: 'halalFoodNearby',icon: '🍽️', label: 'Halal food nearby' },
 ];
 
 const HALAL_CHECKS = [
@@ -43,6 +48,7 @@ const HALAL_CHECKS = [
   { key: 'prayerSpace',          required: false, title: 'Prayer space or mat available', desc: 'A clean prayer mat is available and the Qibla direction is indicated.' },
   { key: 'mosqueInfo',           required: false, title: 'Nearby mosque information',   desc: 'You can provide guests with details of the nearest mosque.' },
   { key: 'noInappropriateDecor', required: false, title: 'No inappropriate décor',      desc: 'The property contains no explicit imagery or alcohol advertising.' },
+  { key: 'halalFoodInfo',        required: false, title: 'Nearby halal food information', desc: 'You can provide guests with details of nearby halal restaurants and food shops.' },
 ];
 
 // ── Step 1 ────────────────────────────────────────────────────

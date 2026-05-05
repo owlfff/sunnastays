@@ -38,10 +38,15 @@ const AMENITIES_MAP = {
   workspace: { icon: '💻', label: 'Workspace' },
   balcony:   { icon: '🌿', label: 'Balcony / Terrace' },
   garden:    { icon: '🌳', label: 'Garden' },
-  elevator:  { icon: '🛗', label: 'Lift' },
-  cot:       { icon: '👶', label: 'Baby cot' },
-  iron:      { icon: '👔', label: 'Iron & board' },
-  bbq:       { icon: '🍖', label: 'BBQ' },
+  elevator:        { icon: '🛗', label: 'Lift' },
+  cot:             { icon: '👶', label: 'Baby cot' },
+  iron:            { icon: '👔', label: 'Iron & board' },
+  bbq:             { icon: '🍖', label: 'BBQ' },
+  bidet:           { icon: '🚿', label: 'Bidet / shattaf' },
+  bathtub:         { icon: '🛁', label: 'Bathtub' },
+  walkInShower:    { icon: '🚿', label: 'Walk-in shower' },
+  enSuite:         { icon: '🚪', label: 'En-suite bathroom' },
+  halalFoodNearby: { icon: '🍽️', label: 'Halal food nearby' },
 };
 
 const GRADIENTS = [

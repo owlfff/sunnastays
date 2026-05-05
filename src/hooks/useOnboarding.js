@@ -11,7 +11,7 @@ const INITIAL_STATE = {
   price: '', minStay: '1 night', cleaningFee: '',
   halalChecks: {
     alcoholFree: false, noNonHalalMeat: false, petFree: false,
-    halalKitchen: false, prayerSpace: false, mosqueInfo: false, noInappropriateDecor: false,
+    halalKitchen: false, prayerSpace: false, mosqueInfo: false, noInappropriateDecor: false, halalFoodInfo: false,
   },
   houseRules: {
     noSmoking: false, noParties: false, noPets: false,
