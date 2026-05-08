@@ -64,7 +64,11 @@ out center 20;`;
     const location = new window.google.maps.LatLng(lat, lng);
 
     const search = (keyword, maxResults, setter) => {
-      service.nearbySearch({ location, radius: 5000, keyword }, (results, status) => {
+      service.nearbySearch({
+        location,
+        rankBy: window.google.maps.places.RankBy.DISTANCE,
+        keyword,
+      }, (results, status) => {
         if (status !== window.google.maps.places.PlacesServiceStatus.OK || !results?.length) return;
         const mapped = results.slice(0, maxResults).map(r => ({
           name: r.name,
