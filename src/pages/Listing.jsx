@@ -439,24 +439,28 @@ out center 20;`;
             {mosque && (
               <div className="listing-nearby-line">🕌 Nearest mosque: <strong>{mosque.name}</strong> — {mosque.miles} miles away</div>
             )}
-            {halalRestaurants.length > 0 && (
-              <div className="listing-nearby-group">
-                <div className="listing-nearby-label">🍽️ Halal restaurants nearby</div>
-                {halalRestaurants.map((r, i) => (
-                  <div key={i} className="listing-nearby-line">
-                    <strong>{r.name}</strong>{r.rating ? ` · ★ ${r.rating}` : ''} — {r.miles} miles away
+            {(halalRestaurants.length > 0 || halalShops.length > 0) && (
+              <div className="listing-nearby-row">
+                {halalRestaurants.length > 0 && (
+                  <div className="listing-nearby-group">
+                    <div className="listing-nearby-label">🍽️ Halal restaurants nearby</div>
+                    {halalRestaurants.map((r, i) => (
+                      <div key={i} className="listing-nearby-line">
+                        <strong>{r.name}</strong>{r.rating ? ` · ★ ${r.rating}` : ''} — {r.miles} miles away
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-            {halalShops.length > 0 && (
-              <div className="listing-nearby-group">
-                <div className="listing-nearby-label">🥩 Halal food shops nearby</div>
-                {halalShops.map((r, i) => (
-                  <div key={i} className="listing-nearby-line">
-                    <strong>{r.name}</strong> — {r.miles} miles away
+                )}
+                {halalShops.length > 0 && (
+                  <div className="listing-nearby-group">
+                    <div className="listing-nearby-label">🥩 Halal food shops nearby</div>
+                    {halalShops.map((r, i) => (
+                      <div key={i} className="listing-nearby-line">
+                        <strong>{r.name}</strong> — {r.miles} miles away
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             )}
           </div>

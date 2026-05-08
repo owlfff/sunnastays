@@ -375,14 +375,15 @@
   font-size: 14px; color: var(--ink-soft);
   margin-bottom: 4px; font-weight: 300;
 }
+.listing-nearby-row {
+  display: flex; gap: 32px; margin-top: 12px; flex-wrap: wrap;
+}
 .listing-nearby-group {
-  margin-top: 12px;
-  margin-bottom: 4px;
+  flex: 1; min-width: 200px; margin-bottom: 4px;
 }
 .listing-nearby-label {
-  font-size: 12px; font-weight: 600;
+  font-size: 13px; font-weight: 600;
   color: var(--ink-mid); margin-bottom: 6px;
-  text-transform: uppercase; letter-spacing: 0.5px;
 }
 .listing-map-wrap {
   height: 400px;
