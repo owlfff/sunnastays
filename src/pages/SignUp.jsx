@@ -55,7 +55,7 @@ export default function SignUp() {
         </div>
         <div style={{textAlign:'center',padding:'20px 0'}}>
           <div style={{fontSize:64,marginBottom:16}}>📧</div>
-          <h2 style={{fontFamily:'Cormorant Garamond, serif',fontSize:28,fontWeight:700,color:'var(--ink)',marginBottom:10}}>Check your email</h2>
+          <h2 style={{fontFamily:'Fraunces, serif',fontSize:28,fontWeight:700,color:'var(--ink)',marginBottom:10}}>Check your email</h2>
           <p style={{fontSize:15,color:'var(--ink-soft)',fontWeight:300,lineHeight:1.6,marginBottom:24}}>
             We've sent a verification link to <strong>{form.email}</strong>. 
             Click the link in the email to verify your account and get started.

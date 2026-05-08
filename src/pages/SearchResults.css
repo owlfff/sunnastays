@@ -152,7 +152,7 @@
 }
 
 .map-placeholder { text-align: center; color: var(--ink-mid); }
-.map-placeholder h3 { font-family: 'Cormorant Garamond', serif; font-size: 24px; margin-bottom: 6px; }
+.map-placeholder h3 { font-family: 'Fraunces', serif; font-size: 24px; margin-bottom: 6px; }
 .map-placeholder p  { font-size: 13px; opacity: 0.7; }
 
 /* RESPONSIVE */
@@ -179,7 +179,7 @@
 }
 .sr-empty-icon { font-size: 48px; margin-bottom: 16px; }
 .sr-empty h3 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 28px; margin-bottom: 8px; color: var(--ink);
 }
 .sr-empty p { font-size: 15px; color: var(--ink-soft); margin-bottom: 24px; font-weight: 300; }

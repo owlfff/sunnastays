@@ -188,7 +188,7 @@
 }
 
 .booking-price {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 28px; font-weight: 700;
   color: var(--ink); margin-bottom: 4px;
 }
@@ -329,7 +329,7 @@
 
 .listing-reviews { padding-bottom: 48px; }
 .reviews-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 26px; font-weight: 700;
   color: var(--ink); margin-bottom: 24px;
 }
@@ -363,7 +363,7 @@
 
 .listing-map-section { padding-bottom: 48px; }
 .listing-section-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 26px; font-weight: 700;
   color: var(--ink); margin-bottom: 8px;
 }

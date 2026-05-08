@@ -26,7 +26,7 @@
   z-index: 10; border-radius: 24px 24px 0 0;
 }
 .bm-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 24px; font-weight: 600; color: var(--ink);
 }
 .bm-close {
@@ -175,7 +175,7 @@
 /* SUCCESS */
 .bm-success { padding: 28px; text-align: center; }
 .bm-success-icon { font-size: 64px; margin-bottom: 16px; }
-.bm-success h3 { font-family: 'Cormorant Garamond', serif; font-size: 30px; margin-bottom: 10px; }
+.bm-success h3 { font-family: 'Fraunces', serif; font-size: 30px; margin-bottom: 10px; }
 .bm-success p { font-size: 15px; color: var(--ink-soft); font-weight: 300; line-height: 1.6; margin-bottom: 20px; }
 .bm-success-detail { background: var(--sand); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; text-align: left; }
 .bm-success-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--sand-dark); font-size: 14px; }
@@ -243,7 +243,7 @@
   font-weight: 700;
 }
 .bm-success-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 32px;
   font-weight: 600;
   color: var(--ink);
@@ -275,7 +275,7 @@
   border-bottom: 1px solid var(--sand-dark);
 }
 .bm-success-property-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--ink);

@@ -25,7 +25,7 @@
   cursor: pointer;
 }
 .auth-logo-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 22px;
   font-weight: 600;
   color: var(--ink);

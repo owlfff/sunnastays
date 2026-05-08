@@ -14,7 +14,7 @@
 .admin-header-left { display: flex; align-items: center; gap: 12px; }
 .admin-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .admin-logo-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 20px; font-weight: 600; color: var(--sand);
 }
 .admin-header-right { display: flex; align-items: center; gap: 16px; }
@@ -50,7 +50,7 @@
   border: 1.5px solid var(--sand-dark);
   text-align: center;
 }
-.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.stat-num { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
 .stat-label { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
 .stat-pending  .stat-num { color: var(--terra); }
 .stat-approved .stat-num { color: var(--success); }
@@ -187,7 +187,7 @@
   text-align: center;
 }
 .admin-stat-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 36px; font-weight: 700;
   color: var(--ink); line-height: 1;
   margin-bottom: 6px;

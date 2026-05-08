@@ -38,7 +38,7 @@
   flex-shrink: 0;
 }
 .nav-logo-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 22px; font-weight: 700;
   color: var(--ink);
 }

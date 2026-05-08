@@ -18,7 +18,7 @@
 .dashboard-header-left { display: flex; align-items: center; gap: 16px; }
 .dashboard-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .dashboard-logo-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 20px; font-weight: 600; color: var(--sand);
 }
 .dashboard-tag {
@@ -66,7 +66,7 @@
   text-align: center;
 }
 .dash-stat-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 40px; font-weight: 700;
   color: var(--ink); line-height: 1;
   margin-bottom: 6px;
@@ -106,7 +106,7 @@
   max-width: 560px;
 }
 .dash-payments-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Fraunces', serif;
   font-size: 26px; font-weight: 600;
   color: var(--ink); margin-bottom: 8px;
 }

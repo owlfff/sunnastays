@@ -118,7 +118,7 @@
 .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
 .how-card { padding: 32px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); transition: background 0.2s, transform 0.2s; }
 .how-card:hover { background: rgba(196,98,45,0.12); transform: translateY(-4px); }
-.how-num { font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 700; color: var(--terra); opacity: 0.3; line-height: 1; margin-bottom: 12px; }
+.how-num { font-family: 'Fraunces', serif; font-size: 56px; font-weight: 700; color: var(--terra); opacity: 0.3; line-height: 1; margin-bottom: 12px; }
 .how-title { font-size: 18px; font-weight: 600; color: var(--cream); margin-bottom: 10px; }
 .how-desc { font-size: 14px; color: rgba(245,237,216,0.6); line-height: 1.7; font-weight: 300; }
 
@@ -139,7 +139,7 @@
 .testimonials-section h2 em { color: var(--terra); font-style: italic; }
 .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .test-card { background: var(--white); border-radius: 20px; padding: 26px; border: 1px solid var(--sand-dark); }
-.test-quote { font-family: 'Cormorant Garamond', serif; font-size: 48px; color: var(--terra); opacity: 0.25; line-height: 0.8; margin-bottom: 10px; }
+.test-quote { font-family: 'Fraunces', serif; font-size: 48px; color: var(--terra); opacity: 0.25; line-height: 0.8; margin-bottom: 10px; }
 .test-text { font-size: 14px; color: var(--ink-mid); line-height: 1.7; margin-bottom: 18px; font-weight: 300; }
 .test-author { display: flex; align-items: center; gap: 10px; }
 .test-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--terra-muted), var(--terra)); display: flex; align-items: center; justify-content: center; font-size: 15px; }

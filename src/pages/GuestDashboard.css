@@ -39,7 +39,7 @@
   display: flex; justify-content: space-between;
   align-items: flex-start; margin-bottom: 16px;
 }
-.guest-booking-prop { font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 4px; font-family: 'Cormorant Garamond', serif; }
+.guest-booking-prop { font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 4px; font-family: 'Fraunces', serif; }
 .guest-booking-loc  { font-size: 13px; color: var(--ink-soft); }
 .guest-booking-status {
   font-size: 12px; font-weight: 600;
