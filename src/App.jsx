@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import Nav from './components/Nav';
 import CookieBanner from './components/CookieBanner';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import SearchResults from './pages/SearchResults';
 import Listing from './pages/Listing';
@@ -39,6 +40,7 @@ export default function App() {
   return (
     <BrowserRouter>
       {analyticsEnabled && <Analytics />}
+      <ScrollToTop />
       <CookieBanner onConsent={setAnalyticsEnabled} />
       <Routes>
         <Route path="/admin" element={<Admin />} />
