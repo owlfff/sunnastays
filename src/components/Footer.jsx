@@ -27,16 +27,16 @@ export default function Footer() {
           <div className="footer-col">
             <h4>Explore</h4>
             <button onClick={() => navigate('/search')}>Search stays</button>
-            <button>Destinations</button>
-            <button>Weekend escapes</button>
-            <button>Family villas</button>
+            <button onClick={() => navigate('/search')}>Destinations</button>
+            <button onClick={() => navigate('/search')}>Weekend escapes</button>
+            <button onClick={() => navigate('/search')}>Family villas</button>
           </div>
           <div className="footer-col">
             <h4>Hosting</h4>
             <button onClick={() => navigate(user ? '/host' : '/signup')}>List your property</button>
             <button onClick={() => navigate('/halal-charter')}>Halal Charter</button>
-            <button>Host resources</button>
-            <button>Verification</button>
+            <button onClick={() => navigate(user ? '/host' : '/signup')}>Host resources</button>
+            <button onClick={() => navigate('/halal-charter')}>Verification</button>
           </div>
           <div className="footer-col">
             <h4>Company</h4>
