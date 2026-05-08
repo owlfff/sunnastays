@@ -376,7 +376,7 @@
   margin-bottom: 4px; font-weight: 300;
 }
 .listing-nearby-row {
-  display: flex; gap: 32px; margin-top: 12px; flex-wrap: wrap;
+  display: flex; gap: 32px; margin-top: 8px; margin-bottom: 20px; flex-wrap: wrap;
 }
 .listing-nearby-group {
   flex: 1; min-width: 200px; margin-bottom: 4px;

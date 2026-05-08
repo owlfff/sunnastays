@@ -435,34 +435,35 @@ out center 20;`;
           <div className="container">
             <hr className="listing-divider" />
             <h3 className="listing-section-title">Where you'll be</h3>
-            <div className="listing-address-line">📍 {stay.location}</div>
-            {mosque && (
-              <div className="listing-nearby-line">🕌 Nearest mosque: <strong>{mosque.name}</strong> — {mosque.miles} miles away</div>
-            )}
-            {(halalRestaurants.length > 0 || halalShops.length > 0) && (
-              <div className="listing-nearby-row">
-                {halalRestaurants.length > 0 && (
-                  <div className="listing-nearby-group">
-                    <div className="listing-nearby-label">🍽️ Halal restaurants nearby</div>
-                    {halalRestaurants.map((r, i) => (
-                      <div key={i} className="listing-nearby-line">
-                        <strong>{r.name}</strong>{r.rating ? ` · ★ ${r.rating}` : ''} — {r.miles} miles away
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {halalShops.length > 0 && (
-                  <div className="listing-nearby-group">
-                    <div className="listing-nearby-label">🥩 Halal food shops nearby</div>
-                    {halalShops.map((r, i) => (
-                      <div key={i} className="listing-nearby-line">
-                        <strong>{r.name}</strong> — {r.miles} miles away
-                      </div>
-                    ))}
-                  </div>
+            <div className="listing-nearby-row">
+              <div className="listing-nearby-group">
+                <div className="listing-nearby-label">📍 Location</div>
+                <div className="listing-nearby-line">{stay.location}</div>
+                {mosque && (
+                  <div className="listing-nearby-line">🕌 <strong>{mosque.name}</strong> — {mosque.miles} miles away</div>
                 )}
               </div>
-            )}
+              {halalRestaurants.length > 0 && (
+                <div className="listing-nearby-group">
+                  <div className="listing-nearby-label">🍽️ Halal restaurants nearby</div>
+                  {halalRestaurants.map((r, i) => (
+                    <div key={i} className="listing-nearby-line">
+                      <strong>{r.name}</strong>{r.rating ? ` · ★ ${r.rating}` : ''} — {r.miles} miles away
+                    </div>
+                  ))}
+                </div>
+              )}
+              {halalShops.length > 0 && (
+                <div className="listing-nearby-group">
+                  <div className="listing-nearby-label">🥩 Halal food shops nearby</div>
+                  {halalShops.map((r, i) => (
+                    <div key={i} className="listing-nearby-line">
+                      <strong>{r.name}</strong> — {r.miles} miles away
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           {stay.lat && stay.lng && (
             <div className="listing-map-wrap">
