@@ -2,9 +2,9 @@
   min-height: 100vh;
   background: linear-gradient(160deg, #F5EDD8 0%, #EDE0C4 40%, #D4C4A0 100%);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
 .auth-card {
