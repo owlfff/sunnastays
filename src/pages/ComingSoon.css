@@ -1,0 +1,34 @@
+.coming-soon-body {
+  min-height: calc(100vh - var(--nav-height) - 200px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 24px;
+}
+.coming-soon-inner {
+  text-align: center; max-width: 400px;
+}
+.coming-soon-mark {
+  width: 72px; height: 72px;
+  background: var(--terra);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 32px; color: var(--sand);
+  margin: 0 auto 28px;
+}
+.coming-soon-inner h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 42px; font-weight: 600;
+  color: var(--ink); margin-bottom: 12px;
+}
+.coming-soon-inner p {
+  font-size: 16px; color: var(--ink-soft);
+  font-weight: 300; margin-bottom: 32px;
+}
+.coming-soon-btn {
+  background: var(--terra); color: white;
+  border: none; border-radius: 50px;
+  padding: 14px 32px; font-size: 15px;
+  font-weight: 500; cursor: pointer;
+  transition: background 0.15s;
+}
+.coming-soon-btn:hover { background: var(--terra-dark); }

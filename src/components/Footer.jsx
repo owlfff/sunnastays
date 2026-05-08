@@ -12,6 +12,7 @@ export default function Footer() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
     return () => subscription.unsubscribe();
   }, []);
+
   return (
     <footer className="footer">
       <div className="container">
@@ -35,19 +36,30 @@ export default function Footer() {
             <h4>Hosting</h4>
             <button onClick={() => navigate(user ? '/host' : '/signup')}>List your property</button>
             <button onClick={() => navigate('/halal-charter')}>Halal Charter</button>
-            <button onClick={() => navigate(user ? '/host' : '/signup')}>Host resources</button>
-            <button onClick={() => navigate('/halal-charter')}>Verification</button>
+            <button onClick={() => navigate('/host-agreement')}>Host Agreement</button>
+            <button onClick={() => navigate('/cancellation-policy')}>Cancellation policy</button>
           </div>
           <div className="footer-col">
             <h4>Company</h4>
-            <button>About us</button>
-            <button>Blog</button>
-            <button>Careers</button>
-            <button>Contact</button>
+            <button onClick={() => navigate('/about')}>About us</button>
+            <button onClick={() => navigate('/coming-soon')}>Blog</button>
+            <button onClick={() => navigate('/coming-soon')}>Careers</button>
+            <button onClick={() => navigate('/contact')}>Contact</button>
           </div>
         </div>
+
+        <div className="footer-legal-links">
+          <button onClick={() => navigate('/privacy')}>Privacy Policy</button>
+          <span className="footer-legal-dot">·</span>
+          <button onClick={() => navigate('/terms')}>Terms of Service</button>
+          <span className="footer-legal-dot">·</span>
+          <button onClick={() => navigate('/cookies')}>Cookie Policy</button>
+          <span className="footer-legal-dot">·</span>
+          <button onClick={() => navigate('/cancellation-policy')}>Cancellations</button>
+        </div>
+
         <div className="footer-bottom">
-          <div className="footer-copy">© 2025 SunnaStays Ltd · sunnastays.com</div>
+          <div className="footer-copy">© 2026 SunnaStays Ltd · Registered in England and Wales</div>
           <div className="footer-badges">
             <span className="footer-badge">✓ Halal Certified</span>
             <span className="footer-badge">🔒 Secure Payments</span>

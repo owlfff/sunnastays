@@ -88,3 +88,20 @@
   text-align: left;
 }
 .footer-col button:hover { color: var(--terra-muted); }
+
+.footer-legal-links {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  padding: 20px 0 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 40px;
+}
+.footer-legal-links button {
+  background: none; border: none; padding: 0;
+  font-size: 12px; color: rgba(245,237,216,0.4);
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-weight: 300; transition: color 0.15s;
+}
+.footer-legal-links button:hover { color: rgba(245,237,216,0.7); }
+.footer-legal-dot {
+  font-size: 12px; color: rgba(245,237,216,0.2);
+}
