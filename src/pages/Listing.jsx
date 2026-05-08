@@ -20,6 +20,8 @@ export default function Listing() {
   const [reviews, setReviews] = useState([]);
   const [lightbox, setLightbox] = useState(null);
   const [mosque, setMosque] = useState(null);
+  const [halalRestaurants, setHalalRestaurants] = useState([]);
+  const [halalShops, setHalalShops] = useState([]);
   const [searchParams] = useSearchParams();
 
   const fetchNearestMosque = useCallback(async function fetchNearestMosque(lat, lng) {
@@ -53,6 +55,30 @@ out center 20;`;
     } catch (_) {}
   }, []);
 
+  const fetchNearbyHalal = useCallback(function fetchNearbyHalal(lat, lng, attempt = 0) {
+    if (!window.google?.maps?.places) {
+      if (attempt < 10) setTimeout(() => fetchNearbyHalal(lat, lng, attempt + 1), 800);
+      return;
+    }
+    const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+    const location = new window.google.maps.LatLng(lat, lng);
+
+    const search = (keyword, maxResults, setter) => {
+      service.nearbySearch({ location, radius: 5000, keyword }, (results, status) => {
+        if (status !== window.google.maps.places.PlacesServiceStatus.OK || !results?.length) return;
+        const mapped = results.slice(0, maxResults).map(r => ({
+          name: r.name,
+          rating: r.rating || null,
+          miles: haversine(lat, lng, r.geometry.location.lat(), r.geometry.location.lng()).toFixed(1),
+        }));
+        setter(mapped);
+      });
+    };
+
+    search('halal restaurant', 3, setHalalRestaurants);
+    search('halal butcher', 2, setHalalShops);
+  }, []);
+
   useEffect(() => {
     if (searchParams.get('booking') === 'true') {
       setShowBooking(true);
@@ -68,6 +94,7 @@ out center 20;`;
         if (data?.id) getReviewsForProperty(data.id).then(r => { setReviews(r); }).catch(() => {});
         if (data?.lat && data?.lng) {
           fetchNearestMosque(data.lat, data.lng);
+          fetchNearbyHalal(data.lat, data.lng);
         } else {
           // Geocode via Nominatim — use full address if available, else city/country
           const geocodeQuery = data?.address || data?.location;
@@ -75,14 +102,19 @@ out center 20;`;
             fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(geocodeQuery)}&format=json&limit=1`)
               .then(r => r.json())
               .then(results => {
-                if (results?.[0]) fetchNearestMosque(parseFloat(results[0].lat), parseFloat(results[0].lon));
+                if (results?.[0]) {
+                  const lt = parseFloat(results[0].lat);
+                  const ln = parseFloat(results[0].lon);
+                  fetchNearestMosque(lt, ln);
+                  fetchNearbyHalal(lt, ln);
+                }
               })
               .catch(() => {});
           }
         }
       })
       .catch(() => setLoading(false));
-  }, [slug, fetchNearestMosque]);
+  }, [slug, fetchNearestMosque, fetchNearbyHalal]);
 
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 3958.8;
@@ -401,7 +433,27 @@ out center 20;`;
             <h3 className="listing-section-title">Where you'll be</h3>
             <div className="listing-address-line">📍 {stay.location}</div>
             {mosque && (
-              <div className="listing-mosque-line">🕌 Nearest mosque: <strong>{mosque.name}</strong> — {mosque.miles} miles away</div>
+              <div className="listing-nearby-line">🕌 Nearest mosque: <strong>{mosque.name}</strong> — {mosque.miles} miles away</div>
+            )}
+            {halalRestaurants.length > 0 && (
+              <div className="listing-nearby-group">
+                <div className="listing-nearby-label">🍽️ Halal restaurants nearby</div>
+                {halalRestaurants.map((r, i) => (
+                  <div key={i} className="listing-nearby-line">
+                    <strong>{r.name}</strong>{r.rating ? ` · ★ ${r.rating}` : ''} — {r.miles} miles away
+                  </div>
+                ))}
+              </div>
+            )}
+            {halalShops.length > 0 && (
+              <div className="listing-nearby-group">
+                <div className="listing-nearby-label">🥩 Halal food shops nearby</div>
+                {halalShops.map((r, i) => (
+                  <div key={i} className="listing-nearby-line">
+                    <strong>{r.name}</strong> — {r.miles} miles away
+                  </div>
+                ))}
+              </div>
             )}
           </div>
           {stay.lat && stay.lng && (

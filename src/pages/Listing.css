@@ -371,9 +371,17 @@
   font-size: 14px; color: var(--ink-soft);
   margin-bottom: 8px; font-weight: 300;
 }
-.listing-mosque-line {
+.listing-nearby-line {
   font-size: 14px; color: var(--ink-soft);
-  margin-bottom: 16px; font-weight: 300;
+  margin-bottom: 6px; font-weight: 300;
+}
+.listing-nearby-group {
+  margin-bottom: 14px;
+}
+.listing-nearby-label {
+  font-size: 13px; font-weight: 600;
+  color: var(--ink-mid); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
 .listing-map-wrap {
   height: 400px;
