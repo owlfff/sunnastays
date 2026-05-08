@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
-import { getStay, getReviewsForProperty } from '../api';
+import { getStay, getReviewsForProperty, CURRENCY_SYMBOLS } from '../api';
 import './Listing.css';
 import SearchMap from '../components/SearchMap';
 
@@ -118,6 +118,7 @@ out center 20;`;
     : 0;
   const serviceFee = nights > 0 ? Math.round(stay.price * nights * 0.10) : 0;
   const total = nights > 0 ? stay.price * nights + serviceFee : 0;
+  const currencySymbol = CURRENCY_SYMBOLS[stay.currency] || stay.currency || '£';
 
   return (
     <div className="listing-page">
@@ -256,7 +257,7 @@ out center 20;`;
         {/* BOOKING CARD */}
         <div className="listing-right">
           <div className="booking-card">
-            <div className="booking-price">£{stay.price} <span>per night</span></div>
+            <div className="booking-price">{currencySymbol}{stay.price} <span>per night</span></div>
             {reviews.length > 0 && (
               <div className="booking-rating">
                 <span style={{ color: 'var(--gold)' }}>★</span> {(reviews.reduce((sum,r) => sum+r.rating,0)/reviews.length).toFixed(1)} · <span>{reviews.length} review{reviews.length !== 1 ? 's' : ''}</span>
@@ -301,17 +302,18 @@ out center 20;`;
             {nights > 0 && (
             <div className="booking-total">
               <div className="booking-line">
-                <span>£{stay.price} × {nights} night{nights !== 1 ? 's' : ''}</span>
-                <span>£{stay.price * nights}</span>
+                <span>{currencySymbol}{stay.price} × {nights} night{nights !== 1 ? 's' : ''}</span>
+                <span>{currencySymbol}{stay.price * nights}</span>
               </div>
               <div className="booking-line">
                 <span>SunnaStays service fee (10%)</span>
-                <span>£{serviceFee}</span>
+                <span>{currencySymbol}{serviceFee}</span>
               </div>
               <div className="booking-line booking-line--total">
-                <span>Total (GBP)</span>
-                <span>£{total}</span>
+                <span>Total ({stay.currency || 'GBP'})</span>
+                <span>{currencySymbol}{total}</span>
               </div>
+              <div className="booking-currency-note">Charged in {stay.currency || 'GBP'}</div>
             </div>
             )}
 

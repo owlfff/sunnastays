@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   instantBooking: false,
   cancellationPolicy: 'moderate',
   photos: [],
-  price: '', minStay: '1 night', cleaningFee: '',
+  price: '', minStay: '1 night', cleaningFee: '', currency: 'GBP',
   halalChecks: {
     alcoholFree: false, noNonHalalMeat: false, petFree: false,
     halalKitchen: false, prayerSpace: false, mosqueInfo: false, noInappropriateDecor: false, halalFoodInfo: false,

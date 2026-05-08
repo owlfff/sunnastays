@@ -224,10 +224,19 @@ function StepPhotos({ form, addPhoto, removePhoto, goStep }) {
   );
 }
 
+const CURRENCIES = [
+  { code: 'GBP', symbol: '£', label: 'GBP — British Pound' },
+  { code: 'MYR', symbol: 'RM', label: 'MYR — Malaysian Ringgit' },
+  { code: 'AED', symbol: 'AED', label: 'AED — UAE Dirham' },
+  { code: 'TRY', symbol: '₺', label: 'TRY — Turkish Lira' },
+];
+
 // ── Step 3: Pricing ───────────────────────────────────────────
 function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
   const QUICK_PRICES = [75, 120, 180, 250, 400];
   const [error, setError] = React.useState(null);
+
+  const currency = CURRENCIES.find(c => c.code === form.currency) || CURRENCIES[0];
 
   const handleNext = () => {
     if (!form.price || parseFloat(form.price) <= 0) return setError('Please set a nightly price.');
@@ -240,23 +249,31 @@ function StepPricing({ form, update, goStep, hostFee, hostEarns }) {
       <div className="step-title">Set your price</div>
       <div className="step-subtitle">Set your nightly rate — we'll show you what you earn after our 3% host fee.</div>
       <div className="form-group">
-        <label className="form-label">Nightly price (GBP)</label>
+        <label className="form-label">Listing currency</label>
+        <select className="form-input form-select" value={form.currency} onChange={e => { update('currency', e.target.value); update('price', ''); }}>
+          {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+        </select>
+      </div>
+      <div className="form-group">
+        <label className="form-label">Nightly price ({form.currency})</label>
         <div className="price-input-wrap">
-          <span className="price-symbol">£</span>
+          <span className="price-symbol">{currency.symbol}</span>
           <input className="form-input price-input" type="number" placeholder="0" min="0"
             value={form.price} onChange={e => update('price', e.target.value)} />
         </div>
-        <div className="price-suggestion">
-          {QUICK_PRICES.map(p => (
-            <button key={p} className={`price-tag ${form.price === String(p) ? 'selected' : ''}`}
-              onClick={() => update('price', String(p))}>£{p}</button>
-          ))}
-        </div>
+        {form.currency === 'GBP' && (
+          <div className="price-suggestion">
+            {QUICK_PRICES.map(p => (
+              <button key={p} className={`price-tag ${form.price === String(p) ? 'selected' : ''}`}
+                onClick={() => update('price', String(p))}>£{p}</button>
+            ))}
+          </div>
+        )}
       </div>
       <div className="price-breakdown">
-        <div className="price-row"><span>Your nightly rate</span><span>{form.price ? `£${form.price}` : '£—'}</span></div>
-        <div className="price-row"><span>SunnaStays host fee (3%)</span><span>{form.price ? `−£${hostFee}` : '−£—'}</span></div>
-        <div className="price-row price-row--total"><span>You receive per night</span><span>{form.price ? `£${hostEarns}` : '£—'}</span></div>
+        <div className="price-row"><span>Your nightly rate</span><span>{form.price ? `${currency.symbol}${form.price}` : `${currency.symbol}—`}</span></div>
+        <div className="price-row"><span>SunnaStays host fee (3%)</span><span>{form.price ? `−${currency.symbol}${hostFee}` : `−${currency.symbol}—`}</span></div>
+        <div className="price-row price-row--total"><span>You receive per night</span><span>{form.price ? `${currency.symbol}${hostEarns}` : `${currency.symbol}—`}</span></div>
       </div>
       <div className="form-row" style={{ marginTop: 22 }}>
         <div className="form-group">

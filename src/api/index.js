@@ -25,6 +25,13 @@ const MOCK_LISTING = {
   images: ['🕌', '🌅', '🛏️'],
 };
 
+export const CURRENCY_SYMBOLS = {
+  GBP: '£',
+  MYR: 'RM',
+  AED: 'AED',
+  TRY: '₺',
+};
+
 const AMENITIES_MAP = {
   wifi:      { icon: '📶', label: 'Fast WiFi' },
   ac:        { icon: '❄️', label: 'Air conditioning' },
@@ -85,6 +92,7 @@ function formatProperty(p, index) {
     cancellationPolicy: p.cancellation_policy || 'moderate',
     houseRules: p.house_rules || {},
     amenities: (p.amenities || []).map(key => AMENITIES_MAP[key]).filter(Boolean),
+    currency: p.currency || 'GBP',
   };
 }
 
@@ -163,6 +171,7 @@ export async function submitListing(payload) {
         custom: payload.customRules || '',
       },
       amenities: payload.amenities || [],
+      currency: payload.currency || 'GBP',
     }]);
 
   if (error) throw new Error(error.message);

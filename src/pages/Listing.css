@@ -271,6 +271,12 @@
   color: var(--ink-soft); margin-top: 10px;
 }
 
+.booking-currency-note {
+  text-align: center; font-size: 11px;
+  color: var(--ink-soft); margin-top: 6px;
+  font-style: italic;
+}
+
 .wishlist-btn {
   width: 100%; padding: 12px;
   background: transparent; border: 1.5px solid var(--sand-dark);
