@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
 import './Footer.css';
 
 export default function Footer() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
+    return () => subscription.unsubscribe();
+  }, []);
   return (
     <footer className="footer">
       <div className="container">
@@ -25,7 +33,7 @@ export default function Footer() {
           </div>
           <div className="footer-col">
             <h4>Hosting</h4>
-            <button onClick={() => navigate('/host')}>List your property</button>
+            <button onClick={() => navigate(user ? '/host' : '/signup')}>List your property</button>
             <button onClick={() => navigate('/halal-charter')}>Halal Charter</button>
             <button>Host resources</button>
             <button>Verification</button>

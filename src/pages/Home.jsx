@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { searchStays } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
 import SearchBar from '../components/SearchBar';
 import { useSearch } from '../hooks/useSearch';
 import StayCard from '../components/StayCard';
@@ -46,6 +47,13 @@ export default function Home() {
   const search = useSearch();
   const [activeCategory, setActiveCategory] = useState(0);
   const [featuredStays, setFeaturedStays] = useState(FEATURED);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     searchStays({}).then(results => {
@@ -221,7 +229,7 @@ export default function Home() {
           <div className="section-label">For hosts</div>
           <h2>List your halal <em>property</em></h2>
           <p>Join a community of verified hosts and earn from guests who share your values.</p>
-          <button className="btn-white" onClick={() => navigate('/host')}>Become a host →</button>
+          <button className="btn-white" onClick={() => navigate(user ? '/host' : '/signup')}>Become a host →</button>
         </div>
       </section>
 

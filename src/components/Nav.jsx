@@ -86,7 +86,7 @@ export default function Nav() {
             <button className="nav-link nav-signin" onClick={() => navigate('/signup')}>Sign up</button>
           </>
         )}
-        <button className="nav-host-btn" onClick={() => navigate('/host')}>
+        <button className="nav-host-btn" onClick={() => navigate(user ? '/host' : '/signup')}>
           List your property
         </button>
       </div>
