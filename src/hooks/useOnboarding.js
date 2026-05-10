@@ -29,6 +29,13 @@ export function useOnboarding(editListingId = null) {
   const [submitted, setSubmitted]   = useState(false);
   const [error, setError]           = useState(null);
 
+  // Reset submitted state when switching between create and edit modes
+  useEffect(() => {
+    setSubmitted(false);
+    setStep(1);
+    setError(null);
+  }, [editListingId]);
+
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;

@@ -488,7 +488,7 @@ export default function HostOnboarding() {
       <div className="onboard-wrap">
         <div className="onboard-header">
           <p className="onboard-arabic">كن مضيفاً معنا</p>
-          <h2>{isEditing ? 'Edit your <em>listing</em>' : 'List your <em>property</em>'}</h2>
+          <h2>{isEditing ? <>Edit your <em>listing</em></> : <>List your <em>property</em></>}</h2>
           <p>{isEditing ? 'Update your listing and resubmit for review. Our team will review within 48 hours.' : 'Join SunnaStays in 6 simple steps. Our team reviews every listing within 48 hours.'}</p>
         </div>
 
