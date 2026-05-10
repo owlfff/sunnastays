@@ -67,10 +67,19 @@ const GRADIENTS = [
 
 const EMOJIS = ['🕌','🌴','🏰','🌊','🌿','🏡','🏖️','🏔️'];
 
+export function generateSlug(name, city) {
+  const base = `${name}-${city || ''}`
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[\s-]+/g, '-')
+    .replace(/^-|-$/g, '');
+  return base;
+}
+
 function formatProperty(p, index) {
   return {
     id:             p.id,
-    slug:           p.id,
+    slug:           p.slug || p.id,
     name:           p.name,
     emoji:          EMOJIS[index % EMOJIS.length],
     location:       `${p.city}, ${p.country}`,
@@ -117,7 +126,7 @@ export async function getStay(slug) {
   const { data, error } = await supabase
     .from('properties')
     .select('*')
-    .eq('id', slug)
+    .eq('slug', slug)
     .single();
 
   if (error || !data) return MOCK_LISTING;
@@ -147,10 +156,16 @@ export async function getStay(slug) {
 
 export async function submitListing(payload) {
   const photoUrls = payload.photos.map(p => p.url);
+
+  // Generate a base slug from name + city, then append a random 6-char suffix for uniqueness
+  const suffix = Math.random().toString(36).substring(2, 8);
+  const slug = generateSlug(payload.name, payload.city) + '-' + suffix;
+
   const { error } = await supabase
     .from('properties')
     .insert([{
       name:        payload.name,
+      slug:        slug,
       type:        payload.type,
       city:        payload.city,
       country:     payload.country,
