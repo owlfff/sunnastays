@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { submitListing } from '../api';
+import { submitListing, updateListing } from '../api';
 
 const INITIAL_STATE = {
   name: '', type: '', city: '', country: '', bedrooms: '1', maxGuests: '2', description: '',
@@ -22,7 +22,7 @@ const INITIAL_STATE = {
   fullName: '', email: '', phone: '', termsAccepted: false,
 };
 
-export function useOnboarding() {
+export function useOnboarding(editListingId = null) {
   const [step, setStep]             = useState(1);
   const [form, setForm]             = useState(INITIAL_STATE);
   const [submitting, setSubmitting] = useState(false);
@@ -37,6 +37,52 @@ export function useOnboarding() {
         .select('display_name, full_name, email, phone')
         .eq('user_id', user.id)
         .single();
+
+      // If editing, load the existing listing and pre-populate the form
+      if (editListingId) {
+        const { data: listing } = await supabase
+          .from('properties')
+          .select('*')
+          .eq('id', editListingId)
+          .single();
+
+        if (listing) {
+          setForm({
+            ...INITIAL_STATE,
+            name:               listing.name || '',
+            type:               listing.type || '',
+            city:               listing.city || '',
+            country:            listing.country || '',
+            bedrooms:           String(listing.bedrooms || '1'),
+            maxGuests:          String(listing.max_guests || '2'),
+            description:        listing.description || '',
+            address:            listing.address || '',
+            lat:                listing.lat || null,
+            lng:                listing.lng || null,
+            instantBooking:     listing.instant_booking || false,
+            cancellationPolicy: listing.cancellation_policy || 'moderate',
+            photos:             (listing.photos || []).map(url => ({ url })),
+            price:              String(listing.price || ''),
+            currency:           listing.currency || 'GBP',
+            amenities:          listing.amenities || [],
+            halalChecks: {
+              ...INITIAL_STATE.halalChecks,
+              ...(listing.halal_checks || {}),
+            },
+            houseRules: {
+              ...INITIAL_STATE.houseRules,
+              ...(listing.house_rules || {}),
+            },
+            customRules:  listing.house_rules?.custom || '',
+            fullName:     profile?.full_name || profile?.display_name || '',
+            email:        profile?.email || user.email || '',
+            phone:        profile?.phone || '',
+            termsAccepted: true, // already accepted when first submitted
+          });
+          return;
+        }
+      }
+
       if (profile) {
         setForm(f => ({
           ...f,
@@ -48,7 +94,7 @@ export function useOnboarding() {
         setForm(f => ({ ...f, email: user.email }));
       }
     });
-  }, []);
+  }, [editListingId]);
 
   const update = useCallback((field, value) => {
     setForm(f => ({ ...f, [field]: value }));
@@ -104,14 +150,18 @@ export function useOnboarding() {
     setError(null);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      await submitListing({ ...form, hostId: user?.id });
+      if (editListingId) {
+        await updateListing(editListingId, { ...form, hostId: user?.id });
+      } else {
+        await submitListing({ ...form, hostId: user?.id });
+      }
       setSubmitted(true);
     } catch (e) {
       setError('Something went wrong. Please try again.');
     } finally {
       setSubmitting(false);
     }
-  }, [form]);
+  }, [form, editListingId]);
 
   const reset = useCallback(() => {
     setForm(INITIAL_STATE);

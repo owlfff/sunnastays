@@ -333,9 +333,27 @@ export default function HostDashboard() {
                             <span>£{l.price}/night</span>
                             <span>{l.bedrooms} bed · {l.max_guests} guests</span>
                           </div>
-                          <div className={`dash-listing-status dash-listing-status--${l.status}`}>
+                                  <div className={`dash-listing-status dash-listing-status--${l.status}`}>
                             {l.status === 'approved' ? '✓ Live' : l.status === 'pending' ? '⏳ Pending review' : '✕ Rejected'}
                           </div>
+                          {l.status === 'rejected' && (
+                            <div className="dash-rejection-block">
+                              {l.rejection_reason && (
+                                <div className="dash-rejection-reasons">
+                                  <div className="dash-rejection-label">Rejected — reasons:</div>
+                                  {l.rejection_reason.split('\n').map((r, i) => (
+                                    <div key={i} className="dash-rejection-item">• {r}</div>
+                                  ))}
+                                </div>
+                              )}
+                              <button
+                                className="dash-resubmit-btn"
+                                onClick={() => navigate(`/host?edit=${l.id}`)}
+                              >
+                                ✏️ Edit &amp; resubmit
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}

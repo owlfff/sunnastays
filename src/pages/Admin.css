@@ -301,3 +301,80 @@
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
   color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 500;
 }
+
+/* Rejection form */
+.admin-rejection-form {
+  margin-top: 12px;
+  background: #fff8f5;
+  border: 1.5px solid #f5c6b0;
+  border-radius: 12px;
+  padding: 16px;
+}
+.admin-rejection-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.admin-rejection-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-mid);
+  margin-bottom: 8px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.admin-rejection-option input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: var(--terra);
+  flex-shrink: 0;
+}
+.admin-rejection-note {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+  background: var(--white);
+}
+.admin-rejection-note:focus { outline: none; border-color: var(--terra); }
+.admin-btn-cancel {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1.5px solid var(--sand-dark);
+  background: var(--white);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.admin-btn-cancel:hover { background: var(--sand); }
+
+/* Rejection summary on rejected cards */
+.admin-rejection-summary {
+  background: #fff8f5;
+  border: 1.5px solid #f5c6b0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.admin-rejection-summary-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--terra);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.admin-rejection-summary-item {
+  font-size: 13px;
+  color: var(--ink-mid);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}

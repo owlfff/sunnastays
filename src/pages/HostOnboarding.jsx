@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { useOnboarding } from '../hooks/useOnboarding';
 import AddressPicker from '../components/AddressPicker';
@@ -462,13 +462,15 @@ function StepSubmit({ form, update, checkedCount, totalChecks, submitting, error
 }
 
 // ── Success ───────────────────────────────────────────────────
-function SuccessState({ navigate }) {
+function SuccessState({ navigate, isEditing }) {
   return (
     <div className="success-state">
       <div className="success-icon">🎉</div>
-      <h3>Listing submitted!</h3>
+      <h3>{isEditing ? 'Listing resubmitted!' : 'Listing submitted!'}</h3>
       <p>Jazakallah khair. Your property has been received and our halal verification team will review it within <strong>48 hours</strong>.</p>
-      <button className="btn-primary" onClick={() => navigate('/')}>← Back to SunnaStays</button>
+      <button className="btn-primary" onClick={() => navigate(isEditing ? '/dashboard/host' : '/')}>
+        {isEditing ? '← Back to dashboard' : '← Back to SunnaStays'}
+      </button>
     </div>
   );
 }
@@ -476,15 +478,18 @@ function SuccessState({ navigate }) {
 // ── Main ──────────────────────────────────────────────────────
 export default function HostOnboarding() {
   const navigate = useNavigate();
-  const ob = useOnboarding();
+  const [searchParams] = useSearchParams();
+  const editListingId = searchParams.get('edit') || null;
+  const ob = useOnboarding(editListingId);
+  const isEditing = Boolean(editListingId);
 
   return (
     <div className="onboard-page">
       <div className="onboard-wrap">
         <div className="onboard-header">
           <p className="onboard-arabic">كن مضيفاً معنا</p>
-          <h2>List your <em>property</em></h2>
-          <p>Join SunnaStays in 6 simple steps. Our team reviews every listing within 48 hours.</p>
+          <h2>{isEditing ? 'Edit your <em>listing</em>' : 'List your <em>property</em>'}</h2>
+          <p>{isEditing ? 'Update your listing and resubmit for review. Our team will review within 48 hours.' : 'Join SunnaStays in 6 simple steps. Our team reviews every listing within 48 hours.'}</p>
         </div>
 
         <div className="progress-track">
@@ -502,7 +507,7 @@ export default function HostOnboarding() {
         </div>
 
         <div className="step-card">
-          {ob.submitted ? <SuccessState navigate={navigate} /> : (
+          {ob.submitted ? <SuccessState navigate={navigate} isEditing={isEditing} /> : (
             <>
               {ob.step === 1 && <StepProperty  form={ob.form} update={ob.update} toggleAmenity={ob.toggleAmenity} goStep={ob.goStep} navigate={navigate} />}
               {ob.step === 2 && <StepPhotos    form={ob.form} addPhoto={ob.addPhoto} removePhoto={ob.removePhoto} goStep={ob.goStep} />}

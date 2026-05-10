@@ -276,3 +276,42 @@
   font-weight: 700;
   margin-left: 4px;
 }
+
+/* Rejection reasons on listing cards */
+.dash-rejection-block {
+  margin-top: 10px;
+}
+.dash-rejection-reasons {
+  background: #fff8f5;
+  border: 1.5px solid #f5c6b0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.dash-rejection-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c0392b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+.dash-rejection-item {
+  font-size: 13px;
+  color: var(--ink-mid);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.dash-resubmit-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dash-resubmit-btn:hover { background: var(--terra); }

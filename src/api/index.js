@@ -154,6 +154,40 @@ export async function getStay(slug) {
   };
 }
 
+export async function updateListing(listingId, payload) {
+  const photoUrls = payload.photos.map(p => p.url);
+  const { error } = await supabase
+    .from('properties')
+    .update({
+      name:        payload.name,
+      type:        payload.type,
+      city:        payload.city,
+      country:     payload.country,
+      description: payload.description,
+      price:       parseFloat(payload.price) || 0,
+      bedrooms:    parseInt(payload.bedrooms) || 1,
+      max_guests:  parseInt(payload.maxGuests) || 2,
+      address:     payload.address || null,
+      instant_booking: payload.instantBooking || false,
+      cancellation_policy: payload.cancellationPolicy || 'moderate',
+      lat:         payload.lat || null,
+      lng:         payload.lng || null,
+      photos:      photoUrls,
+      house_rules: {
+        ...payload.houseRules,
+        custom: payload.customRules || '',
+      },
+      amenities:        payload.amenities || [],
+      currency:         payload.currency || 'GBP',
+      status:           'pending',
+      rejection_reason: null,
+    })
+    .eq('id', listingId);
+
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
 export async function submitListing(payload) {
   const photoUrls = payload.photos.map(p => p.url);
 

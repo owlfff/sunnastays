@@ -12,6 +12,9 @@ export default function Admin() {
   const [filter, setFilter] = useState('pending');
   const [lightbox, setLightbox] = useState(null); // { photos: [], index: 0 }
   const [checking, setChecking] = useState(true);
+  const [rejectingId, setRejectingId] = useState(null);
+  const [rejectionReasons, setRejectionReasons] = useState([]);
+  const [rejectionNote, setRejectionNote] = useState('');
   const [activeTab, setActiveTab] = useState('properties');
   const [bookings, setBookings] = useState([]);
   const [bookingFilter, setBookingFilter] = useState('all');
@@ -68,12 +71,45 @@ export default function Admin() {
     setLoading(false);
   };
 
+  const REJECTION_OPTIONS = [
+    'Insufficient or low-quality photos',
+    'Property description needs more detail',
+    'Unable to verify halal compliance from information provided',
+    'Address or location details unclear',
+    'Pricing appears inconsistent with the property',
+    'Property does not meet SunnaStays halal standards',
+  ];
+
   const updateStatus = async (id, status) => {
     const { error } = await supabase
       .from('properties')
       .update({ status })
       .eq('id', id);
     if (!error) loadProperties();
+  };
+
+  const confirmRejection = async (id) => {
+    const parts = [
+      ...rejectionReasons,
+      ...(rejectionNote.trim() ? [`Note: ${rejectionNote.trim()}`] : []),
+    ];
+    const reason = parts.join('\n');
+    const { error } = await supabase
+      .from('properties')
+      .update({ status: 'rejected', rejection_reason: reason || null })
+      .eq('id', id);
+    if (!error) {
+      setRejectingId(null);
+      setRejectionReasons([]);
+      setRejectionNote('');
+      loadProperties();
+    }
+  };
+
+  const toggleRejectionReason = (reason) => {
+    setRejectionReasons(prev =>
+      prev.includes(reason) ? prev.filter(r => r !== reason) : [...prev, reason]
+    );
   };
 
   const filtered = properties.filter(p => p.status === filter);
@@ -325,9 +361,47 @@ export default function Admin() {
                   </div>
 
                   {p.status === 'pending' && (
-                    <div className="admin-card-actions">
-                      <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>✓ Approve</button>
-                      <button className="admin-btn-reject" onClick={() => updateStatus(p.id, 'rejected')}>✕ Reject</button>
+                    <div>
+                      <div className="admin-card-actions">
+                        <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>✓ Approve</button>
+                        <button className="admin-btn-reject" onClick={() => {
+                          setRejectingId(rejectingId === p.id ? null : p.id);
+                          setRejectionReasons([]);
+                          setRejectionNote('');
+                        }}>✕ Reject</button>
+                      </div>
+                      {rejectingId === p.id && (
+                        <div className="admin-rejection-form">
+                          <div className="admin-rejection-title">Select reasons for rejection</div>
+                          {REJECTION_OPTIONS.map(opt => (
+                            <label key={opt} className="admin-rejection-option">
+                              <input
+                                type="checkbox"
+                                checked={rejectionReasons.includes(opt)}
+                                onChange={() => toggleRejectionReason(opt)}
+                              />
+                              {opt}
+                            </label>
+                          ))}
+                          <textarea
+                            className="admin-rejection-note"
+                            placeholder="Additional notes for the host (optional)…"
+                            value={rejectionNote}
+                            onChange={e => setRejectionNote(e.target.value)}
+                            rows={3}
+                          />
+                          <div className="admin-card-actions" style={{marginTop:8}}>
+                            <button
+                              className="admin-btn-reject"
+                              onClick={() => confirmRejection(p.id)}
+                              disabled={rejectionReasons.length === 0 && !rejectionNote.trim()}
+                            >
+                              Confirm rejection
+                            </button>
+                            <button className="admin-btn-cancel" onClick={() => setRejectingId(null)}>Cancel</button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   {p.status === 'approved' && (
@@ -336,8 +410,18 @@ export default function Admin() {
                     </div>
                   )}
                   {p.status === 'rejected' && (
-                    <div className="admin-card-actions">
-                      <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>✓ Approve instead</button>
+                    <div>
+                      {p.rejection_reason && (
+                        <div className="admin-rejection-summary">
+                          <div className="admin-rejection-summary-title">Rejection reasons sent to host:</div>
+                          {p.rejection_reason.split('\n').map((r, i) => (
+                            <div key={i} className="admin-rejection-summary-item">• {r}</div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="admin-card-actions">
+                        <button className="admin-btn-approve" onClick={() => updateStatus(p.id, 'approved')}>✓ Approve instead</button>
+                      </div>
                     </div>
                   )}
                 </div>
