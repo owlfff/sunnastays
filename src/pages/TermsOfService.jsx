@@ -1,8 +1,10 @@
 import React from 'react';
 import Footer from '../components/Footer';
+import { useMeta } from '../hooks/useMeta';
 import './LegalPage.css';
 
 export default function TermsOfService() {
+  useMeta('Terms of Service', 'SunnaStays terms of service for guests and hosts using the platform.');
   return (
     <div className="legal-page">
       <div className="legal-hero">

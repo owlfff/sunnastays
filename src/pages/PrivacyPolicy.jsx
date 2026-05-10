@@ -1,8 +1,10 @@
 import React from 'react';
 import Footer from '../components/Footer';
+import { useMeta } from '../hooks/useMeta';
 import './LegalPage.css';
 
 export default function PrivacyPolicy() {
+  useMeta('Privacy Policy', 'How SunnaStays collects, uses, and protects your personal data under UK GDPR.');
   return (
     <div className="legal-page">
       <div className="legal-hero">

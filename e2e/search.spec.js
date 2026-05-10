@@ -4,9 +4,9 @@ test.describe('Search', () => {
 
   test('home page loads with search bar', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('SunnaStays')).toBeVisible();
-    // Search bar should be present
-    await expect(page.locator('input[placeholder*="destination" i], input[placeholder*="where" i]').first()).toBeVisible();
+    await expect(page.locator('nav').getByText('SunnaStays').first()).toBeVisible();
+    // Search bar should be present (it's div-based until opened)
+    await expect(page.locator('.sb-wrap, .sb-outer').first()).toBeVisible();
   });
 
   test('can search for Istanbul and see results', async ({ page }) => {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMeta } from '../hooks/useMeta';
 import { searchStays } from '../api';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
@@ -43,6 +44,7 @@ const TESTIMONIALS = [
 ];
 
 export default function Home() {
+  useMeta(null, 'Halal-certified short stays for the modern Muslim traveller. Alcohol-free, halal-kitchen properties verified by SunnaStays.');
   const navigate = useNavigate();
   const search = useSearch();
   const [activeCategory, setActiveCategory] = useState(0);

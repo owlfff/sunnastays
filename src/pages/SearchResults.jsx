@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useMeta } from '../hooks/useMeta';
 import StayCard from '../components/StayCard';
 import SearchMap from '../components/SearchMap';
 import Footer from '../components/Footer';
@@ -29,6 +30,10 @@ export default function SearchResults() {
   const navigate = useNavigate();
 
   const destination = searchParams.get('destination') || '';
+  useMeta(
+    destination ? `Halal stays in ${destination}` : 'Search halal stays',
+    `Browse halal-certified, alcohol-free properties${destination ? ` in ${destination}` : ''}. Every stay verified by SunnaStays.`
+  );
   const checkin     = searchParams.get('checkin') || '';
   const checkout    = searchParams.get('checkout') || '';
   const guests      = searchParams.get('guests') || '';

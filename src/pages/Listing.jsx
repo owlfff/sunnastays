@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
+import { useMeta } from '../hooks/useMeta';
 import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
 import { getStay, getReviewsForProperty, CURRENCY_SYMBOLS } from '../api';
@@ -11,6 +12,10 @@ export default function Listing() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [stay, setStay]           = useState(null);
+  useMeta(
+    stay ? `${stay.name} – ${stay.location}` : null,
+    stay ? `${stay.name} in ${stay.location}. Halal-certified, alcohol-free stay verified by SunnaStays. From ${stay.price_per_night ? `£${stay.price_per_night}` : ''} per night.` : null
+  );
   const [loading, setLoading]     = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
   const [showBooking, setShowBooking] = useState(false);

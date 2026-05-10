@@ -1,9 +1,11 @@
 import React from 'react';
 import Footer from '../components/Footer';
+import { useMeta } from '../hooks/useMeta';
 import './LegalPage.css';
 import './About.css';
 
 export default function About() {
+  useMeta('About us', 'Learn about SunnaStays — the halal-certified short stay platform for the modern Muslim traveller.');
   return (
     <div className="legal-page">
       <div className="legal-hero">

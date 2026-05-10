@@ -22,7 +22,8 @@ test.describe('Booking flow', () => {
     const reserveBtn = page.getByRole('button', { name: /reserve|book/i }).first();
     await reserveBtn.click();
 
-    // Should either redirect to sign in or show a prompt
+    // Should either redirect to sign in / sign up, or show an auth prompt
+    await page.waitForTimeout(1500);
     const url = page.url();
     const hasModal = await page.locator('[class*="modal"], [class*="booking"]').count();
     expect(url.includes('/signin') || url.includes('/signup') || hasModal > 0).toBeTruthy();

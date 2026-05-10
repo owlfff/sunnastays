@@ -1,5 +1,6 @@
 import React from 'react';
 import Footer from '../components/Footer';
+import { useMeta } from '../hooks/useMeta';
 import './HalalCharter.css';
 
 const REQUIREMENTS = [
@@ -43,6 +44,7 @@ const VERIFICATION_STEPS = [
 ];
 
 export default function HalalCharter() {
+  useMeta('Halal Charter', 'The SunnaStays Halal Charter — the standards every listed property must meet to be halal-certified.');
   return (
     <div className="charter-page">
       {/* HERO */}

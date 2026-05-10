@@ -1,9 +1,11 @@
 import React from 'react';
 import Footer from '../components/Footer';
+import { useMeta } from '../hooks/useMeta';
 import './LegalPage.css';
 import './Contact.css';
 
 export default function Contact() {
+  useMeta('Contact us', 'Get in touch with the SunnaStays team. We\'re here to help guests and hosts.');
   return (
     <div className="legal-page">
       <div className="legal-hero">

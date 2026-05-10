@@ -4,7 +4,7 @@ test.describe('Navigation and legal pages', () => {
 
   test('home page loads', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('SunnaStays')).toBeVisible();
+    await expect(page.locator('nav').getByText('SunnaStays').first()).toBeVisible();
   });
 
   test('cookie banner appears on first visit', async ({ page }) => {
@@ -25,18 +25,18 @@ test.describe('Navigation and legal pages', () => {
 
   test('privacy policy page loads', async ({ page }) => {
     await page.goto('/privacy');
-    await expect(page.getByText('Privacy Policy')).toBeVisible();
-    await expect(page.getByText('UK GDPR', { exact: false })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Privacy Policy' })).toBeVisible();
+    await expect(page.getByText('UK GDPR', { exact: false }).first()).toBeVisible();
   });
 
   test('terms of service page loads', async ({ page }) => {
     await page.goto('/terms');
-    await expect(page.getByText('Terms of Service')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Terms of Service' })).toBeVisible();
   });
 
   test('halal charter page loads', async ({ page }) => {
     await page.goto('/halal-charter');
-    await expect(page.getByText('Halal Charter')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Halal Charter', exact: false })).toBeVisible();
   });
 
   test('about page loads', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Navigation and legal pages', () => {
 
   test('nav List your property goes to signup when not logged in', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'List your property' }).click();
+    await page.getByRole('button', { name: /list your property/i }).first().click();
     await expect(page).toHaveURL('/signup');
   });
 
