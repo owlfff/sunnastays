@@ -10,6 +10,8 @@ import Listing from './pages/Listing';
 import HostOnboarding from './pages/HostOnboarding';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Admin from './pages/Admin';
 import BookingSuccess from './pages/BookingSuccess';
 import AccountPage from './pages/AccountPage';
@@ -56,6 +58,8 @@ export default function App() {
               <Route path="/host"                element={<HostOnboarding />} />
               <Route path="/signup"              element={<SignUp />} />
               <Route path="/signin"              element={<SignIn />} />
+              <Route path="/forgot-password"    element={<ForgotPassword />} />
+              <Route path="/reset-password"     element={<ResetPassword />} />
               <Route path="/booking-success"     element={<BookingSuccess />} />
               <Route path="/account"             element={<AccountPage />} />
               <Route path="/review"              element={<ReviewPage />} />

@@ -49,9 +49,15 @@ export default function SignIn() {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Password</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <label className="form-label" style={{ margin: 0 }}>Password</label>
+            <Link to="/forgot-password" style={{ fontSize: 13, color: 'var(--terracotta)', textDecoration: 'none' }}>
+              Forgot password?
+            </Link>
+          </div>
           <input className="form-input" type="password" placeholder="Your password"
-            value={form.password} onChange={e => update('password', e.target.value)} />
+            value={form.password} onChange={e => update('password', e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
         </div>
 
         {error && <div className="auth-error">{error}</div>}
