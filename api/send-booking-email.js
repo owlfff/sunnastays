@@ -1,3 +1,10 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -99,21 +106,41 @@ export default async function handler(req, res) {
     </div>
   `;
 
+  // Look up the actual host email for the property
+  let hostEmail = null;
+  if (property.id) {
+    const { data: prop } = await supabase
+      .from('properties')
+      .select('host_id')
+      .eq('id', property.id)
+      .single();
+    if (prop?.host_id) {
+      const { data: hostProfile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('user_id', prop.host_id)
+        .single();
+      hostEmail = hostProfile?.email;
+    }
+  }
+
   try {
     // Send to host
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'SunnaStays <bookings@sunnastays.com>',
-        to: ['fortyfourb@proton.me'], // Your admin email — replace with host email when host accounts are wired
-        subject,
-        html: type === 'host' ? hostHtml : guestHtml,
-      }),
-    });
+    if (hostEmail) {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'SunnaStays <bookings@sunnastays.com>',
+          to: [hostEmail],
+          subject,
+          html: hostHtml,
+        }),
+      });
+    }
 
     // Send confirmation to guest
     if (booking.guestEmail) {

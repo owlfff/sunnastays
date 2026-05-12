@@ -69,7 +69,7 @@ export default async function handler(req, res) {
             instantBooking:     meta.instantBooking === 'true',
             message:            meta.message,
           },
-          property: { name: meta.propertyName || 'Property' },
+          property: { name: meta.propertyName || 'Property', id: meta.propertyId },
         }),
       });
     } catch (e) {

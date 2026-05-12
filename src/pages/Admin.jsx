@@ -85,7 +85,16 @@ export default function Admin() {
       .from('properties')
       .update({ status })
       .eq('id', id);
-    if (!error) loadProperties();
+    if (!error) {
+      loadProperties();
+      if (status === 'approved') {
+        fetch('/api/send-listing-status-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ propertyId: id, status: 'approved' }),
+        }).catch(() => {});
+      }
+    }
   };
 
   const confirmRejection = async (id) => {
@@ -103,6 +112,11 @@ export default function Admin() {
       setRejectionReasons([]);
       setRejectionNote('');
       loadProperties();
+      fetch('/api/send-listing-status-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ propertyId: id, status: 'rejected', rejectionReason: reason || null }),
+      }).catch(() => {});
     }
   };
 

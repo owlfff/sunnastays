@@ -291,6 +291,16 @@ export async function updateBookingStatus(bookingId, status) {
     .eq('id', bookingId);
 
   if (error) throw new Error(error.message);
+
+  // Notify guest when host confirms or rejects
+  if (status === 'confirmed' || status === 'rejected') {
+    fetch('/api/send-booking-status-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId, status }),
+    }).catch(() => {});
+  }
+
   return { success: true };
 }
 
