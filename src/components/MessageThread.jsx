@@ -60,6 +60,8 @@ export default function MessageThread({ bookingId, propertyId, currentUserId, cu
     if (!newMessage.trim()) return;
     setSending(true);
 
+    const content = newMessage.trim();
+
     await supabase.from('messages').insert([{
       thread_id:    tid,
       booking_id:   bookingId || null,
@@ -67,8 +69,22 @@ export default function MessageThread({ bookingId, propertyId, currentUserId, cu
       sender_id:    currentUserId,
       sender_name:  currentUserName,
       sender_type:  senderType,
-      content:      newMessage.trim(),
+      content,
     }]);
+
+    // Fire-and-forget email notification to the other party
+    if (bookingId) {
+      fetch('/api/send-message-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId,
+          senderType,
+          senderName: currentUserName,
+          messagePreview: content,
+        }),
+      }).catch(() => {});
+    }
 
     setNewMessage('');
     setSending(false);
