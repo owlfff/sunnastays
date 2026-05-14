@@ -88,10 +88,10 @@ export default function Admin() {
     if (!error) {
       loadProperties();
       if (status === 'approved') {
-        fetch('/api/send-listing-status-email', {
+        fetch('/api/send-booking-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ propertyId: id, status: 'approved' }),
+          body: JSON.stringify({ type: 'listing-status', propertyId: id, status: 'approved' }),
         }).catch(() => {});
       }
     }
@@ -112,10 +112,10 @@ export default function Admin() {
       setRejectionReasons([]);
       setRejectionNote('');
       loadProperties();
-      fetch('/api/send-listing-status-email', {
+      fetch('/api/send-booking-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ propertyId: id, status: 'rejected', rejectionReason: reason || null }),
+        body: JSON.stringify({ type: 'listing-status', propertyId: id, status: 'rejected', rejectionReason: reason || null }),
       }).catch(() => {});
     }
   };

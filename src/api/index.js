@@ -294,10 +294,10 @@ export async function updateBookingStatus(bookingId, status) {
 
   // Notify guest when host confirms or rejects
   if (status === 'confirmed' || status === 'rejected') {
-    fetch('/api/send-booking-status-email', {
+    fetch('/api/send-booking-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bookingId, status }),
+      body: JSON.stringify({ type: 'booking-status', bookingId, status }),
     }).catch(() => {});
   }
 
