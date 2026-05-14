@@ -20,7 +20,7 @@ function findRange(dt, ranges) {
   return ranges.find(r => dt >= new Date(r.start_date) && dt <= new Date(r.end_date));
 }
 
-function CalendarMonth({ year, month, blockedRanges, selectionStart, hoverDate, onDayClick, onDayHover }) {
+function CalendarMonth({ year, month, blockedRanges, selectionStart, selectionEnd, hoverDate, onDayClick, onDayHover }) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -40,8 +40,13 @@ function CalendarMonth({ year, month, blockedRanges, selectionStart, hoverDate, 
 
           // Selection preview
           let isSelStart = selectionStart && dt.toDateString() === selectionStart.toDateString();
+          let isSelEnd = selectionEnd && dt.toDateString() === selectionEnd.toDateString();
           let inSelection = false;
-          if (selectionStart && hoverDate && !isPast) {
+          if (selectionEnd) {
+            // Confirmed selection — highlight the full range
+            inSelection = dt >= selectionStart && dt <= selectionEnd;
+          } else if (selectionStart && hoverDate && !isPast) {
+            // Live preview while picking second date
             const lo = selectionStart < hoverDate ? selectionStart : hoverDate;
             const hi = selectionStart < hoverDate ? hoverDate : selectionStart;
             inSelection = dt >= lo && dt <= hi;
@@ -50,7 +55,7 @@ function CalendarMonth({ year, month, blockedRanges, selectionStart, hoverDate, 
           let cls = 'bdc-cal-day';
           if (isPast) cls += ' past';
           if (isBlocked) cls += ' blocked';
-          if (isSelStart) cls += ' sel-start';
+          if (isSelStart || isSelEnd) cls += ' sel-start';
           if (inSelection && !isBlocked) cls += ' in-selection';
 
           return (
@@ -72,6 +77,7 @@ function CalendarMonth({ year, month, blockedRanges, selectionStart, hoverDate, 
 export default function BlockedDatesCalendar({ propertyId, propertyName, onClose }) {
   const [blockedRanges, setBlockedRanges] = useState([]);
   const [selectionStart, setSelectionStart] = useState(null);
+  const [selectionEnd, setSelectionEnd] = useState(null);
   const [hoverDate, setHoverDate] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -102,33 +108,48 @@ export default function BlockedDatesCalendar({ propertyId, propertyName, onClose
 
     if (!selectionStart) {
       setSelectionStart(dt);
+      setSelectionEnd(null);
       return;
     }
 
-    // Second click — save range
+    // Second click — stage the selection for confirmation
     const start = selectionStart < dt ? selectionStart : dt;
     const end   = selectionStart < dt ? dt : selectionStart;
 
-    // Overlap check against existing blocked ranges
+    // Overlap check
     const overlaps = blockedRanges.some(r =>
       start <= new Date(r.end_date) && end >= new Date(r.start_date)
     );
     if (overlaps) {
       setError('Selected range overlaps an existing blocked period. Click a blocked date to remove it first.');
       setSelectionStart(null);
+      setSelectionEnd(null);
       return;
     }
 
+    setSelectionStart(start);
+    setSelectionEnd(end);
+  };
+
+  const handleConfirm = async () => {
+    if (!selectionStart || !selectionEnd) return;
     setSaving(true);
     try {
-      const saved = await addBlockedRange(propertyId, toStr(start), toStr(end));
+      const saved = await addBlockedRange(propertyId, toStr(selectionStart), toStr(selectionEnd));
       setBlockedRanges(prev => [...prev, saved].sort((a, b) => a.start_date.localeCompare(b.start_date)));
       setSelectionStart(null);
+      setSelectionEnd(null);
     } catch {
       setError('Failed to save blocked range');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleCancelSelection = () => {
+    setSelectionStart(null);
+    setSelectionEnd(null);
+    setError(null);
   };
 
   const handleDelete = async (id) => {
@@ -161,10 +182,21 @@ export default function BlockedDatesCalendar({ propertyId, propertyName, onClose
         </div>
 
         <div className="bdc-instructions">
-          {selectionStart
-            ? `Check-in selected: ${selectionStart.getDate()} ${MONTHS_SHORT[selectionStart.getMonth()]} — now click the last date to block`
-            : 'Click a date to start blocking a range. Click a blocked date (red) to remove it.'}
+          {selectionEnd
+            ? `${selectionStart.getDate()} ${MONTHS_SHORT[selectionStart.getMonth()]} – ${selectionEnd.getDate()} ${MONTHS_SHORT[selectionEnd.getMonth()]} ${selectionEnd.getFullYear()}`
+            : selectionStart
+            ? `Start: ${selectionStart.getDate()} ${MONTHS_SHORT[selectionStart.getMonth()]} — now click the last date to block`
+            : 'Click a start date to begin blocking a range. Click a blocked date (red) to remove it.'}
         </div>
+
+        {selectionEnd && (
+          <div className="bdc-confirm-bar">
+            <button className="bdc-confirm-btn" onClick={handleConfirm} disabled={saving}>
+              {saving ? 'Saving…' : 'Block these dates'}
+            </button>
+            <button className="bdc-cancel-btn" onClick={handleCancelSelection}>Cancel</button>
+          </div>
+        )}
 
         {error && <div className="bdc-error">{error}</div>}
 
@@ -176,14 +208,13 @@ export default function BlockedDatesCalendar({ propertyId, propertyName, onClose
               month={month}
               blockedRanges={blockedRanges}
               selectionStart={selectionStart}
+              selectionEnd={selectionEnd}
               hoverDate={hoverDate}
               onDayClick={handleDayClick}
               onDayHover={setHoverDate}
             />
           ))}
         </div>
-
-        {saving && <div className="bdc-saving">Saving…</div>}
 
         {futureRanges.length > 0 && (
           <div className="bdc-ranges-section">
