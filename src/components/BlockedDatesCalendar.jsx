@@ -107,7 +107,7 @@ export default function BlockedDatesCalendar({ propertyId, propertyName, onClose
       return;
     }
 
-    if (!selectionStart) {
+    if (!selectionStart || selectionEnd) {
       setSelectionStart(dt);
       setSelectionEnd(null);
       return;
