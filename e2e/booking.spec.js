@@ -4,9 +4,9 @@ import { test, expect } from '@playwright/test';
 async function signIn(page) {
   await page.goto('/signin');
   await page.getByPlaceholder('you@example.com').fill(process.env.TEST_GUEST_EMAIL || 'owflint+guest1@gmail.com');
-  await page.getByPlaceholder('Password').fill(process.env.TEST_GUEST_PASSWORD || '');
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  await page.waitForURL(url => !url.toString().includes('/signin'), { timeout: 10000 });
+  await page.getByPlaceholder('Your password').fill(process.env.TEST_GUEST_PASSWORD || '');
+  await page.getByRole('button', { name: 'Sign in' }).nth(1).click();
+  await expect(page).not.toHaveURL(/\/signin/, { timeout: 10000 });
 }
 
 test.describe('Booking flow', () => {
@@ -57,18 +57,33 @@ test.describe('Booking flow', () => {
     if (await card.count() === 0) { test.skip(); return; }
     await card.click();
 
-    // Select dates
+    // Dismiss cookie banner if present
+    const acceptBtn = page.getByRole('button', { name: /accept/i });
+    if (await acceptBtn.isVisible().catch(() => false)) await acceptBtn.click();
+
+    // Click date cell — this opens the booking modal
     await page.locator('.date-cell').first().click();
-    // Pick a date ~30 days out in the calendar
-    const futureDates = page.locator('[class*="day"]:not([class*="disabled"]):not([class*="past"])');
-    await futureDates.nth(30).click().catch(() => {});
-    await futureDates.nth(33).click().catch(() => {});
+    await expect(page.locator('.bm-modal')).toBeVisible({ timeout: 5000 });
 
-    // Click Reserve
-    const reserveBtn = page.getByRole('button', { name: /reserve|book/i }).first();
-    await reserveBtn.click();
+    // Pick two available dates from the modal calendar
+    const availableDays = page.locator('.bm-cal-day:not(.disabled)');
+    await availableDays.nth(5).click().catch(() => {});
+    await availableDays.nth(8).click().catch(() => {});
 
-    // Should eventually land on Stripe checkout
+    // Continue past dates step
+    await page.getByRole('button', { name: /continue/i }).click();
+
+    // Step 2 — fill phone if empty, then continue
+    const phoneInput = page.getByPlaceholder('+44 7700 000000');
+    if (await phoneInput.isVisible().catch(() => false)) {
+      const val = await phoneInput.inputValue();
+      if (!val) await phoneInput.fill('+44 7700 000001');
+    }
+    await page.getByRole('button', { name: /continue/i }).click();
+
+    // Step 3 — confirm booking → should redirect to Stripe
+    await page.getByRole('button', { name: /confirm booking/i }).click();
+
     await page.waitForURL(/stripe\.com|checkout\.stripe/, { timeout: 15000 }).catch(() => {});
     expect(page.url()).toMatch(/stripe\.com|sunnastays/);
   });
