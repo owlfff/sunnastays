@@ -108,6 +108,19 @@ export default function BlockedDatesCalendar({ propertyId, propertyName, onClose
     }
 
     if (!selectionStart || selectionEnd) {
+      // If there's a confirmed-but-unsaved selection, auto-save it before starting a new one
+      if (selectionStart && selectionEnd) {
+        setSaving(true);
+        try {
+          const saved = await addBlockedRange(propertyId, toStr(selectionStart), toStr(selectionEnd));
+          setBlockedRanges(prev => [...prev, saved].sort((a, b) => a.start_date.localeCompare(b.start_date)));
+        } catch {
+          setError('Failed to save blocked range');
+          setSaving(false);
+          return;
+        }
+        setSaving(false);
+      }
       setSelectionStart(dt);
       setSelectionEnd(null);
       return;
