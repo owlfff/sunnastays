@@ -100,6 +100,7 @@ export default function BlockedDatesCalendar({ propertyId, propertyName, onClose
         await deleteBlockedRange(existing.id);
         setBlockedRanges(prev => prev.filter(r => r.id !== existing.id));
         setSelectionStart(null);
+        setSelectionEnd(null);
       } catch {
         setError('Failed to remove blocked range');
       }
@@ -182,7 +183,7 @@ export default function BlockedDatesCalendar({ propertyId, propertyName, onClose
         </div>
 
         <div className="bdc-instructions">
-          {selectionEnd
+          {selectionEnd && selectionStart
             ? `${selectionStart.getDate()} ${MONTHS_SHORT[selectionStart.getMonth()]} – ${selectionEnd.getDate()} ${MONTHS_SHORT[selectionEnd.getMonth()]} ${selectionEnd.getFullYear()}`
             : selectionStart
             ? `Start: ${selectionStart.getDate()} ${MONTHS_SHORT[selectionStart.getMonth()]} — now click the last date to block`
