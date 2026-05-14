@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
+import { getBlockedRanges } from '../api';
 
 import './BookingModal.css';
 
@@ -71,21 +72,27 @@ export default function BookingModal({ stay, onClose, initialCheckin, initialChe
   const [fieldErrors, setFieldErrors] = useState({});
   const [attempted, setAttempted] = useState(false);
 
-  // Fetch booked dates
+  // Fetch booked dates and host-blocked ranges
   useEffect(() => {
-    supabase
-      .from('bookings')
-      .select('checkin, checkout, status')
-      .eq('property_id', stay.id)
-      .not('status', 'eq', 'rejected')
-      .then(({ data }) => {
-        if (!data) return;
-        const ranges = data.map(b => ({
-          checkin:  new Date(b.checkin),
-          checkout: new Date(b.checkout),
-        }));
-        setUnavailableRanges(ranges);
-      });
+    Promise.all([
+      supabase
+        .from('bookings')
+        .select('checkin, checkout, status')
+        .eq('property_id', stay.id)
+        .not('status', 'eq', 'rejected'),
+      getBlockedRanges(stay.id),
+    ]).then(([{ data: bookingData }, blockedData]) => {
+      const bookingRanges = (bookingData || []).map(b => ({
+        checkin:  new Date(b.checkin),
+        checkout: new Date(b.checkout),
+      }));
+      // blocked ranges: end_date is inclusive, so add 1 day to match exclusive checkout convention
+      const blockedRanges = (blockedData || []).map(r => ({
+        checkin:  new Date(r.start_date),
+        checkout: new Date(new Date(r.end_date).getTime() + 86400000),
+      }));
+      setUnavailableRanges([...bookingRanges, ...blockedRanges]);
+    });
   }, [stay.id]);
 
   const now = new Date();

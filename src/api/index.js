@@ -320,3 +320,32 @@ export async function getCurrentUser() {
   const { data: { user } } = await supabase.auth.getUser();
   return user;
 }
+
+export async function getBlockedRanges(propertyId) {
+  const { data, error } = await supabase
+    .from('blocked_ranges')
+    .select('id, start_date, end_date')
+    .eq('property_id', propertyId)
+    .order('start_date', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function addBlockedRange(propertyId, startDate, endDate) {
+  const { data, error } = await supabase
+    .from('blocked_ranges')
+    .insert([{ property_id: propertyId, start_date: startDate, end_date: endDate }])
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function deleteBlockedRange(id) {
+  const { error } = await supabase
+    .from('blocked_ranges')
+    .delete()
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+  return { success: true };
+}

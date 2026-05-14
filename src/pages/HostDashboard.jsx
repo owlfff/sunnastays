@@ -4,6 +4,7 @@ import { supabase } from '../supabase';
 import { updateBookingStatus } from '../api';
 import './HostDashboard.css';
 import MessageThread from '../components/MessageThread';
+import BlockedDatesCalendar from '../components/BlockedDatesCalendar';
 
 const STATUS_COLOURS = {
   pending:   { bg: 'rgba(196,98,45,0.1)',  color: '#C4622D' },
@@ -27,6 +28,7 @@ export default function HostDashboard() {
   const [stripeStatus, setStripeStatus] = useState(null);
   const [connectLoading, setConnectLoading] = useState(false);
   const [connectError, setConnectError] = useState(null);
+  const [availabilityListing, setAvailabilityListing] = useState(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -333,9 +335,17 @@ export default function HostDashboard() {
                             <span>£{l.price}/night</span>
                             <span>{l.bedrooms} bed · {l.max_guests} guests</span>
                           </div>
-                                  <div className={`dash-listing-status dash-listing-status--${l.status}`}>
+                          <div className={`dash-listing-status dash-listing-status--${l.status}`}>
                             {l.status === 'approved' ? '✓ Live' : l.status === 'pending' ? '⏳ Pending review' : '✕ Rejected'}
                           </div>
+                          {l.status === 'approved' && (
+                            <button
+                              className="dash-availability-btn"
+                              onClick={() => setAvailabilityListing(l)}
+                            >
+                              Manage availability
+                            </button>
+                          )}
                           {l.status === 'rejected' && (
                             <div className="dash-rejection-block">
                               {l.rejection_reason && (
@@ -364,6 +374,13 @@ export default function HostDashboard() {
           </>
         )}
       </div>
+      {availabilityListing && (
+        <BlockedDatesCalendar
+          propertyId={availabilityListing.id}
+          propertyName={availabilityListing.name}
+          onClose={() => setAvailabilityListing(null)}
+        />
+      )}
     </div>
   );
 }
