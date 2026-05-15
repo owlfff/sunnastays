@@ -65,10 +65,14 @@ export default function GuestDashboard() {
     if (!window.confirm('Are you sure you want to cancel this booking? This cannot be undone.')) return;
     setCancellingId(bookingId);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/cancel-booking', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId, userId: user.id }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ bookingId }),
       });
       const data = await res.json();
       if (data.success) {

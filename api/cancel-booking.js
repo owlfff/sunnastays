@@ -1,9 +1,14 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require('@supabase/supabase-js');
 
+// Service-role client for DB writes; auth client for token verification
 const supabase = createClient(
   process.env.REACT_APP_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY
+);
+const supabaseAuth = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY
 );
 
 function calcRefundAmount(totalPrice, policy, checkinDate) {
@@ -43,8 +48,14 @@ function calcRefundAmount(totalPrice, policy, checkinDate) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { bookingId, userId } = req.body;
-  if (!bookingId || !userId) return res.status(400).json({ error: 'Missing bookingId or userId' });
+  const { bookingId } = req.body;
+  if (!bookingId) return res.status(400).json({ error: 'Missing bookingId' });
+
+  // Verify the caller's identity from their JWT — never trust client-supplied userId
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace('Bearer ', '');
+  const { data: { user: authedUser }, error: authErr } = await supabaseAuth.auth.getUser(token);
+  if (authErr || !authedUser) return res.status(401).json({ error: 'Unauthorised' });
 
   try {
     // Fetch booking and verify ownership
@@ -55,7 +66,7 @@ export default async function handler(req, res) {
       .single();
 
     if (bookingErr || !booking) return res.status(404).json({ error: 'Booking not found' });
-    if (booking.guest_id !== userId) return res.status(403).json({ error: 'Not authorised' });
+    if (booking.guest_id !== authedUser.id) return res.status(403).json({ error: 'Not authorised' });
     if (['cancelled', 'rejected'].includes(booking.status)) {
       return res.status(400).json({ error: 'Booking is already cancelled' });
     }
