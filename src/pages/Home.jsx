@@ -37,11 +37,6 @@ const PROMISE = [
   { icon:'🔒',   title:'Verified hosts', desc:'Every host is ID-verified and must sign our Halal Charter before listing.' },
 ];
 
-const TESTIMONIALS = [
-  { emoji:'👨', quote:'Finally a platform where I don\'t have to interrogate every host. The halal guarantee meant my wife and I could just relax and enjoy Istanbul.', name:'Yusuf Al-Hassan', meta:'London, UK · 3 stays' },
-  { emoji:'👩', quote:'As a solo female traveller, knowing every property is screened gives me such peace of mind. The prayer-friendly filters are a brilliant touch.', name:'Fatima Osei', meta:'Birmingham, UK · 7 stays' },
-  { emoji:'👨‍👩‍👧', quote:'We travel as a big family and halal compliance is non-negotiable. Smoother than Airbnb and the host communication was incredible. 10/10.', name:'The Mahmood Family', meta:'Manchester, UK · 5 stays' },
-];
 
 export default function Home() {
   useMeta(null, 'Halal-certified short stays for the modern Muslim traveller. Alcohol-free, halal-kitchen properties verified by SunnaStays.');
@@ -196,29 +191,6 @@ export default function Home() {
                 <div className="promise-icon">{p.icon}</div>
                 <div className="promise-title">{p.title}</div>
                 <div className="promise-desc">{p.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="testimonials-section">
-        <div className="container">
-          <div className="section-label">Guest voices</div>
-          <h2>Stories from our <em>community</em></h2>
-          <div className="test-grid">
-            {TESTIMONIALS.map(t => (
-              <div key={t.name} className="test-card">
-                <div className="test-quote">"</div>
-                <p className="test-text">{t.quote}</p>
-                <div className="test-author">
-                  <div className="test-avatar">{t.emoji}</div>
-                  <div>
-                    <div className="test-name">{t.name}</div>
-                    <div className="test-meta">{t.meta}</div>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
